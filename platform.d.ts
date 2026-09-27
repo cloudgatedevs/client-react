@@ -74,6 +74,14 @@ export function paletteMatches(left: Partial<AppearanceValues>, right: Partial<A
 export function parseCustomPalette(value: unknown): CustomPalette | null;
 export function paletteVariables(values?: Partial<AppearanceValues>, dark?: boolean): Record<string, string>;
 export function contrastRatio(first: string | number[], second: string | number[]): number;
+export type FontId = 'system' | 'inter' | 'roboto' | 'open-sans' | 'source-sans-3' | 'nunito-sans' | 'dm-sans' | 'manrope' | 'plus-jakarta-sans' | 'montserrat' | 'work-sans' | 'lora' | 'source-serif-4' | 'ibm-plex-sans' | 'rubik';
+export const FONT_DEFAULTS: Readonly<{ theme_font_body: 'inter'; theme_font_heading: 'inherit' }>;
+export const FONT_KEYS: readonly ('theme_font_body' | 'theme_font_heading')[];
+export const FONT_OPTIONS: ReadonlyArray<Readonly<{ id: FontId; label: string; category: 'sans-serif' | 'serif'; family: string }>>;
+export function isFont(value: unknown, heading?: boolean): boolean;
+export function normalizeFonts(values?: Partial<AppearanceValues>): { theme_font_body: FontId; theme_font_heading: FontId | 'inherit' };
+export function fontFamily(id: unknown): string;
+export function fontVariables(values?: Partial<AppearanceValues>): Record<'--font-body' | '--font-heading', string>;
 export const LAYOUT_PRESETS: ReadonlyArray<{ value: 'wide' | 'content' | 'compact' | 'flex'; label: string; description: string; detail: string }>;
 export function normalizeDensity(value: unknown): 'wide' | 'content' | 'compact' | 'flex';
 export function normalizeSettings(values?: Partial<AppearanceValues>): AppearanceValues;

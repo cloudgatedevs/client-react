@@ -7,6 +7,8 @@ import { Save, RotateCcw, Upload, Images } from 'lucide-react';
 import { useSettings } from '../settings/SettingsProvider.jsx';
 import {
   PALETTE_COLOR_KEYS,
+  FONT_KEYS,
+  fontVariables,
   paletteVariables,
   LAYOUT_PRESETS,
   normalizeDensity,
@@ -16,6 +18,7 @@ import {
 
 import { PageHead, ErrorNote, Spinner } from '../components/ui.jsx';
 import { Field, Notice } from '../components/forms.jsx';
+import { FontPicker } from '../settings/FontPicker.jsx';
 import { PalettePicker } from '../settings/PalettePicker.jsx';
 import { MediaImagePicker } from '../components/MediaImagePicker.jsx';
 
@@ -32,6 +35,7 @@ const appearanceKeys = [
 const themeKeys = [
   'theme_mode',
   'theme_density',
+  ...FONT_KEYS,
   ...PALETTE_COLOR_KEYS,
   'theme_custom_palette',
 ];
@@ -112,7 +116,7 @@ export function Appearance({ theme = false }) {
         title={theme ? 'Theme' : 'Appearance'}
         subtitle={
           theme
-            ? 'Set the colours, display mode and layout for this back office.'
+            ? 'Set the fonts, colours, display mode and layout for your app.'
             : 'Make the application your own with a name, logo and contact details.'
         }
       />
@@ -192,6 +196,7 @@ export function Appearance({ theme = false }) {
                   across the back office.
                 </p>
               </fieldset>
+              <FontPicker value={form} onChange={patch => { setNotice(''); setForm(old => ({ ...old, ...patch })); }} />
               <PalettePicker key={JSON.stringify(settings)} value={form} onChange={patch => { setNotice(''); setForm(old => ({...old, ...patch})); }} />
             </>
           ) : (
@@ -391,6 +396,8 @@ function ThemePreview({ settings }) {
         data-density={density}
         style={{
           ...variables,
+          ...fontVariables(settings),
+          fontFamily: 'var(--font-body)',
           colorScheme: dark ? 'dark' : 'light',
           background: 'rgb(var(--ink-850))',
           color: 'rgb(var(--mist))',
@@ -417,7 +424,7 @@ function ThemePreview({ settings }) {
             </span>
           )}
           <div>
-            <strong className="block">
+            <strong className="block font-display">
               {settings.app_name || 'Application'}
             </strong>
             <small className="opacity-60">
@@ -434,7 +441,7 @@ function ThemePreview({ settings }) {
               {['Users', 'Activity'].map((label) => (
                 <div key={label}>
                   <small className="opacity-60">{label}</small>
-                  <p className="mt-1 text-xl font-semibold">128</p>
+                  <p className="mt-1 text-xl font-semibold font-display">128</p>
                 </div>
               ))}
             </div>

@@ -1,7 +1,7 @@
 import { useCloudgate } from '../context.jsx';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
-import { DEFAULT_SETTINGS, normalizeSettings, paletteVariables } from '../../platform/appearance-model.js';
+import { DEFAULT_SETTINGS, normalizeSettings, paletteVariables, fontVariables } from '../../platform/appearance-model.js';
 import cloudgateIcon from '../assets/cloudgate-icon.svg';
 
 const SettingsContext = createContext(null);
@@ -43,7 +43,7 @@ export function SettingsProvider({ children, publicAccess = false }) {
       root.dataset.theme =
         settings.theme_mode === 'system' ? (media.matches ? 'dark' : 'light') : settings.theme_mode;
       root.dataset.density = settings.theme_density;
-      const variables = paletteVariables(settings, root.dataset.theme === 'dark');
+      const variables = { ...paletteVariables(settings, root.dataset.theme === 'dark'), ...fontVariables(settings) };
       for (const [key, value] of Object.entries(variables)) root.style.setProperty(key, value);
       document
         .querySelector('meta[name="theme-color"]')

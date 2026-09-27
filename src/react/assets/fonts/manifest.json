@@ -1,0 +1,372 @@
+[
+  {
+    "id": "inter",
+    "name": "Inter",
+    "package": "@fontsource-variable/inter",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/inter/-/inter-5.3.0.tgz",
+    "integrity": "sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==",
+    "files": [
+      {
+        "file": "inter-latin-ext-wght-normal.woff2",
+        "sha256": "34b9c504cab7a73e37b746343a449132e56cf7b5481af2cb81dc74dcff25c956"
+      },
+      {
+        "file": "inter-latin-wght-normal.woff2",
+        "sha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62"
+      },
+      {
+        "file": "inter-latin-ext-wght-italic.woff2",
+        "sha256": "71254244ccb1ec21e14db3480fef6f6826d1136dc4aca1c7d3ca7ce31294fcce"
+      },
+      {
+        "file": "inter-latin-wght-italic.woff2",
+        "sha256": "7291b5970da2237441273c03b424a504b70b18f09791473fab99687dcc314720"
+      }
+    ]
+  },
+  {
+    "id": "roboto",
+    "name": "Roboto",
+    "package": "@fontsource-variable/roboto",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/roboto/-/roboto-5.3.0.tgz",
+    "integrity": "sha512-BoaaZiQf8fgtxv07KXkTwx1bKz/EoqIlTXq2OOKKXINxp6qXWdnlChqV+hSaDANS49yyUASFl3OVBMMDTCIHFA==",
+    "files": [
+      {
+        "file": "roboto-latin-ext-wght-normal.woff2",
+        "sha256": "cedb374b05a35034cf96db185db4eeb8f8ce49e1a56197673702ff11b5533d6e"
+      },
+      {
+        "file": "roboto-latin-wght-normal.woff2",
+        "sha256": "1404ca348bd75ef836f4dd8b6f2cc719458642d1237c368296b2fc652dca47dc"
+      },
+      {
+        "file": "roboto-latin-ext-wght-italic.woff2",
+        "sha256": "7f21d061a9de1ea78a858938ff3b8e677869656b10bad470fc6039f8f3daf329"
+      },
+      {
+        "file": "roboto-latin-wght-italic.woff2",
+        "sha256": "14f23757c6b41b4b6c0b967ca3fa74ff47a868728158373461c4e6e4b6368f19"
+      }
+    ]
+  },
+  {
+    "id": "open-sans",
+    "name": "Open Sans",
+    "package": "@fontsource-variable/open-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/open-sans/-/open-sans-5.3.0.tgz",
+    "integrity": "sha512-VOfhZfLIOBVa6K/dTEu7scqQXYdGa4jBX8quFpQ0S6574B+W2EOBJf9PkqyVtMEI7WWIWNEbpvPc3vY1mN2mmQ==",
+    "files": [
+      {
+        "file": "open-sans-latin-ext-wght-normal.woff2",
+        "sha256": "d5bab8e28732fe3d10dcef4f77b9c248605bbb2a87d289a2539251ceafab536a"
+      },
+      {
+        "file": "open-sans-latin-wght-normal.woff2",
+        "sha256": "d8e4fe0452aa2076429a9bb5d8757d00a994dd95986cf950e9a1a371b9a072a0"
+      },
+      {
+        "file": "open-sans-latin-ext-wght-italic.woff2",
+        "sha256": "a6fa0e8ac2a665c121a19c2e2434fb286e3afdef7b9288739a73c7cb6849108c"
+      },
+      {
+        "file": "open-sans-latin-wght-italic.woff2",
+        "sha256": "186836b74ceac07b2764c07c0379420e3014efb30fe918461c235e0ef6cbc4a2"
+      }
+    ]
+  },
+  {
+    "id": "source-sans-3",
+    "name": "Source Sans 3",
+    "package": "@fontsource-variable/source-sans-3",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/source-sans-3/-/source-sans-3-5.3.0.tgz",
+    "integrity": "sha512-dpi0GZk7EQe2tYpg6Q0Fx0OmUgnuGu+0rHPgtXqtKhglYmJuP7jZ12Mu1uN+NfRaJRY1Emn8AQJEWzmoZ4wa9g==",
+    "files": [
+      {
+        "file": "source-sans-3-latin-ext-wght-normal.woff2",
+        "sha256": "a85a7459bdb3cdc1136751e151a506bae653fc29ada3ca86237477df6f1b59e6"
+      },
+      {
+        "file": "source-sans-3-latin-wght-normal.woff2",
+        "sha256": "7a19a7027e125257d310c6dbd78ae3a30b5ea1e3794d60b12bb28227a003bfda"
+      },
+      {
+        "file": "source-sans-3-latin-ext-wght-italic.woff2",
+        "sha256": "6fe10a66ec416f77a26309b645471d032ad8175063bb605b886e9b7e57efaaa8"
+      },
+      {
+        "file": "source-sans-3-latin-wght-italic.woff2",
+        "sha256": "9a15dafc2c2b2414aaa9d6c30830d9aab4361329d8495b1574633603b994b411"
+      }
+    ]
+  },
+  {
+    "id": "nunito-sans",
+    "name": "Nunito Sans",
+    "package": "@fontsource-variable/nunito-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/nunito-sans/-/nunito-sans-5.3.0.tgz",
+    "integrity": "sha512-Vk1PSfckNDwgw2yGcsvJP3o/0zEW8Rp6KzbD8Ql/6iRHQshnhhAjt+cSIfAUyp5vQuSlleGHFW2LfYaaex0diw==",
+    "files": [
+      {
+        "file": "nunito-sans-latin-ext-wght-normal.woff2",
+        "sha256": "c648ee5bfda70d44b9fb628f4114d1cc4f984d050cbb4881052237ede3638a2e"
+      },
+      {
+        "file": "nunito-sans-latin-wght-normal.woff2",
+        "sha256": "29e3890496844a9ea81975c52771c587c872b4eb317026422d1995b88d21b57d"
+      },
+      {
+        "file": "nunito-sans-latin-ext-wght-italic.woff2",
+        "sha256": "f3093f72aabbc08b8f00f185aef1b9503519a227c3d75a057dc7a3c47d7c6151"
+      },
+      {
+        "file": "nunito-sans-latin-wght-italic.woff2",
+        "sha256": "8904d953726b43ded1a16bfd43398325d2382dd50780c10f18d048e0e73f84a8"
+      }
+    ]
+  },
+  {
+    "id": "dm-sans",
+    "name": "DM Sans",
+    "package": "@fontsource-variable/dm-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/dm-sans/-/dm-sans-5.3.0.tgz",
+    "integrity": "sha512-BpUG5bqePiDFMBM4ZtLSlPdAIOM990uB1dlXzIf4aw21yQR7BmykedLXXXMqGWsR18aMLOsbWccwJNh3ztTQaA==",
+    "files": [
+      {
+        "file": "dm-sans-latin-ext-wght-normal.woff2",
+        "sha256": "a5d38fe99f930275684999b462c7123faa063d9e44e73b4b241723d884aa0f49"
+      },
+      {
+        "file": "dm-sans-latin-wght-normal.woff2",
+        "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
+      },
+      {
+        "file": "dm-sans-latin-ext-wght-italic.woff2",
+        "sha256": "6e646d2022808fb4532e77d38a9348e4dcf832796be2acc43a79052b60900db2"
+      },
+      {
+        "file": "dm-sans-latin-wght-italic.woff2",
+        "sha256": "f1a235db5bcb8730707844188d35201ecdf63e56c5dcce97bab24a9c7066091d"
+      }
+    ]
+  },
+  {
+    "id": "manrope",
+    "name": "Manrope",
+    "package": "@fontsource-variable/manrope",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/manrope/-/manrope-5.3.0.tgz",
+    "integrity": "sha512-6D5dgokHsWDDMtmXHznKa0hK229NN+1a4BLPmUCLqcO1Pw5EEhWY5RFt0AcXnVRAljFFPfRtLkJePQj6LSsV6g==",
+    "files": [
+      {
+        "file": "manrope-latin-ext-wght-normal.woff2",
+        "sha256": "3911b66d9f2e005a4b989223405d0e5032619c668597ba467cc76a23c8fffcfb"
+      },
+      {
+        "file": "manrope-latin-wght-normal.woff2",
+        "sha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972"
+      }
+    ]
+  },
+  {
+    "id": "plus-jakarta-sans",
+    "name": "Plus Jakarta Sans",
+    "package": "@fontsource-variable/plus-jakarta-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/plus-jakarta-sans/-/plus-jakarta-sans-5.3.0.tgz",
+    "integrity": "sha512-/l/4r0yyWK9JzAlmA0LiYgGgmJe/Gswt4jTJEzr5QhJfwMbvJZDmYWyW0M4X7yCK69BajMVlV/Lx8g7WDc1+sw==",
+    "files": [
+      {
+        "file": "plus-jakarta-sans-latin-ext-wght-normal.woff2",
+        "sha256": "38e3b8fd8045048eb311d90170a4429ed2c8f405852dc3d91b5af8452758703f"
+      },
+      {
+        "file": "plus-jakarta-sans-latin-wght-normal.woff2",
+        "sha256": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
+      },
+      {
+        "file": "plus-jakarta-sans-latin-ext-wght-italic.woff2",
+        "sha256": "7524d4b5f829201192882f775b90d78dbd9f9b3014ea729cfb7a47f5261ec7cb"
+      },
+      {
+        "file": "plus-jakarta-sans-latin-wght-italic.woff2",
+        "sha256": "bb113d8f5be89636a9a31ffa0966762126546b98be171d6fa81115abb2cd5352"
+      }
+    ]
+  },
+  {
+    "id": "montserrat",
+    "name": "Montserrat",
+    "package": "@fontsource-variable/montserrat",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/montserrat/-/montserrat-5.3.0.tgz",
+    "integrity": "sha512-7PaZoxaxrWLAyrhO46v65An9LhUhfkTExWLhfbywYZCnZEgg/W1rEHnlNmZKjNZ3nJTVYyicqxlJt10z/26yTA==",
+    "files": [
+      {
+        "file": "montserrat-latin-ext-wght-normal.woff2",
+        "sha256": "54d9a78b7ff60b689ad9f3017ffac8547b5d871afec733f6c1c3ae36577ee504"
+      },
+      {
+        "file": "montserrat-latin-wght-normal.woff2",
+        "sha256": "06b16db7a969135d48d38c49183be7fb88d4452e2a3011957c7851941f4e4879"
+      },
+      {
+        "file": "montserrat-latin-ext-wght-italic.woff2",
+        "sha256": "9f7c3dc0c1fdbc8b09d53d1beb4aca048a5aff376ac5423878e03e83e89a7fe8"
+      },
+      {
+        "file": "montserrat-latin-wght-italic.woff2",
+        "sha256": "0eb22e3d769a66a92dbd82e3aefa5740e5bc21afa4485f62f92b22656d49182a"
+      }
+    ]
+  },
+  {
+    "id": "work-sans",
+    "name": "Work Sans",
+    "package": "@fontsource-variable/work-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/work-sans/-/work-sans-5.3.0.tgz",
+    "integrity": "sha512-le8h/OIIuhm5Z7TdvuMw0yKg2gaCZUiMec8zaumsVVjzeJRBPEF0bQI/MkaZDHCVzZDvZoP/O2LiGOSfDLSbaw==",
+    "files": [
+      {
+        "file": "work-sans-latin-ext-wght-normal.woff2",
+        "sha256": "2aa17fc7b072e46652e84bbe3dbba9ec57cdea320d89e8c951ed7cf3218c300b"
+      },
+      {
+        "file": "work-sans-latin-wght-normal.woff2",
+        "sha256": "1dd49afc07fb2231b2ff686cbf007725fb2742271bb1f28ebd98f22a0d817343"
+      },
+      {
+        "file": "work-sans-latin-ext-wght-italic.woff2",
+        "sha256": "7ad4dd06ed7836bad7fef7c5cb75a93229d549c8db9671aff1aa798dc1682a70"
+      },
+      {
+        "file": "work-sans-latin-wght-italic.woff2",
+        "sha256": "73468c2b5cc7c31456ee0c297ac87b2bfb7eb626bc79688dc3a320151fddcd2f"
+      }
+    ]
+  },
+  {
+    "id": "lora",
+    "name": "Lora",
+    "package": "@fontsource-variable/lora",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/lora/-/lora-5.3.0.tgz",
+    "integrity": "sha512-2ph8KiZ8Bn141hWuC3ErtpJ+Ui8p2MJQn8TJNRSRmLmnCIOCtHfiBM9R7WLRPeUG/q6hXyHOxWQ8DvRSX+ixvQ==",
+    "files": [
+      {
+        "file": "lora-latin-ext-wght-normal.woff2",
+        "sha256": "2a2d9c22c9863086a23f5013fede1428585321812b25f2662542c39d02967c5e"
+      },
+      {
+        "file": "lora-latin-wght-normal.woff2",
+        "sha256": "ddb8c66035104e233fc024669183aad3738b6daa16deee2ebb1241bd0f98ace1"
+      },
+      {
+        "file": "lora-latin-ext-wght-italic.woff2",
+        "sha256": "45f989df83f3a9f40007d2ecdea98bff248c8767a1a0bbe60e94fb37b605ecee"
+      },
+      {
+        "file": "lora-latin-wght-italic.woff2",
+        "sha256": "d824d807d4d832d12c87932d0b8ec1314dcfd502157a56dee6bb04cf8a3768ae"
+      }
+    ]
+  },
+  {
+    "id": "source-serif-4",
+    "name": "Source Serif 4",
+    "package": "@fontsource-variable/source-serif-4",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/source-serif-4/-/source-serif-4-5.3.0.tgz",
+    "integrity": "sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==",
+    "files": [
+      {
+        "file": "source-serif-4-latin-ext-wght-normal.woff2",
+        "sha256": "41529a5b38008d9ea01e28ec18693a714a3216669ee477d83a5b9db999369625"
+      },
+      {
+        "file": "source-serif-4-latin-wght-normal.woff2",
+        "sha256": "c1df4596be5029233ed2afbb8b2f6ea20784b3fb1aa5d6b5c6519ccd85eb3dfb"
+      },
+      {
+        "file": "source-serif-4-latin-ext-wght-italic.woff2",
+        "sha256": "515639854d3566c43860d2005770645c590df8b43a0144c70fe2566c33015ede"
+      },
+      {
+        "file": "source-serif-4-latin-wght-italic.woff2",
+        "sha256": "663e7ef3037a56dce81dfc33f68c1e6445995ffd8887991b3c0b68a7689c9da5"
+      }
+    ]
+  },
+  {
+    "id": "ibm-plex-sans",
+    "name": "IBM Plex Sans",
+    "package": "@fontsource-variable/ibm-plex-sans",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/ibm-plex-sans/-/ibm-plex-sans-5.3.0.tgz",
+    "integrity": "sha512-agG8tXFEo0hD9+J7npa4vbbWult52eMLVaQ6WQRlhs/iCAojrMAoejru85W9HTVXHfyUj96KM7gp/KGAS87XaQ==",
+    "files": [
+      {
+        "file": "ibm-plex-sans-latin-ext-wght-normal.woff2",
+        "sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81"
+      },
+      {
+        "file": "ibm-plex-sans-latin-wght-normal.woff2",
+        "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470"
+      },
+      {
+        "file": "ibm-plex-sans-latin-ext-wght-italic.woff2",
+        "sha256": "bf44b77cc751203b2f0ce95c048a9d8f984313f84b58106c7c4410ca50314016"
+      },
+      {
+        "file": "ibm-plex-sans-latin-wght-italic.woff2",
+        "sha256": "4363757d2695c7633f98472855849f7c30528eba869d7968ee35b58c87cf14c1"
+      }
+    ]
+  },
+  {
+    "id": "rubik",
+    "name": "Rubik",
+    "package": "@fontsource-variable/rubik",
+    "version": "5.3.0",
+    "license": "OFL-1.1",
+    "source": "https://registry.npmjs.org/@fontsource-variable/rubik/-/rubik-5.3.0.tgz",
+    "integrity": "sha512-yQUf8qle24MJYA+EuauyF+cqjjN6I715nGjitt3sGmwZA0XfA4fWJcLq1C/diREZl4Qzn1E80nLMc0ipC/a4Lg==",
+    "files": [
+      {
+        "file": "rubik-latin-ext-wght-normal.woff2",
+        "sha256": "09472f217ad1ebb61a7669cf532f9f2f80685e07652ee862fde9a79665aef479"
+      },
+      {
+        "file": "rubik-latin-wght-normal.woff2",
+        "sha256": "691cd1d9b4c0cdf31a1dcf04259c86f92c85e69f6622abab7964d81e36890691"
+      },
+      {
+        "file": "rubik-latin-ext-wght-italic.woff2",
+        "sha256": "51999fc7e45d93d8d34d3c0f1c32e58f85ae6e69d8dfb700771062e5c3945e49"
+      },
+      {
+        "file": "rubik-latin-wght-italic.woff2",
+        "sha256": "4d9f552c4b0a7f02f231e56198d80aed8550bdfb7e7541260b2b20455b14fb88"
+      }
+    ]
+  }
+]

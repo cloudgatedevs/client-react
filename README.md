@@ -694,6 +694,13 @@ The migration adds missing built-in roles/permissions across existing tenants, p
 permissions and explicit denials, and does not overwrite subsequent role edits. New tenants are
 seeded during creation. Saving an empty permission list explicitly revokes all back-office access.
 
+### Fonts
+
+Theme settings include 14 self-hosted font families, a system font option, and
+separate body/heading choices. Font selections also work in the launcher and
+Cloudgate web-app settings, including template rollout defaults. See
+[App fonts](docs/fonts.md) for setup, deployment order and custom-page CSS tokens.
+
 ### Colour palettes
 
 Administration → Theme includes eight coordinated colour palettes, previews in

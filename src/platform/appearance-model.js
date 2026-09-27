@@ -2,6 +2,8 @@ import { isHex } from './theme-colors.js';
 export { isHex, rgb, foreground, accentText } from './theme-colors.js';
 import { PALETTE_DEFAULTS, PALETTE_COLOR_KEYS, PALETTE_PRESETS, parseCustomPalette } from './theme-palette.js';
 export * from './theme-palette.js';
+import { FONT_DEFAULTS, FONT_KEYS, isFont, normalizeFonts } from './theme-fonts.js';
+export * from './theme-fonts.js';
 
 export const DEFAULT_SETTINGS = Object.freeze({
   enable_public_website: 'true',
@@ -16,6 +18,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   footer_note: '',
   theme_mode: 'light',
   ...PALETTE_DEFAULTS,
+  ...FONT_DEFAULTS,
   theme_density: 'content',
 });
 export const LAYOUT_PRESETS = Object.freeze([
@@ -58,6 +61,7 @@ export function normalizeSettings(values = {}) {
     if (typeof values[key] === 'string') result[key] = values[key];
   if (!['light', 'dark', 'system'].includes(result.theme_mode))
     result.theme_mode = 'light';
+  Object.assign(result, normalizeFonts(result));
   result.theme_density = normalizeDensity(result.theme_density);
   if (!['true', 'false'].includes(result.enable_public_website))
     result.enable_public_website = 'true';
@@ -71,6 +75,8 @@ export function normalizeSettings(values = {}) {
   return result;
 }
 export function validateSettings(values) {
+  if (FONT_KEYS.some(key => values[key] !== undefined && !isFont(values[key], key === 'theme_font_heading')))
+    return 'Choose a body and heading font from the available fonts.';
   if (values.theme_custom_palette && !parseCustomPalette(values.theme_custom_palette))
     return 'Give your custom palette a name and seven valid six-digit hex colours.';
   if (

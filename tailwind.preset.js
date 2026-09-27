@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body, "Cloudgate Inter", ui-sans-serif, system-ui, sans-serif)'],
+        display: ['var(--font-heading, var(--font-body, "Cloudgate Inter", ui-sans-serif, system-ui, sans-serif))'],
       },
       colors: {
         'accent-fg': 'rgb(var(--accent-fg) / <alpha-value>)',
