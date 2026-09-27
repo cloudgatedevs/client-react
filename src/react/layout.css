@@ -1,0 +1,337 @@
+/* One layout contract for the back office and scoped widget previews.
+   Aliases are declared in each scope so nested previews never inherit resolved parent sizes. */
+:root,
+.cgw-theme[data-density],
+.theme-preview[data-density] {
+  --cg-content-width: 1120px;
+  --cg-page-gutter: 28px;
+  --cg-section-gap: 24px;
+  --cg-card-padding: 22px;
+  --cg-control-height: 40px;
+  --cg-control-padding: 9px;
+  --cg-cell-padding: 13px 16px;
+  --cg-nav-height: 36px;
+  --cg-toolbar-padding: 16px;
+  --cgw-control-height: var(--cg-control-height);
+  --cgw-cell-padding: var(--cg-cell-padding);
+}
+:root[data-density="wide"],
+.cgw-theme[data-density="wide"],
+.theme-preview[data-density="wide"] {
+  --cg-content-width: 1600px;
+  --cg-page-gutter: 36px;
+  --cg-section-gap: 28px;
+  --cg-card-padding: 28px;
+  --cg-control-height: 44px;
+  --cg-control-padding: 11px;
+  --cg-cell-padding: 16px 20px;
+  --cg-nav-height: 38px;
+  --cg-toolbar-padding: 20px;
+}
+:root[data-density="compact"],
+.cgw-theme[data-density="compact"],
+.theme-preview[data-density="compact"] {
+  --cg-content-width: none;
+  --cg-page-gutter: 16px;
+  --cg-section-gap: 12px;
+  --cg-card-padding: 12px;
+  --cg-control-height: 30px;
+  --cg-control-padding: 4px;
+  --cg-cell-padding: 6px 10px;
+  --cg-nav-height: 30px;
+  --cg-toolbar-padding: 10px;
+}
+:root[data-density="flex"],
+.cgw-theme[data-density="flex"],
+.theme-preview[data-density="flex"] {
+  --cg-content-width: none;
+  --cg-page-gutter: clamp(16px, 1.5vw, 28px);
+  --cg-section-gap: 20px;
+  --cg-card-padding: 18px;
+  --cg-control-height: 36px;
+  --cg-control-padding: 7px;
+  --cg-cell-padding: 10px 14px;
+  --cg-nav-height: 34px;
+  --cg-toolbar-padding: 14px;
+}
+.app-main {
+  padding: var(--cg-page-gutter);
+  padding-bottom: calc(var(--cg-page-gutter) + var(--safe-bottom));
+  padding-left: calc(var(--cg-page-gutter) + var(--safe-left));
+  padding-right: calc(var(--cg-page-gutter) + var(--safe-right));
+  container-type: inline-size;
+}
+.app-content {
+  width: 100%;
+  min-width: 0;
+  max-width: var(--cg-content-width);
+  margin-inline: auto;
+}
+.app-main
+  .page-transition
+  > :is(.space-y-5, .space-y-6)
+  > :not([hidden])
+  ~ :not([hidden]) {
+  margin-top: var(--cg-section-gap);
+}
+.app-main .card:is(.p-5, .p-6) {
+  padding: var(--cg-card-padding);
+}
+.app-main :is(.input, .btn-primary, .btn-ghost, .btn-danger):not(.btn-sm) {
+  min-height: var(--cg-control-height);
+}
+.app-main
+  :is(input.input, select.input, .btn-primary, .btn-ghost, .btn-danger):not(
+    .btn-sm
+  ) {
+  padding-block: var(--cg-control-padding);
+}
+.app-main .data-table :is(th, td) {
+  padding: var(--cg-cell-padding);
+}
+.app-sidebar .nav-item {
+  min-height: var(--cg-nav-height);
+  padding-block: calc((var(--cg-nav-height) - 20px) / 2);
+}
+.app-main .user-editor-fields {
+  gap: var(--cg-section-gap);
+}
+
+/* Shared widgets respond even when used outside the back-office shell. */
+.cgw-stack {
+  gap: var(--cg-section-gap);
+}
+.cgw-button:not(.cgw-button--sm):not(.cgw-button--lg),
+.cgw-input:not(textarea) {
+  padding-block: var(--cg-control-padding);
+}
+.cgw-card-head {
+  padding: var(--cg-card-padding) var(--cg-card-padding) 0;
+}
+.cgw-card-body,
+.cgw-metric {
+  padding: var(--cg-card-padding);
+}
+.cgw-card-foot {
+  padding: var(--cg-toolbar-padding) var(--cg-card-padding);
+}
+.cgw-table-toolbar,
+.cgw-table-footer {
+  padding: var(--cg-toolbar-padding);
+}
+.cgw-library {
+  max-width: none;
+}
+.cgw-library-head {
+  margin-bottom: min(var(--cg-section-gap), 16px);
+}
+.cgw-library-layout,
+.cgw-demo-metrics {
+  gap: var(--cg-section-gap);
+}
+.cgw-library-canvas {
+  padding: min(var(--cg-card-padding), 16px);
+  gap: min(var(--cg-section-gap), 12px);
+}
+.cgw-library-canvas > * {
+  width: 100%;
+  max-width: var(--cg-content-width);
+  margin-inline: auto;
+}
+
+/* Layout choices show shape as well as a name. Native radios keep keyboard navigation. */
+.layout-choices {
+  border: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+.layout-choices legend {
+  margin-bottom: 10px;
+}
+.layout-choices-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.layout-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid rgb(var(--ink-600));
+  border-radius: 10px;
+  cursor: pointer;
+  background: rgb(var(--ink-850));
+}
+.layout-choice:has(:checked) {
+  border-color: rgb(var(--accent));
+  background: rgb(var(--accent) / 0.045);
+  box-shadow: 0 0 0 1px rgb(var(--accent));
+}
+.layout-choice:has(:focus-visible) {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+}
+.layout-choice:has(:disabled) {
+  cursor: default;
+}
+.layout-choice-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.layout-choice input {
+  accent-color: rgb(var(--accent));
+  width: 15px;
+  height: 15px;
+}
+.layout-choice p {
+  font-size: 11px;
+  color: rgb(var(--mist-muted));
+  line-height: 1.5;
+  margin: 0;
+}
+.layout-mini {
+  display: flex;
+  height: 48px;
+  background: rgb(var(--ink-900));
+  border: 1px solid rgb(var(--ink-700));
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 4px;
+  gap: 5px;
+  overflow: hidden;
+}
+.layout-mini > i {
+  width: 16%;
+  background: rgb(var(--accent) / 0.13);
+  border-radius: 2px;
+}
+.layout-mini > span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.layout-mini b {
+  display: grid;
+  gap: 3px;
+  width: 92%;
+  margin: auto;
+}
+.layout-mini em {
+  display: block;
+  height: 7px;
+  border-radius: 2px;
+  background: rgb(var(--accent) / 0.2);
+}
+.layout-mini[data-layout="content"] b {
+  width: 66%;
+}
+.layout-mini[data-layout="compact"] b {
+  width: 100%;
+  gap: 2px;
+}
+.layout-mini[data-layout="compact"] em {
+  height: 4px;
+}
+.layout-mini[data-layout="flex"] b {
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.layout-preview-note {
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgb(var(--mist-muted));
+}
+.theme-preview-body {
+  padding: 16px 10px;
+  background: rgb(var(--ink-950) / 0.08);
+}
+.theme-preview-content {
+  width: 100%;
+  margin-inline: auto;
+  display: grid;
+  gap: calc(var(--cg-section-gap) * 0.55);
+}
+.theme-preview[data-density="content"] .theme-preview-content {
+  width: 78%;
+}
+.theme-preview[data-density="wide"] .theme-preview-content {
+  width: 94%;
+}
+.theme-preview-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.theme-preview-metrics > div {
+  padding: calc(var(--cg-card-padding) * 0.6);
+  border: 1px solid var(--preview-line);
+  border-radius: 8px;
+}
+.theme-preview-rows {
+  border: 1px solid var(--preview-line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.theme-preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: calc(var(--cg-control-padding) * 0.8 + 3px) 8px;
+  font-size: 10px;
+}
+.theme-preview-row + .theme-preview-row {
+  border-top: 1px solid var(--preview-line);
+}
+.theme-preview-row > span:last-child {
+  opacity: 0.55;
+}
+.theme-preview-action {
+  display: inline-block;
+  justify-self: start;
+  border-radius: 6px;
+  padding: calc(var(--cg-control-padding) * 0.6 + 2px) 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Forms use the actual content width, including when a Content layout is chosen on a large monitor. */
+.appearance-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--cg-section-gap);
+}
+@container (min-width: 920px) {
+  .appearance-form {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+}
+@media (max-width: 639px) {
+  .app-main {
+    padding: 16px;
+    padding-bottom: calc(16px + var(--safe-bottom));
+    padding-left: calc(16px + var(--safe-left));
+    padding-right: calc(16px + var(--safe-right));
+  }
+  .cgw-library-canvas {
+    padding: min(var(--cg-card-padding), 16px);
+  }
+  .layout-choices-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (pointer: coarse) {
+  .app-main :is(.input, .btn-primary, .btn-ghost, .btn-danger),
+  .cgw-button,
+  .cgw-input {
+    min-height: max(44px, var(--cg-control-height));
+  }
+  .cgw-icon-button {
+    min-width: 44px;
+  }
+}

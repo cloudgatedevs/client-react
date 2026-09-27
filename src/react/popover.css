@@ -1,0 +1,33 @@
+/* Account stays mounted so rapid toggles smoothly reverse the transition. */
+.account-dropdown {
+  opacity: 0;
+  transform: translateY(-6px) scale(.98);
+  transform-origin: top right;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 140ms ease-in, transform 140ms ease-in, visibility 0s linear 140ms;
+}
+.account-dropdown[data-state="open"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 180ms ease-out, transform 180ms cubic-bezier(.2, .8, .2, 1), visibility 0s;
+}
+
+/* Radix retains the notification panel until its exit animation finishes. */
+.notification-popover { transform-origin: top right; }
+.notification-popover[data-state="open"] { animation: header-popover-in 180ms cubic-bezier(.2, .8, .2, 1) both; }
+.notification-popover[data-state="closed"] { animation: header-popover-out 140ms ease-in both; pointer-events: none; }
+@keyframes header-popover-in {
+  from { opacity: 0; transform: translateY(-6px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes header-popover-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-6px) scale(.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-dropdown[data-state] { transition: none; transform: none; }
+  .notification-popover[data-state] { animation: none; }
+}

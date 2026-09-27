@@ -1,0 +1,32 @@
+/* Shop back-office palette, exposed as channels so Tailwind opacity utilities work. */
+:root {
+  --ink-950: 245 246 248; --ink-900: 251 251 252; --ink-850: 255 255 255;
+  --ink-800: 241 243 247; --ink-700: 229 232 238; --ink-600: 213 218 227; --ink-500: 184 192 204;
+  --mist: 15 23 42; --mist-muted: 71 85 105; --mist-dim: 107 114 128;
+  --accent: 79 70 229; --accent-fg: 255 255 255; --accent-text: 79 70 229; --secondary: 124 58 237;
+  --cwl-accent: rgb(var(--accent-text));
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink-950: 8 11 18; --ink-900: 12 17 28; --ink-850: 17 24 39; --ink-800: 22 31 49;
+  --ink-700: 39 50 70; --ink-600: 60 73 96; --ink-500: 89 103 125;
+  --mist: 232 237 247; --mist-muted: 174 187 207; --mist-dim: 144 158 184;
+}
+button:disabled, fieldset:disabled { cursor: default; }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 3px; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+.media-checker { background-color: rgb(var(--ink-800)); background-image: conic-gradient(rgb(var(--ink-700)) 25%, transparent 0 50%, rgb(var(--ink-700)) 0 75%, transparent 0); background-size: 20px 20px; }
+.cga.cga { --cga-accent: rgb(var(--accent-text)); --cga-line: rgb(var(--ink-700)); --cga-bg: rgb(var(--ink-850)); --cga-muted: rgb(var(--mist-dim)); color: rgb(var(--mist)); }
+.cga.cga-dialog { background: var(--cga-bg); }
+.cga .cga-table-wrap { position: relative; }
+.cwl .cwl-card, .cwl .cwl-table-wrap, .cwl.cwl-drawer, .cg-about .cg-about-card, .cg-about .cg-about-hero, .cg-powered.cg-powered { background-color: rgb(var(--ink-850)); color: rgb(var(--mist)); }
+.cg-about .cg-about-card, .cg-about .cg-about-hero, .cg-powered.cg-powered { background-image: none; }
+.cg-about .cg-about-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.cg-about a, .cg-about .cg-about-version, .cg-powered .cg-powered-version, .text-accent, .text-accent-400, .text-accent-500, .text-accent-600 { color: rgb(var(--accent-text)); }
+.cloudgate-smtp input, .cloudgate-smtp select { background: rgb(var(--ink-850)); }
+[data-theme="dark"] .cwl pre { background: rgb(var(--ink-900)); color: rgb(var(--mist)); }
+[data-theme="dark"] .cwl .cwl-node { background: rgb(var(--ink-900)); border-color: rgb(var(--ink-700)); }
+[data-theme="dark"] .text-red-600 { color: #fca5a5; }
+[data-theme="dark"] .text-emerald-600 { color: #6ee7b7; }
+[data-theme="dark"] .text-amber-600 { color: #fcd34d; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

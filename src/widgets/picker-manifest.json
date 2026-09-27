@@ -1,0 +1,1447 @@
+{
+  "schemaVersion": 1,
+  "sdkVersion": "0.1.0",
+  "fingerprint": "f22aa73eb64b4e512078fe4a893b157a5aa3c93e97af3f52d398307dba2d969b",
+  "sourceFiles": [
+    "calendar-catalog.js",
+    "card-catalog.js",
+    "card-examples.js",
+    "card-index.js",
+    "catalog.js",
+    "chart-catalog.js",
+    "chart-examples.js",
+    "chart-index.js",
+    "cli.mjs",
+    "manifest.mjs",
+    "mcp.mjs",
+    "radio-catalog.js",
+    "rich-text-catalog.js",
+    "scrum-catalog.js",
+    "select-catalog.js",
+    "table-examples.js",
+    "tabs-catalog.js",
+    "timeline-catalog.js",
+    "widget-index.js"
+  ],
+  "aliases": {
+    "search-select": "select"
+  },
+  "widgets": [
+    {
+      "id": "typography",
+      "name": "Text styles",
+      "category": "Foundations",
+      "description": "A shared type scale for headings, paragraphs, labels and supporting text, with links, lists, quotes and inline code. Inherits your app’s font, palette and layout.",
+      "exports": [
+        "Heading",
+        "Text",
+        "Paragraph",
+        "TextLink",
+        "TextList",
+        "Blockquote",
+        "InlineCode"
+      ],
+      "kind": "component",
+      "tags": [
+        "foundations",
+        "Heading",
+        "Text",
+        "Paragraph",
+        "TextLink",
+        "TextList",
+        "Blockquote",
+        "InlineCode"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/typography"
+      }
+    },
+    {
+      "id": "icons",
+      "name": "Icon library",
+      "category": "Foundations",
+      "description": "Browse the installed Lucide icon collection. Search names and keywords, filter categories, preview size and stroke, and copy ready-to-use React code.",
+      "exports": [
+        "IconLibrary"
+      ],
+      "kind": "component",
+      "tags": [
+        "foundations",
+        "IconLibrary"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/icons"
+      }
+    },
+    {
+      "id": "select",
+      "name": "Select",
+      "category": "Forms",
+      "description": "Standard, searchable and server-side dropdowns in one place. Choose a native Select for short lists or SearchSelect for local filtering and debounced remote search.",
+      "exports": [
+        "Select",
+        "SearchSelect"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "Select",
+        "SearchSelect"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/select"
+      }
+    },
+    {
+      "id": "radio",
+      "name": "Radio group",
+      "category": "Forms",
+      "description": "Single-choice radio buttons, inline choices and selectable cards. Native keyboard navigation with descriptions, disabled options and shared form validation.",
+      "exports": [
+        "RadioGroup"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "RadioGroup"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/radio"
+      }
+    },
+    {
+      "id": "code-editor",
+      "name": "Code editor",
+      "category": "Forms",
+      "description": "Syntax-highlighted code with line numbers, folding, search, copy and optional editing. Powered by CodeMirror, with inherited palette colours.",
+      "exports": [
+        "CodeEditor"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "CodeEditor"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/code-editor"
+      }
+    },
+    {
+      "id": "data-table",
+      "name": "Static table",
+      "category": "Data",
+      "description": "Local records with search, sorting, pagination, column controls and Excel export. Compose the same DataTable with server loading, selection or subtables when needed.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/data-table"
+      }
+    },
+    {
+      "id": "line-chart",
+      "name": "Line chart",
+      "category": "Charts",
+      "description": "A responsive trend chart with subtle area fills, series controls and accessible values.",
+      "exports": [
+        "LineChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "LineChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/line-chart"
+      }
+    },
+    {
+      "id": "bar-chart",
+      "name": "Bar chart",
+      "category": "Charts",
+      "description": "Compare grouped measures, including positive and negative values.",
+      "exports": [
+        "BarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "BarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/bar-chart"
+      }
+    },
+    {
+      "id": "donut-chart",
+      "name": "Donut chart",
+      "category": "Charts",
+      "description": "A clear breakdown with a focusable ring, totals and percentage legend.",
+      "exports": [
+        "DonutChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "DonutChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/donut-chart"
+      }
+    },
+    {
+      "id": "metric-card",
+      "name": "Metric card",
+      "category": "Cards",
+      "description": "A focused headline number with context, an optional icon and a semantic trend.",
+      "exports": [
+        "MetricCard",
+        "CountUp"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "MetricCard",
+        "CountUp"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/metric-card"
+      }
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "category": "Cards",
+      "description": "A flexible surface with a consistent header, content area and optional footer.",
+      "exports": [
+        "Card"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "Card"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/card"
+      }
+    },
+    {
+      "id": "button",
+      "name": "Buttons",
+      "category": "Actions",
+      "description": "Primary, secondary and semantic actions with solid, soft and outline styles, icons and busy states.",
+      "exports": [
+        "Button",
+        "IconButton"
+      ],
+      "kind": "component",
+      "tags": [
+        "actions",
+        "Button",
+        "IconButton"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/button"
+      }
+    },
+    {
+      "id": "input",
+      "name": "Text fields",
+      "category": "Forms",
+      "description": "Labelled fields with built-in validation, custom rules, hints and accessible error messages.",
+      "exports": [
+        "Input",
+        "Textarea"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "Input",
+        "Textarea"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/input"
+      }
+    },
+    {
+      "id": "form",
+      "name": "Form validation",
+      "category": "Forms",
+      "description": "Validate fields before submission, focus the first error and submit native FormData. Works with controlled and uncontrolled fields.",
+      "exports": [
+        "Form"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "Form"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/form"
+      }
+    },
+    {
+      "id": "slider",
+      "name": "Slider",
+      "category": "Forms",
+      "description": "A native range control with a visible value and keyboard support.",
+      "exports": [
+        "Slider"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "Slider"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/slider"
+      }
+    },
+    {
+      "id": "switch",
+      "name": "Switch & checkbox",
+      "category": "Forms",
+      "description": "Binary choices with three switch sizes, clear labels, helper text and native checkbox selection.",
+      "exports": [
+        "Switch",
+        "Checkbox"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "Switch",
+        "Checkbox"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/switch"
+      }
+    },
+    {
+      "id": "tabs",
+      "name": "Tabs",
+      "category": "Navigation",
+      "description": "Five tab styles: underline, segmented, pills, outlined and enclosed. Horizontal or vertical layouts, icons, counts, responsive overflow and accessible keyboard navigation.",
+      "exports": [
+        "Tabs"
+      ],
+      "kind": "component",
+      "tags": [
+        "navigation",
+        "Tabs"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/tabs"
+      }
+    },
+    {
+      "id": "dialog",
+      "name": "Dialog",
+      "category": "Feedback",
+      "description": "An animated modal with focus trapping, Escape dismissal and focus restoration.",
+      "exports": [
+        "Dialog"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "Dialog"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/dialog"
+      }
+    },
+    {
+      "id": "badge",
+      "name": "Badges",
+      "category": "Feedback",
+      "description": "Subtle status labels that remain readable in every theme.",
+      "exports": [
+        "Badge"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "Badge"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/badge"
+      }
+    },
+    {
+      "id": "alert",
+      "name": "Alerts",
+      "category": "Feedback",
+      "description": "Contextual feedback with an optional action and dismissal.",
+      "exports": [
+        "Alert"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "Alert"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/alert"
+      }
+    },
+    {
+      "id": "empty-state",
+      "name": "Empty state",
+      "category": "Feedback",
+      "description": "A useful next step when a list, chart or module has no data.",
+      "exports": [
+        "EmptyState"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "EmptyState"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/empty-state"
+      }
+    },
+    {
+      "id": "skeleton",
+      "name": "Loading skeleton",
+      "category": "Feedback",
+      "description": "A quiet loading placeholder that respects reduced motion.",
+      "exports": [
+        "Skeleton",
+        "WidgetSkeleton"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "Skeleton",
+        "WidgetSkeleton"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/skeleton"
+      }
+    },
+    {
+      "id": "progress",
+      "name": "Progress",
+      "category": "Feedback",
+      "description": "Determinate progress with an accessible value and optional percentage.",
+      "exports": [
+        "Progress"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "Progress"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/progress"
+      }
+    },
+    {
+      "id": "area-chart",
+      "name": "Area chart",
+      "category": "Charts",
+      "description": "Filled trends over ordered categories, with gaps for missing values.",
+      "exports": [
+        "AreaChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "AreaChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/area-chart"
+      }
+    },
+    {
+      "id": "stacked-area-chart",
+      "name": "Stacked area",
+      "category": "Charts",
+      "description": "How multiple measures contribute to a total over time.",
+      "exports": [
+        "StackedAreaChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "StackedAreaChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/stacked-area-chart"
+      }
+    },
+    {
+      "id": "step-line-chart",
+      "name": "Step line",
+      "category": "Charts",
+      "description": "Discrete changes, such as pricing, inventory or service limits.",
+      "exports": [
+        "StepLineChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "StepLineChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/step-line-chart"
+      }
+    },
+    {
+      "id": "horizontal-bar-chart",
+      "name": "Horizontal bars",
+      "category": "Charts",
+      "description": "Compare categories with horizontal grouped bars.",
+      "exports": [
+        "HorizontalBarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "HorizontalBarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/horizontal-bar-chart"
+      }
+    },
+    {
+      "id": "stacked-bar-chart",
+      "name": "Stacked bars",
+      "category": "Charts",
+      "description": "Compare totals and their contributing measures.",
+      "exports": [
+        "StackedBarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "StackedBarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/stacked-bar-chart"
+      }
+    },
+    {
+      "id": "percent-bar-chart",
+      "name": "100% stacked bars",
+      "category": "Charts",
+      "description": "Compare relative contributions on a 0–100% scale.",
+      "exports": [
+        "PercentBarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "PercentBarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/percent-bar-chart"
+      }
+    },
+    {
+      "id": "pie-chart",
+      "name": "Pie chart",
+      "category": "Charts",
+      "description": "Part-to-whole proportions with a series legend.",
+      "exports": [
+        "PieChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "PieChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/pie-chart"
+      }
+    },
+    {
+      "id": "rose-chart",
+      "name": "Rose chart",
+      "category": "Charts",
+      "description": "Radial comparisons with equal angles and proportional areas.",
+      "exports": [
+        "RoseChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "RoseChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/rose-chart"
+      }
+    },
+    {
+      "id": "radar-chart",
+      "name": "Radar chart",
+      "category": "Charts",
+      "description": "Compare profiles across three or more non-negative measures.",
+      "exports": [
+        "RadarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "RadarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/radar-chart"
+      }
+    },
+    {
+      "id": "scatter-chart",
+      "name": "Scatter plot",
+      "category": "Charts",
+      "description": "Explore relationships between two numeric measures.",
+      "exports": [
+        "ScatterChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "ScatterChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/scatter-chart"
+      }
+    },
+    {
+      "id": "bubble-chart",
+      "name": "Bubble chart",
+      "category": "Charts",
+      "description": "Compare two numeric measures with a third encoded by bubble area.",
+      "exports": [
+        "BubbleChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "BubbleChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/bubble-chart"
+      }
+    },
+    {
+      "id": "heatmap-chart",
+      "name": "Heatmap",
+      "category": "Charts",
+      "description": "Find patterns across a categorical row-and-column matrix.",
+      "exports": [
+        "HeatmapChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "HeatmapChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/heatmap-chart"
+      }
+    },
+    {
+      "id": "calendar-heatmap",
+      "name": "Calendar heatmap",
+      "category": "Charts",
+      "description": "Daily activity arranged in a calendar.",
+      "exports": [
+        "CalendarHeatmap"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "CalendarHeatmap"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/calendar-heatmap"
+      }
+    },
+    {
+      "id": "histogram",
+      "name": "Histogram",
+      "category": "Charts",
+      "description": "Group numeric observations into equal-width frequency bins.",
+      "exports": [
+        "Histogram"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "Histogram"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/histogram"
+      }
+    },
+    {
+      "id": "box-plot-chart",
+      "name": "Box plot",
+      "category": "Charts",
+      "description": "Compare medians, quartiles, Tukey whiskers and outliers.",
+      "exports": [
+        "BoxPlotChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "BoxPlotChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/box-plot-chart"
+      }
+    },
+    {
+      "id": "waterfall-chart",
+      "name": "Waterfall",
+      "category": "Charts",
+      "description": "Track additions and deductions to a running total, including changes across zero.",
+      "exports": [
+        "WaterfallChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "WaterfallChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/waterfall-chart"
+      }
+    },
+    {
+      "id": "range-bar-chart",
+      "name": "Range bars",
+      "category": "Charts",
+      "description": "Compare start/end intervals on a numeric scale.",
+      "exports": [
+        "RangeBarChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "RangeBarChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/range-bar-chart"
+      }
+    },
+    {
+      "id": "combo-chart",
+      "name": "Mixed line & bars",
+      "category": "Charts",
+      "description": "Combine line and bar measures on a shared value axis.",
+      "exports": [
+        "ComboChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "ComboChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/combo-chart"
+      }
+    },
+    {
+      "id": "candlestick-chart",
+      "name": "Candlestick",
+      "category": "Charts",
+      "description": "Show open, close, low and high values for ordered periods.",
+      "exports": [
+        "CandlestickChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "CandlestickChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/candlestick-chart"
+      }
+    },
+    {
+      "id": "funnel-chart",
+      "name": "Funnel",
+      "category": "Charts",
+      "description": "Compare descending stages of a process.",
+      "exports": [
+        "FunnelChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "FunnelChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/funnel-chart"
+      }
+    },
+    {
+      "id": "gauge-chart",
+      "name": "Gauge",
+      "category": "Charts",
+      "description": "Track one value against a bounded target range.",
+      "exports": [
+        "GaugeChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "GaugeChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/gauge-chart"
+      }
+    },
+    {
+      "id": "treemap-chart",
+      "name": "Treemap",
+      "category": "Charts",
+      "description": "Compare hierarchical values using nested rectangles.",
+      "exports": [
+        "TreemapChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "TreemapChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/treemap-chart"
+      }
+    },
+    {
+      "id": "sunburst-chart",
+      "name": "Sunburst",
+      "category": "Charts",
+      "description": "Explore hierarchical proportions in concentric rings.",
+      "exports": [
+        "SunburstChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "SunburstChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/sunburst-chart"
+      }
+    },
+    {
+      "id": "sankey-chart",
+      "name": "Sankey",
+      "category": "Charts",
+      "description": "Show weighted flows through an acyclic network.",
+      "exports": [
+        "SankeyChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "SankeyChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/sankey-chart"
+      }
+    },
+    {
+      "id": "graph-chart",
+      "name": "Network graph",
+      "category": "Charts",
+      "description": "Show directed relationships, including cycles, in a circular network.",
+      "exports": [
+        "GraphChart"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "GraphChart"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/graph-chart"
+      }
+    },
+    {
+      "id": "cards",
+      "name": "Card gallery",
+      "category": "Cards",
+      "description": "Reusable card patterns for commerce, learning, dashboards, people, projects, bookings and activity.",
+      "exports": [
+        "CardGrid"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "CardGrid"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/cards"
+      }
+    },
+    {
+      "id": "product-card",
+      "name": "Product card",
+      "category": "Cards",
+      "description": "Products with image, pricing, rating, stock availability and saved-item controls.",
+      "exports": [
+        "ProductCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "ProductCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/product-card"
+      }
+    },
+    {
+      "id": "course-card",
+      "name": "Course card",
+      "category": "Cards",
+      "description": "Courses with instructor, lesson count, duration and completion progress.",
+      "exports": [
+        "CourseCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "CourseCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/course-card"
+      }
+    },
+    {
+      "id": "metric-chart-card",
+      "name": "Metric & chart",
+      "category": "Cards",
+      "description": "An animated headline number paired with a trend chart, comparison and accessible data table.",
+      "exports": [
+        "MetricChartCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "MetricChartCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/metric-chart-card"
+      }
+    },
+    {
+      "id": "timeline-card",
+      "name": "Timeline entry",
+      "category": "Cards",
+      "description": "Dated activity entries with an actor, status and a connected chronological list.",
+      "exports": [
+        "TimelineCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "TimelineCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/timeline-card"
+      }
+    },
+    {
+      "id": "article-card",
+      "name": "Article card",
+      "category": "Cards",
+      "description": "Editorial content with cover media, excerpt, author and reading time.",
+      "exports": [
+        "ArticleCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "ArticleCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/article-card"
+      }
+    },
+    {
+      "id": "profile-card",
+      "name": "Profile card",
+      "category": "Cards",
+      "description": "People and teams with identity, status, skills and animated statistics.",
+      "exports": [
+        "ProfileCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "ProfileCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/profile-card"
+      }
+    },
+    {
+      "id": "project-card",
+      "name": "Project card",
+      "category": "Cards",
+      "description": "Project status, completion, deadline, tags and team members.",
+      "exports": [
+        "ProjectCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "ProjectCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/project-card"
+      }
+    },
+    {
+      "id": "task-card",
+      "name": "Task card",
+      "category": "Cards",
+      "description": "Actionable tasks with controlled completion, priority, assignee and due date.",
+      "exports": [
+        "TaskCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "TaskCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/task-card"
+      }
+    },
+    {
+      "id": "event-card",
+      "name": "Event card",
+      "category": "Cards",
+      "description": "A calendar date, event details, location and attendance.",
+      "exports": [
+        "EventCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "EventCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/event-card"
+      }
+    },
+    {
+      "id": "pricing-card",
+      "name": "Pricing card",
+      "category": "Cards",
+      "description": "Subscription plans with pricing, included features and a highlighted recommendation.",
+      "exports": [
+        "PricingCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "PricingCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/pricing-card"
+      }
+    },
+    {
+      "id": "file-card",
+      "name": "File card",
+      "category": "Cards",
+      "description": "Documents and assets with file metadata, owner and explicit actions.",
+      "exports": [
+        "FileCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "FileCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/file-card"
+      }
+    },
+    {
+      "id": "testimonial-card",
+      "name": "Testimonial card",
+      "category": "Cards",
+      "description": "Customer quotes with attribution, avatar and optional rating.",
+      "exports": [
+        "TestimonialCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "TestimonialCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/testimonial-card"
+      }
+    },
+    {
+      "id": "job-card",
+      "name": "Job card",
+      "category": "Cards",
+      "description": "Job listings with company, location, contract type, compensation and skill tags.",
+      "exports": [
+        "JobCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "JobCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/job-card"
+      }
+    },
+    {
+      "id": "listing-card",
+      "name": "Listing card",
+      "category": "Cards",
+      "description": "Properties, stays and marketplace listings with amenities, rating and a price basis.",
+      "exports": [
+        "ListingCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "ListingCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/listing-card"
+      }
+    },
+    {
+      "id": "goal-card",
+      "name": "Goal card",
+      "category": "Cards",
+      "description": "Animated progress towards a target, with a deadline and achievement state.",
+      "exports": [
+        "GoalCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "GoalCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/goal-card"
+      }
+    },
+    {
+      "id": "notification-card",
+      "name": "Notification card",
+      "category": "Cards",
+      "description": "Notifications with an explicit unread state, time, action and dismissal.",
+      "exports": [
+        "NotificationCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "NotificationCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/notification-card"
+      }
+    },
+    {
+      "id": "integration-card",
+      "name": "Integration card",
+      "category": "Cards",
+      "description": "Connections and services with account details, status and configurable actions.",
+      "exports": [
+        "IntegrationCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "IntegrationCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/integration-card"
+      }
+    },
+    {
+      "id": "order-card",
+      "name": "Order card",
+      "category": "Cards",
+      "description": "Order status, line items, total and delivery information.",
+      "exports": [
+        "OrderCard"
+      ],
+      "kind": "component",
+      "tags": [
+        "cards",
+        "OrderCard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/order-card"
+      }
+    },
+    {
+      "id": "wysiwyg",
+      "name": "WYSIWYG editor",
+      "category": "Forms",
+      "description": "CKEditor 5 rich-text editing for product descriptions, lessons, articles and messages, with HTML output and form validation.",
+      "exports": [
+        "RichTextEditor",
+        "WysiwygEditor",
+        "RichTextContent"
+      ],
+      "kind": "component",
+      "tags": [
+        "forms",
+        "RichTextEditor",
+        "WysiwygEditor",
+        "RichTextContent"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/wysiwyg"
+      }
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "category": "Scheduling",
+      "description": "An event calendar for bookings, meetings, courses and milestones, with month, week, day and agenda views and visible-range server loading.",
+      "exports": [
+        "Calendar"
+      ],
+      "kind": "component",
+      "tags": [
+        "scheduling",
+        "Calendar"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/calendar"
+      }
+    },
+    {
+      "id": "scrum-board",
+      "name": "Scrum board",
+      "category": "Scheduling",
+      "description": "A theme-aware scrum / kanban board for projects, courses, content and sales pipelines. Search, assignee filters, board/list views, draggable cards and accessible column/position moves.",
+      "exports": [
+        "ScrumBoard",
+        "KanbanBoard"
+      ],
+      "kind": "component",
+      "tags": [
+        "scheduling",
+        "ScrumBoard",
+        "KanbanBoard"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/scrum-board"
+      }
+    },
+    {
+      "id": "timeline",
+      "name": "Timeline",
+      "category": "Scheduling",
+      "description": "Connected activity feeds, project histories, milestones and order tracking. Card, compact activity, alternating and horizontal layouts with date grouping and progressive loading.",
+      "exports": [
+        "Timeline"
+      ],
+      "kind": "component",
+      "tags": [
+        "scheduling",
+        "Timeline"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/timeline"
+      }
+    },
+    {
+      "id": "lazy-table",
+      "name": "Lazy loading",
+      "category": "Data",
+      "description": "Server pagination, load-more and infinite scrolling with page-sized requests, cancellation, loading skeletons and retry.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/lazy-table"
+      }
+    },
+    {
+      "id": "selection-table",
+      "name": "Selection & bulk actions",
+      "category": "Data",
+      "description": "Select records across pages and run bulk actions, with pending feedback, error recovery and refresh after success.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/selection-table"
+      }
+    },
+    {
+      "id": "row-selection-table",
+      "name": "Row selection",
+      "category": "Data",
+      "description": "Click a row to highlight one active record and load connected cards, charts or detail widgets. Supports keyboard selection, local or server data and controlled state, independently of bulk checkboxes.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/row-selection-table"
+      }
+    },
+    {
+      "id": "subtable",
+      "name": "Expandable subtables",
+      "category": "Data",
+      "description": "Expand a row to lazily mount a child table. Each parent-scoped subtable owns its search, sorting, pagination and Excel export.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/subtable"
+      }
+    },
+    {
+      "id": "advanced-table",
+      "name": "Advanced filters",
+      "category": "Data",
+      "description": "Combine text, multi-select, number and date conditions using AND/OR. Apply drafts together, remove filter chips or clear all. Supports local and server filtering.",
+      "exports": [
+        "DataTable"
+      ],
+      "kind": "pattern",
+      "tags": [
+        "data",
+        "DataTable",
+        "table",
+        "records",
+        "users"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/advanced-table"
+      }
+    }
+  ]
+}
