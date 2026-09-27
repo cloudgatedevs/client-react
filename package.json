@@ -1,6 +1,6 @@
 {
   "name": "@cloudgatedevs/cloudgate-client-react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Complete Cloudgate React SDK with back office, native platform APIs, authentication, widgets, themes and developer tools.",
   "type": "module",
   "main": "./src/index.js",
