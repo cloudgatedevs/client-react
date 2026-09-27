@@ -30,3 +30,26 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 [data-theme="dark"] .text-emerald-600 { color: #6ee7b7; }
 [data-theme="dark"] .text-amber-600 { color: #fcd34d; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Font options use the bundled typefaces, including the current selection. */
+.input.cg-font-select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-width: 0; text-align: left; }
+.cg-font-select-trigger > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cg-font-select-trigger > svg { flex-shrink: 0; color: rgb(var(--mist-dim)); }
+.cg-font-select-menu { z-index: 100; width: max(250px, var(--radix-select-trigger-width)); max-width: calc(100vw - 24px); max-height: min(420px, var(--radix-select-content-available-height)); overflow: hidden; background: rgb(var(--ink-850)); color: rgb(var(--mist)); border: 1px solid rgb(var(--ink-700)); border-radius: 10px; box-shadow: 0 12px 36px #0003, 0 2px 6px #0001; }
+/* Override Radix's hidden scrollbar; there are no up/down scroll buttons. */
+.cg-font-select-menu .cg-font-select-viewport { padding: 5px; max-height: min(418px, calc(var(--radix-select-content-available-height) - 2px)); scrollbar-width: auto; scrollbar-color: auto; scrollbar-gutter: stable; }
+.cg-font-select-menu .cg-font-select-viewport::-webkit-scrollbar { display: block; width: 8px; }
+.cg-font-select-menu .cg-font-select-viewport::-webkit-scrollbar-track { background: rgb(var(--ink-900)); border-radius: 8px; }
+.cg-font-select-menu .cg-font-select-viewport::-webkit-scrollbar-thumb { background: rgb(var(--ink-500)); border: 2px solid rgb(var(--ink-900)); border-radius: 8px; }
+.cg-font-select-menu .cg-font-select-viewport::-webkit-scrollbar-thumb:hover { background: rgb(var(--mist-dim)); }
+.cg-font-select-menu .cg-font-select-viewport::-webkit-scrollbar-button { display: none; }
+@supports not selector(::-webkit-scrollbar) { .cg-font-select-menu .cg-font-select-viewport { scrollbar-width: thin; scrollbar-color: rgb(var(--ink-500)) rgb(var(--ink-900)); } }
+.cg-font-select-option { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; padding: 8px 12px 8px 30px; border-radius: 6px; font-size: 14px; line-height: 1.5; font-weight: 400; cursor: pointer; user-select: none; outline: none; }
+.cg-font-select-option > span:not(.cg-font-select-check):not(.cg-font-select-sample) { overflow-wrap: anywhere; }
+.cg-font-select-option[data-state="checked"] { color: rgb(var(--accent-text)); background: rgb(var(--accent) / .07); }
+.cg-font-select-option[data-highlighted] { color: rgb(var(--accent-text)); background: rgb(var(--accent) / .14); }
+.cg-font-select-check { position: absolute; left: 9px; display: inline-flex; }
+.cg-font-select-sample { flex-shrink: 0; margin-left: auto; font-size: 19px; line-height: 1; color: rgb(var(--mist-dim)); }
+.cg-font-select-option[data-highlighted] .cg-font-select-sample, .cg-font-select-option[data-state="checked"] .cg-font-select-sample { color: inherit; }
+@media (pointer: coarse) { .input.cg-font-select-trigger, .cg-font-select-option { min-height: 44px; } }
+@media (forced-colors: active) { .cg-font-select-option[data-highlighted] { outline: 1px solid Highlight; } }

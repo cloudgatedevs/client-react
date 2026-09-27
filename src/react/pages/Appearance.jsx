@@ -134,20 +134,18 @@ export function Appearance({ theme = false }) {
         >
           {theme ? (
             <>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Display mode" id="theme-mode">
-                  <select
-                    id="theme-mode"
-                    className="input"
-                    value={form.theme_mode}
-                    onChange={(e) => set('theme_mode', e.target.value)}
-                  >
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="system">Use system setting</option>
-                  </select>
-                </Field>
-              </div>
+              <Field label="Display mode" id="theme-mode">
+                <select
+                  id="theme-mode"
+                  className="input"
+                  value={form.theme_mode}
+                  onChange={(e) => set('theme_mode', e.target.value)}
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                  <option value="system">Use system setting</option>
+                </select>
+              </Field>
               <fieldset className="layout-choices">
                 <legend className="label">Layout &amp; spacing</legend>
                 <div className="layout-choices-grid">

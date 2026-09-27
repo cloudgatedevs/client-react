@@ -1,5 +1,6 @@
 import { useId } from 'react';
-import { FONT_OPTIONS, fontVariables, normalizeFonts } from '../../platform/theme-fonts.js';
+import { fontVariables, normalizeFonts } from '../../platform/theme-fonts.js';
+import { FontSelect } from './FontSelect.jsx';
 
 export function FontPicker({ value, onChange }) {
   const id = useId();
@@ -10,11 +11,9 @@ export function FontPicker({ value, onChange }) {
       {[['theme_font_body', 'Body font'], ['theme_font_heading', 'Heading font']].map(([key, label]) =>
         <div key={key} className="flex min-w-0 flex-col gap-1.5">
           <label htmlFor={`${id}-${key}`} className="label">{label}</label>
-          <select id={`${id}-${key}`} aria-label={label} className="input w-full" value={fonts[key]}
-            onChange={event => onChange({ [key]: event.target.value })}>
-            {key === 'theme_font_heading' && <option value="inherit">Same as body font</option>}
-            {FONT_OPTIONS.map(font => <option key={font.id} value={font.id}>{font.label}</option>)}
-          </select>
+          <FontSelect id={`${id}-${key}`} label={label} value={fonts[key]}
+            heading={key === 'theme_font_heading'} bodyFont={fonts.theme_font_body}
+            onChange={font => onChange({ [key]: font })} />
         </div>)}
     </div>
     <div role="group" aria-label="Font preview" className="space-y-2 rounded-xl border border-ink-700 p-4"
