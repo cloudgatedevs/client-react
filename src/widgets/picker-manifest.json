@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "0.1.2",
-  "fingerprint": "452c6b70255c4801dd9e3e411daa0dd22588b8db600459ce6f893bd3f8469675",
+  "sdkVersion": "0.1.5",
+  "fingerprint": "d64d3c6038d6824bae20fa1657b2120df7670b37b879b792c130c7c5bad338b8",
   "sourceFiles": [
     "calendar-catalog.js",
     "card-catalog.js",

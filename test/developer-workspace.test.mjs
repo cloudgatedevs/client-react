@@ -44,4 +44,17 @@ test('Frame messages require the exact origin and Window object', () => {
   assert.equal(isDeveloperWorkspaceMessage({ ...event, source: other }, frame, 'https://hub.test'), false);
   assert.equal(isDeveloperWorkspaceMessage({ ...event, origin: 'https://evil.test' }, frame, 'https://hub.test'), false);
   assert.equal(isDeveloperWorkspaceMessage({ ...event, data: { ...event.data, type: 'set-token' } }, frame, 'https://hub.test'), false);
+  assert.equal(isDeveloperWorkspaceMessage({ ...event, data: { ...event.data, type: 'sdk-update' } }, frame, 'https://hub.test'), true);
+});
+
+test('SDK version is carried into the workspace and automatic checks do not launch it', async () => {
+  const requests = [];
+  const api = createDeveloperWorkspaceClient({ resolveAppIdentity: async () => ({ webAppId: 'app', environment: 'sbx' }),
+    request: async (path, options) => { requests.push({ path, options }); return { frameUrl: 'https://hub.test/developer', updateAvailable: true }; } });
+  await api.open({ returnUrl: 'https://app.test', sdkVersion: '0.1.3', sdkSource: 'local' });
+  assert.equal(requests[0].options.body.sdkVersion, '0.1.3'); assert.equal(requests[0].options.body.sdkSource, 'local');
+  const result = await api.sdkStatus({ runningVersion: '0.1.2', sdkSource: 'npm' });
+  assert.equal(result.updateAvailable, true); assert.equal(requests[1].options.method, 'GET');
+  assert.equal(requests[1].path, 'developer-workspace/sdk-status?webAppId=app&runningVersion=0.1.2&sdkSource=npm');
+  assert.equal(requests[1].options.body, undefined);
 });

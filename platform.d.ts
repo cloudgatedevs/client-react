@@ -31,7 +31,8 @@ export interface AccountLink { linked: boolean; available: boolean; userId?: num
 export interface AccountLinkTicket { code: string; expiresAt: string; authorizationUrl: string }
 export interface DeveloperWorkspaceLaunch { frameUrl: string; frameOrigin: string; projectName: string; appName: string; environment: 'sbx' | 'prod'; controllerId?: string | null; controllerName?: string | null; controllerPath?: string | null }
 export function createDeveloperWorkspaceClient(options: { request: PlatformRequest; resolveAppIdentity: IdentityResolver; projectPath?: string }): {
-  open(input: { returnUrl: string }, options?: PlatformRequestOptions): Promise<DeveloperWorkspaceLaunch>;
+  open(input: { returnUrl: string; sdkVersion?: string; sdkSource?: 'npm' | 'local' }, options?: PlatformRequestOptions): Promise<DeveloperWorkspaceLaunch>;
+  sdkStatus(input?: { runningVersion?: string; sdkSource?: 'npm' | 'local' }, options?: PlatformRequestOptions): Promise<{ latestVersion: string | null; checkedAt: string | null; checkError: string | null; updateAvailable: boolean }>;
 };
 export function isDeveloperWorkspaceMessage(event: MessageEvent, frameWindow: Window | null, frameOrigin: string): boolean;
 export interface RegistrationSettings { allowSelfRegistration: boolean; promptForEmailVerification?: boolean; scope: 'tenant' }

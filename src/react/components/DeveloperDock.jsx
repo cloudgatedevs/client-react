@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink } from 'lucide-react';
+import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink, Info } from 'lucide-react';
 import { useCloudgate } from '../context.jsx';
 import { useAuthContext } from '../auth/index.js';
 import { isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
+import { version as sdkVersion } from '../../../package.json';
+
+const sdkSource = import.meta.env?.VITE_CLOUDGATE_SDK_SOURCE === 'local' ? 'local' : 'npm';
 
 export function DeveloperDock() {
   const { client, backofficePath } = useCloudgate();
@@ -12,6 +15,24 @@ export function DeveloperDock() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false), [launch, setLaunch] = useState(null);
   const [status, setStatus] = useState('idle'), [error, setError] = useState('');
+  const [sdkUpdate, setSdkUpdate] = useState(false);
+  useEffect(() => {
+    setSdkUpdate(false);
+    if (!currentUser || import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW === 'true') return;
+    const controller = new AbortController(); let checked = 0, pending = false;
+    const check = async () => {
+      if (pending || Date.now() - checked < 60 * 60 * 1000) return;
+      pending = true; checked = Date.now();
+      try {
+        const value = await client.developerWorkspace.sdkStatus({ runningVersion: sdkVersion, sdkSource }, { signal: controller.signal });
+        if (!controller.signal.aborted) setSdkUpdate(value.updateAvailable === true);
+      } catch { /* Older or temporarily unavailable servers must not interrupt the app. */ }
+      finally { pending = false; }
+    };
+    void check(); const timer = setInterval(check, 60 * 60 * 1000);
+    window.addEventListener('focus', check);
+    return () => { controller.abort(); clearInterval(timer); window.removeEventListener('focus', check); };
+  }, [client, currentUser?.user?.id]);
   const frame = useRef(null), abort = useRef(null), generation = useRef(0), closing = useRef(null), toggle = useRef(null), minimize = useRef(null);
   const reset = () => {
     clearTimeout(closing.current);
@@ -30,7 +51,7 @@ export function DeveloperDock() {
     const attempt = ++generation.current;
     setLaunch(null); setStatus('connecting'); setError('');
     try {
-      const result = await client.developerWorkspace.open({ returnUrl: window.location.href }, { signal: abort.current.signal });
+      const result = await client.developerWorkspace.open({ returnUrl: window.location.href, sdkVersion, sdkSource }, { signal: abort.current.signal });
       if (attempt === generation.current) setLaunch(result);
     } catch (err) {
       if (attempt === generation.current) { setStatus('error'); setError(err.message || 'Developer mode could not be opened.'); }
@@ -42,7 +63,8 @@ export function DeveloperDock() {
       if (!isDeveloperWorkspaceMessage(event, frame.current?.contentWindow, launch.frameOrigin)) return;
       if (event.data.type === 'environment') {
         if (['prod', 'sbx'].includes(event.data.environment)) setLaunch(value => value ? { ...value, environment: event.data.environment } : value);
-      } else if (event.data.type === 'ready') { setStatus('ready'); setError(''); }
+      } else if (event.data.type === 'sdk-update') { setSdkUpdate(event.data.updateAvailable === true); }
+      else if (event.data.type === 'ready') { setStatus('ready'); setError(''); }
       else if (event.data.type === 'ended') { reset(); }
       else {
         setStatus('error');
@@ -74,7 +96,7 @@ export function DeveloperDock() {
     if (!destination) { setError('Allow popups to open the developer workspace in a new tab.'); return; }
     destination.opener = null;
     try {
-      const result = await client.developerWorkspace.open({ returnUrl: window.location.href });
+      const result = await client.developerWorkspace.open({ returnUrl: window.location.href, sdkVersion, sdkSource });
       const url = new URL(result.frameUrl); const params = new URLSearchParams(url.hash.slice(1));
       params.set('standalone', '1'); url.hash = params.toString(); destination.location.replace(url.href);
     } catch (err) { destination.close(); setError(err.message || 'The developer workspace could not open.'); }
@@ -84,6 +106,7 @@ export function DeveloperDock() {
     <div className="developer-dock">
       <button ref={toggle} type="button" onClick={() => open ? setOpen(false) : show()} aria-expanded={open} aria-controls="cloudgate-developer-panel">
         <Terminal size={16} /><span>Developers</span><span className="developer-dock-status">{launch ? launch.projectName : 'Cloudgate workspace'}</span>
+        {sdkUpdate && <span className="developer-sdk-update" title="Cloudgate SDK update available — open Info & updates" aria-label="Cloudgate SDK update available"><Info size={14} /></span>}
         <ChevronUp size={16} className="developer-dock-chevron" aria-hidden="true" />
       </button>
       <span className="developer-dock-access"><LockKeyhole size={12} />Linked Cloudgate account</span>

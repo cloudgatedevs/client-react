@@ -3,7 +3,7 @@ export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, pr
   const configuredFocus = String(projectPath ?? '').trim();
   const focus = configuredFocus.replace(/^\/+|\/+$/g, '');
   return {
-    async open({ returnUrl }, options) {
+    async open({ returnUrl, sdkVersion, sdkSource }, options) {
       if (configuredFocus && !focus) throw new Error('The configured developer controller path is invalid. Set a controller path or leave it empty for all controllers.');
       const app = await resolveAppIdentity();
       const url = new URL(returnUrl);
@@ -11,6 +11,7 @@ export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, pr
       const value = await request('developer-workspace', { ...options, body: {
         webAppId: app.webAppId, environment: /^prod/.test(app.environment) ? 'prod' : 'sbx', returnUrl: url.href,
         ...(focus ? { projectPath: focus } : {}),
+        ...(sdkVersion ? { sdkVersion, sdkSource: sdkSource === 'local' ? 'local' : 'npm' } : {}),
       } });
       if (focus && (!value.controllerId || String(value.controllerPath).toLowerCase() !== focus.toLowerCase()))
         throw new Error('Cloudgate did not apply the configured controller focus. Update and restart the Cloudgate server, then reconnect.');
@@ -20,10 +21,17 @@ export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, pr
         throw new Error('Cloudgate returned an invalid developer workspace URL.');
       return { ...value, frameUrl: frame.href, frameOrigin: frame.origin };
     },
+    async sdkStatus({ runningVersion, sdkSource } = {}, options = {}) {
+      const app = await resolveAppIdentity();
+      const query = new URLSearchParams({ webAppId: app.webAppId });
+      if (runningVersion) query.set('runningVersion', runningVersion);
+      if (sdkSource) query.set('sdkSource', sdkSource);
+      return request(`developer-workspace/sdk-status?${query}`, { ...options, method: 'GET' });
+    },
   };
 }
 
 export function isDeveloperWorkspaceMessage(event, frameWindow, frameOrigin) {
   return Boolean(frameWindow && event.source === frameWindow && event.origin === frameOrigin
-    && event.data?.source === 'cloudgate-developer' && ['ready', 'expired', 'error', 'ended', 'environment'].includes(event.data.type));
+    && event.data?.source === 'cloudgate-developer' && ['ready', 'expired', 'error', 'ended', 'environment', 'sdk-update'].includes(event.data.type));
 }

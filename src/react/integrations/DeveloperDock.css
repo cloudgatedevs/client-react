@@ -5,6 +5,7 @@
 .developer-dock-chevron { transition: transform 280ms cubic-bezier(.22, 1, .36, 1); }
 .developer-dock button[aria-expanded="true"] .developer-dock-chevron { transform: rotate(180deg); }
 .developer-dock-status { color: #9296ad; font-size: 11px; margin: 0 14px; }
+.developer-sdk-update { display: inline-flex; color: #fbbf24; flex-shrink: 0; }
 .developer-dock-access { display: flex; align-items: center; gap: 6px; color: #a5a8ba; font-size: 11px; }
 .developer-backdrop { position: fixed; inset: 0 0 38px; z-index: 60; background: #10111b66; backdrop-filter: blur(2px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 200ms ease, visibility 0s linear 280ms; }
 .developer-panel { position: fixed; inset: 5vh 10px 38px; z-index: 61; display: flex; flex-direction: column; overflow: hidden; color: #e5e7eb; background: #14151d; border: 1px solid #373946; border-bottom: 0; border-radius: 12px 12px 0 0; box-shadow: 0 -12px 60px #0005; outline: none; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(100%); transition: transform 280ms cubic-bezier(.22, 1, .36, 1), opacity 200ms ease, visibility 0s linear 280ms; }
