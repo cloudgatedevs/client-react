@@ -209,6 +209,8 @@ clamps the progress bar while preserving the actual count above its target.
 
 ### Table patterns
 
+DataTable owns its outer border, rounded corners, background, toolbar, footer and scroll region. Place it in a plain layout container with min-width: 0; do not wrap it in another bordered or padded table card, or add a second overflow container. Keep keyboard focus outlines visible. The inner scroll region has square corners between the toolbar and footer. Verify wide and narrow layouts, horizontal scrolling and the Columns menu.
+
 The Tables menu has six focused examples, all using the same composable `DataTable`:
 
 | Example | Configuration |
@@ -312,6 +314,41 @@ MCP clients can launch the latter with `node` and the installed package's absolu
 version. It only returns shipped documentation: no credentials, application data,
 filesystem mutation or network access. Protocol: newline-delimited MCP stdio.
 This is separate from the older Cloudweb page-builder cookbook.
+
+### Administrative record editors
+
+The installed `get_widget_guidelines` / CLI `guide` includes the shared record
+editor rules. Use these alongside the widget APIs for policies, permissions,
+provider settings and other operational forms. Composition examples demonstrate
+widgets; they do not define your backend's mutation or financial contracts.
+
+- Read and validate the detail document, record identity, scope and revision.
+  Show inherited values, explicit overrides and effective values with their source.
+  Preserve explicit `false` and `0`. Reset removes a record override; it must not
+  overwrite a shared template. Keep unsupported rules and migration-managed
+  records read-only, with a reason. Enforce these rules on the server too.
+- Bind drafts and frozen before/after reviews to the record and type/revision.
+  Track request generations, including A → B → A selection changes. Late success,
+  error and cleanup handlers must not modify another editor or its loading state.
+  Use exact server-compatible decimal and integer bounds, without lossy coercion.
+- Await the mutation and validate its documented receipt and identity. Separate
+  an accepted write from a subsequent read failure. Refresh reads without
+  resubmitting writes. Reconcile uncertain outcomes through authoritative reads
+  or documented server idempotency before enabling another attempt.
+- Keep recoverable drafts scoped to app, tenant, record and revision. Clear them
+  on discard, accepted save and reverting all edits. Reject stale or malformed
+  recovery data. Avoid secret persistence and unsupported browser-history patches.
+- Test actual SDK components and real client/state composition with controlled
+  transports. Include late responses, remounts, async options, reset/revert,
+  read-only changes and accepted-write/failed-refresh. Confirm signed-in browser
+  reads and review/cancel without mutating live financial or configuration data.
+
+Shared navigation and modal behavior belong in the SDK. Sidebar groups are visual
+organization, not URL namespaces; follow the README's route ownership rules and
+verify both page content and the active link. Nested `Dialog`/`Modal` layering is
+managed by the SDK; do not copy either implementation or add app z-index patches.
+Business policy resolution, permissions and migration ownership belong on the
+server; the app supplies its DTO mapping and operator workflow.
 
 ## Text styles
 
@@ -567,6 +604,20 @@ For standalone apps, the shared stylesheet supplies default tokens. Set the same
 `data-theme`/`data-density` attributes and RGB-channel variables on the document
 root to integrate your own appearance settings. Dialogs use a body portal and
 therefore inherit the document's appearance, not a local preview override.
+
+### Modal dialogs
+
+Import `Dialog` from `@cloudgatedevs/cloudgate-client-react/react/widgets` for
+modal forms, confirmations and record details. It is already included in the
+widget picker as **Dialog**. Use `open`, `onClose`, an accessible `title`, and
+optional `description`, `footer` and `size` (`sm`, `md`, `lg`, `xl`). Keep it
+mounted while toggling `open` so exit animation and focus restoration can finish.
+
+`Dialog` and the existing `Modal` from the main `/react` entry share automatic
+layer management. A child opens above its parent, including mixed nesting in
+either direction. Closing the child restores focus to its opener. Do not add
+application z-index overrides to make nested SDK dialogs work. Keep the parent
+open and render the child within its React subtree when it belongs to that record.
 
 Theme settings include eight coordinated palettes and an editable, named custom
 palette. Brand, workspace tint and success/warning/error/info colours are saved

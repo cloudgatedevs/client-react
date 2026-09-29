@@ -1,5 +1,5 @@
 import { Children, cloneElement, isValidElement, lazy, Suspense, useMemo } from 'react';
-import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { createRoutesFromChildren, Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { CloudgateProvider } from './context.jsx';
 import { AuthProvider, RequireAuth, RequireAdmin } from './auth/index.js';
 import { SettingsProvider } from './settings/SettingsProvider.jsx';
@@ -7,7 +7,7 @@ import { NotificationsProvider } from './notifications/NotificationsProvider.jsx
 import { Layout } from './components/Layout.jsx';
 import { ScreenLoader } from './components/ScreenLoader.jsx';
 import { PLATFORM_NAV } from './components/navConfig.jsx';
-import { normalizeBackofficeBasePath, scopeNavigation, scopedBackofficePath } from './routing.js';
+import { assertNoPlatformRouteConflicts, collectRoutePaths, legacyPaymentRedirects, normalizeBackofficeBasePath, scopeNavigation, scopedBackofficePath, SDK_PAYMENT_ROUTES } from './routing.js';
 import { PublicHomeGate } from './PublicHomeGate.jsx';
 const page = (load, name) => lazy(() => load().then(module => ({ default: module[name] })));
 const RoleManagement = page(() => import('./pages/RoleManagement.jsx'), 'RoleManagement');
@@ -49,27 +49,36 @@ export function CloudgateBackoffice({ client, metadata, navigation = [], childre
   if (publicRoutes && !publicHome) throw new Error('Provide a public home page when adding public website routes.');
   const nav = useMemo(() => scopeNavigation([...navigation, ...PLATFORM_NAV], base), [navigation, base]);
   const path = value => scopedBackofficePath(base, value);
-  const routes = <Routes>
-    <Route path={base || '/'} element={<RequireAuth />}><Route element={<RequireAdmin />}><Route element={<Workspace sharedSettings={!!publicHome} />}><Route element={<Layout developerMode={developerMode} />}>
-      {relativeRoutes(children)}
+  const appRoutes = relativeRoutes(children);
+  const platformRoutes = <>
       <Route path="roles" element={<RoleManagement />} /><Route path="users" element={<UserManagement />} /><Route path="sample-users" element={<Navigate to={path('/users')} replace />} />
       <Route path="account/settings" element={<AccountSettings />} /><Route path="profile" element={<Profile />} /><Route path="analytics" element={<Analytics />} />
       <Route path="registration" element={<Registration />} />
       <Route path="email-template" element={<EmailTemplate />} />
       <Route path="app-notifications" element={<AppNotifications />} />
       <Route path="appearance" element={<Appearance key="appearance" />} /><Route path="theme" element={<Appearance key="theme" theme />} />
-      <Route path="smtp" element={<Smtp />} /><Route path="media" element={<Media />} /><Route path="payments" element={<Payments />} />
-      <Route path="payments/list" element={<PaymentList />} /><Route path="payments/test" element={<TestPayment />} />
+      <Route path="smtp" element={<Smtp />} /><Route path="media" element={<Media />} /><Route path={SDK_PAYMENT_ROUTES.overview.slice(1)} element={<Payments />} />
+      <Route path={SDK_PAYMENT_ROUTES.history.slice(1)} element={<PaymentList />} /><Route path={SDK_PAYMENT_ROUTES.test.slice(1)} element={<TestPayment />} />
       <Route path="logs" element={<Logs />} /><Route path="notifications" element={<Notifications />} /><Route path="about" element={<About />} />
       <Route path="settings" element={<WebsiteSettings />} />
       <Route path="widgets/*" element={<WidgetLibrary />} />
+  </>;
+  const unscoped = value => base && (value === base || value.startsWith(`${base}/`)) ? value.slice(base.length) || '/' : value;
+  const appPaths = [...collectRoutePaths(createRoutesFromChildren(appRoutes)), ...navigationPaths(navigation).map(unscoped)];
+  assertNoPlatformRouteConflicts(appPaths, collectRoutePaths(createRoutesFromChildren(platformRoutes)));
+  const paymentRedirects = legacyPaymentRedirects(appPaths);
+  const routes = <Routes>
+    <Route path={base || '/'} element={<RequireAuth />}><Route element={<RequireAdmin />}><Route element={<Workspace sharedSettings={!!publicHome} />}><Route element={<Layout developerMode={developerMode} />}>
+      {appRoutes}
+      {platformRoutes}
+      {paymentRedirects.map(({ from, to }) => <Route key={from} path={from.slice(1)} element={<LegacyRedirect to={path(to)} />} />)}
       <Route path="*" element={<Navigate to={path(fallback)} replace />} />
     </Route></Route></Route></Route>
     {publicHome && <Route element={<PublicHomeGate />}>
       <Route path="/" element={publicHome} />
       {publicRoutes}
     </Route>}
-    {base && [...new Set([...navigationPaths([...navigation, ...PLATFORM_NAV]), '/profile', '/account/settings', '/about', '/notifications', '/sample-users'])]
+    {base && [...new Set([...navigationPaths([...navigation, ...PLATFORM_NAV]), ...paymentRedirects.map(({ from }) => from), '/profile', '/account/settings', '/about', '/notifications', '/sample-users'])]
       .filter(value => value !== '/' && value !== base && !value.startsWith(`${base}/`)).map(value => <Route key={value} path={value} element={<LegacyRedirect to={path(value)} />} />)}
     <Route path="*" element={<Navigate to={publicHome ? '/' : path(fallback)} replace />} />
   </Routes>;

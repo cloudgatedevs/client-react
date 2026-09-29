@@ -65,7 +65,7 @@ export function createCloudgatePlatform(options = {}) {
     roles: createRolesClient({ request }),
     appearance: createAppearanceClient({ request, publicRequest, resolveAppIdentity }),
     payments: createPaymentsClient({ request, resolveAppIdentity }),
-    files: createFilesClient({ request, resolveAppIdentity, mediaFolder: options.mediaFolder || config.projectPath }),
+    files: createFilesClient({ request, resolveAppIdentity, mediaFolder: options.mediaFolder || (config.projectPath === '*' ? '' : config.projectPath) }),
     smtp: createSmtpClient({ request }),
     // Preserve an explicit invalid path so Logs cannot treat it as an omitted controller scope.
     logs: createWorkflowLogsClient({ request, resolveAppIdentity, projectPath: options.projectPath }),
@@ -74,7 +74,7 @@ export function createCloudgatePlatform(options = {}) {
       return scope.webAppId ? { webAppId: scope.webAppId, isProduction: /^prod/.test(scope.environment) } : null;
     } }),
     accountLink: createAccountLinkClient({ request }),
-    developerWorkspace: createDeveloperWorkspaceClient({ request, resolveAppIdentity, projectPath: config.projectPath }),
+    developerWorkspace: createDeveloperWorkspaceClient({ request, resolveAppIdentity, projectPath: options.projectPath }),
     registration: createRegistrationClient({ request }),
     emailTemplate: createEmailTemplateClient({ request }),
     notificationAdmin: createNotificationAdminClient({ request, resolveAppIdentity }),

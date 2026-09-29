@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Info, X } from 'lucide-react';
+import { DialogLayerContext, useDialogLayer } from './useDialogLayer.js';
 
 export const Field = ({ label, id, hint, children }) => (
   <div className="flex flex-col gap-1.5">
@@ -22,6 +23,7 @@ export const Notice = ({ children, error = false }) =>
     </div>
   ) : null;
 export function Modal({ open, title, description, onClose, onAfterClose, returnFocusRef, onEscapeKeyDown, children }) {
+  const { token, layer, release } = useDialogLayer(open);
   // Callers clear their form model on close. Retain the last committed content
   // just long enough for Radix's exit animation, then release it.
   const [lastContent, setLastContent] = useState(null);
@@ -31,6 +33,7 @@ export function Modal({ open, title, description, onClose, onAfterClose, returnF
   }, [open, title, description, children]);
   const content = open ? { title, description, children } : lastContent;
   return (
+    <DialogLayerContext.Provider value={token}>
     <Dialog.Root
       open={!!open}
       onOpenChange={(value) => {
@@ -38,11 +41,13 @@ export function Modal({ open, title, description, onClose, onAfterClose, returnF
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="dialog-backdrop fixed inset-0 z-50" />
+        <Dialog.Overlay className="dialog-backdrop fixed inset-0" style={{ zIndex: layer }} />
         <Dialog.Content
-          className="modal-panel card fixed left-1/2 top-1/2 z-50 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-5 overflow-y-auto p-6 outline-none"
+          className="modal-panel card fixed left-1/2 top-1/2 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-5 overflow-y-auto p-6 outline-none"
+          style={{ zIndex: layer + 1 }}
           onOpenAutoFocus={() => { returnFocus.current = document.activeElement; }}
           onCloseAutoFocus={(event) => {
+            release();
             event.preventDefault();
             setLastContent(null);
             const target = returnFocusRef?.current || returnFocus.current;
@@ -72,5 +77,6 @@ export function Modal({ open, title, description, onClose, onAfterClose, returnF
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+    </DialogLayerContext.Provider>
   );
 }

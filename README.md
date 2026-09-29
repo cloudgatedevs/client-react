@@ -123,9 +123,10 @@ and supports abort/timeout options. Platform clients bind the configured tenant;
 cannot change it. Published `cg-analytics.json` / injected metadata chooses the web app and environment.
 Back-office entry requires `backoffice.access`; page and action permissions are checked separately.
 Role names do not grant access. The server checks the current stored grants on every request.
-The optional `projectPath` scopes native workflow observability and the developer workspace to
-one controller. Leave it empty to browse all accessible controllers. The Logs client sends the
-native API's `*` scope in this case, and the server applies tenant, controller and environment
+Set `projectPath` to a controller path to restrict the developer workspace to that controller,
+or explicitly use `*` to discover, build and edit across all accessible controllers. An empty
+value cannot open developer mode. The Logs client also accepts `*` (and retains its legacy
+empty-value default), and the server applies tenant, controller and environment
 access checks. Logs and analytics visitor-call details require `backoffice.logs.view`. No default controller is
 created or invoked. Admin/user/appearance/payment routes never use HMAC secrets.
 
@@ -137,7 +138,9 @@ Cloudgate backend and SDK together to enable search. No database migration is re
 
 ### Payments
 
-**Administration → Payments** includes **Overview**, **All payments** and **Test payment**.
+**Administration → Cloudgate payments** includes **Overview**, **All payments** and **Test payment**. These SDK pages use `/cloudgate/payments`, `/cloudgate/payments/list` and `/cloudgate/payments/test` beneath your `basePath`, independently of your application's payment pages. Their permission keys are unchanged.
+
+The former `/payments` URLs redirect to the SDK pages only when the application does not declare routes or navigation in that namespace. Apps can therefore keep their own `/payments` pages. Other built-in SDK routes are reserved: `CloudgateBackoffice` rejects conflicting application routes/navigation with a descriptive error, rather than silently choosing a page and a different active menu item. Sidebar groups are visual organization and do not create URL prefixes.
 History is scoped to the authenticated tenant and selected environment, with status filters
 and pagination. Test payment creates a sandbox checkout only, including when the app runs
 in production. Amounts are entered in currency units and sent as integer minor units.
@@ -610,6 +613,9 @@ This requires the matching hub and backend update.
 Configure `projectPath` (or the template's `VITE_CLOUDGATE_API_PROJECT`) to focus the catalogue and
 controller-owned resources on one controller. The server validates and retains this scope throughout
 the session; invalid or inaccessible controllers fail without falling back to all controllers.
+Use `*` explicitly for all controllers; this applies to Build MCP reads, edits and sandbox tests,
+subject to the linked account's permissions. Empty configuration is rejected. Release bindings
+do not override this setting. When using `*`, API clients must use each selected controller's real path.
 WebSockets are tenant-shared and labeled accordingly. Tenant-wide test recordings are unavailable
 in a focused session. Controller selection in developer mode does not change your saved Hub selection.
 Launching uses the IdP token to obtain a one-use code. Only the hub frame redeems it for a scoped ABP

@@ -1,3 +1,4 @@
+import { SDK_PAYMENT_ROUTES } from '../routing.js';
 import { useState } from 'react';
 import { BackofficeLink as Link } from '../components/BackofficeLink.jsx';
 import { RefreshCw, FlaskConical } from 'lucide-react';
@@ -17,7 +18,7 @@ export function PaymentList() {
   return <div className="space-y-5">
     <PageHead title="All payments" subtitle="Payment records across your Cloudgate tenant.">
       <button className="btn-ghost" disabled={payments.loading} onClick={payments.reload}><RefreshCw size={15} />Refresh</button>
-      <Link className="btn-primary" to="/payments/test"><FlaskConical size={15} />Test payment</Link>
+      <Link className="btn-primary" to={SDK_PAYMENT_ROUTES.test}><FlaskConical size={15} />Test payment</Link>
     </PageHead>
     <div className="card flex flex-wrap gap-4 p-4">
       <Field label="Environment" id="payment-environment"><select id="payment-environment" className="input" value={environment} onChange={event => { setEnvironment(event.target.value); setSkip(0); }}><option value="sbx">Sandbox</option><option value="prod">Production</option></select></Field>

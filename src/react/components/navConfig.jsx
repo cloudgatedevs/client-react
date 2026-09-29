@@ -1,16 +1,17 @@
 import { Users, ChartNoAxesCombined, Palette, PanelTop, Mail, Images, Activity, Wallet, Bell, MessagesSquare, Settings2 } from 'lucide-react';
 import { navigationTrail } from './navigation.js';
 import { WIDGET_NAV } from './widgetNavigation.js';
+import { SDK_PAYMENT_ROUTES } from '../routing.js';
 
 export const PLATFORM_NAV = [WIDGET_NAV, {
   id: 'cloudgate-administration', label: 'Administration', icon: Settings2, section: 'platform',
   children: [
     { to: '/analytics', label: 'Analytics', icon: ChartNoAxesCombined },
     { to: '/logs', label: 'Logs', icon: Activity },
-    { id: 'payments', label: 'Payments', icon: Wallet, keywords: ['billing', 'wallet'], children: [
-      { to: '/payments', label: 'Overview', icon: Wallet, end: true },
-      { to: '/payments/list', label: 'All payments', icon: Wallet, keywords: ['transactions', 'history'] },
-      { to: '/payments/test', label: 'Test payment', icon: Wallet, keywords: ['sandbox', 'checkout'] },
+    { id: 'payments', label: 'Cloudgate payments', icon: Wallet, keywords: ['billing', 'wallet'], children: [
+      { to: SDK_PAYMENT_ROUTES.overview, label: 'Overview', icon: Wallet, end: true },
+      { to: SDK_PAYMENT_ROUTES.history, label: 'All payments', icon: Wallet, keywords: ['transactions', 'history'] },
+      { to: SDK_PAYMENT_ROUTES.test, label: 'Test payment', icon: Wallet, keywords: ['sandbox', 'checkout'] },
     ] },
     { id: 'people', label: 'People & access', icon: Users, children: [
       { to: '/users', label: 'Users', icon: Users },

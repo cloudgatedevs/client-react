@@ -1,4 +1,5 @@
 import { BACKOFFICE_PERMISSIONS as P } from "../../platform/backoffice-permissions.js";
+import { SDK_PAYMENT_ROUTES } from '../routing.js';
 
 export const BACKOFFICE_ROUTE_PERMISSIONS = {
   "/": P.DashboardView,
@@ -8,6 +9,9 @@ export const BACKOFFICE_ROUTE_PERMISSIONS = {
   "/payments": P.PaymentsView,
   "/payments/list": P.PaymentsHistory,
   "/payments/test": P.PaymentsTestView,
+  [SDK_PAYMENT_ROUTES.overview]: P.PaymentsView,
+  [SDK_PAYMENT_ROUTES.history]: P.PaymentsHistory,
+  [SDK_PAYMENT_ROUTES.test]: P.PaymentsTestView,
   "/users": P.UsersView,
   "/roles": P.RolesView,
   "/registration": P.RegistrationView,

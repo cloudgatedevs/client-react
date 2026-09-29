@@ -1,3 +1,4 @@
+import { SDK_PAYMENT_ROUTES } from '../routing.js';
 import { useCloudgate } from '../context.jsx';
 import { ExternalLink, RefreshCw, Wallet, CheckCircle2, CircleAlert } from 'lucide-react';
 
@@ -13,9 +14,9 @@ export function Payments() {
   const status = wallet.data;
   return (
     <div className="space-y-6">
-      <PageHead title="Payments" subtitle="Manage payment readiness through your tenant’s Cloudgate Wallet.">
-        <Link className="btn-ghost" to="/payments/list">All payments</Link>
-        <Link className="btn-ghost" to="/payments/test">Test payment</Link>
+      <PageHead title="Cloudgate payments" subtitle="Manage payment readiness through your tenant’s Cloudgate Wallet.">
+        <Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.history}>All payments</Link>
+        <Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.test}>Test payment</Link>
         <button className="btn-ghost" disabled={wallet.loading} onClick={wallet.reload}>
           <RefreshCw size={16} />
           Refresh

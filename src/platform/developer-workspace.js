@@ -4,16 +4,18 @@ export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, pr
   const focus = configuredFocus.replace(/^\/+|\/+$/g, '');
   return {
     async open({ returnUrl, sdkVersion, sdkSource }, options) {
-      if (configuredFocus && !focus) throw new Error('The configured developer controller path is invalid. Set a controller path or leave it empty for all controllers.');
+      if (!focus) throw new Error('Set VITE_CLOUDGATE_API_PROJECT to a controller path, or "*" for all accessible controllers, before opening developer mode.');
+      if (focus !== '*' && !/^[a-zA-Z0-9_-]{1,256}$/.test(focus)) throw new Error('The configured developer controller path is invalid. Use one controller path or "*".');
       const app = await resolveAppIdentity();
       const url = new URL(returnUrl);
       url.hash = '';
       const value = await request('developer-workspace', { ...options, body: {
         webAppId: app.webAppId, environment: /^prod/.test(app.environment) ? 'prod' : 'sbx', returnUrl: url.href,
-        ...(focus ? { projectPath: focus } : {}),
+        projectPath: focus,
         ...(sdkVersion ? { sdkVersion, sdkSource: sdkSource === 'local' ? 'local' : 'npm' } : {}),
       } });
-      if (focus && (!value.controllerId || String(value.controllerPath).toLowerCase() !== focus.toLowerCase()))
+      if (focus === '*' ? value.controllerId || value.controllerPath !== '*'
+        : !value.controllerId || String(value.controllerPath).toLowerCase() !== focus.toLowerCase())
         throw new Error('Cloudgate did not apply the configured controller focus. Update and restart the Cloudgate server, then reconnect.');
       const frame = new URL(value.frameUrl);
       if (!['https:', 'http:'].includes(frame.protocol) || frame.username || frame.password || frame.pathname !== '/developer'

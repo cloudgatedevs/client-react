@@ -1014,7 +1014,8 @@ ol.cgw-text-list { list-style-type: decimal; }
 .cgw-alert strong {
   font-weight: 600;
 }
-.cgw-alert p {
+.cgw-alert p,
+.cgw-alert-content {
   margin: 0.3rem 0 0;
   line-height: 1.6;
   color: rgb(var(--mist-muted));
@@ -1258,7 +1259,8 @@ ol.cgw-text-list { list-style-type: decimal; }
   position: relative;
   overflow: auto;
   max-height: 32rem;
-  border-radius: inherit;
+  /* Only the outer table surface is rounded; this sits between toolbar and footer. */
+  border-radius: 0;
   overscroll-behavior-x: contain;
   overscroll-behavior-y: auto;
 }

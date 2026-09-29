@@ -1,3 +1,4 @@
+import { SDK_PAYMENT_ROUTES } from '../routing.js';
 import { usePermissions } from '../auth/permissions.jsx';
 import { BACKOFFICE_PERMISSIONS as P } from '../../platform/backoffice-permissions.js';
 import { useRef, useState } from 'react';
@@ -31,7 +32,7 @@ export function TestPayment() {
     finally { submitting.current = false; setBusy(false); }
   };
   return <div className="mx-auto max-w-3xl space-y-5">
-    <PageHead title="Test payment" subtitle="Try your payment flow using the Cloudgate sandbox wallet."><Link className="btn-ghost" to="/payments/list">All payments</Link></PageHead>
+    <PageHead title="Test payment" subtitle="Try your payment flow using the Cloudgate sandbox wallet."><Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.history}>All payments</Link></PageHead>
     <Notice>Sandbox only. This screen creates test payments and cannot charge real money.</Notice>
     {new URLSearchParams(window.location.search).has('checkout') && <Notice>Checkout returned to your app. Check All payments for the confirmed payment status.</Notice>}
     <ErrorNote error={wallet.error || error} />
@@ -46,6 +47,6 @@ export function TestPayment() {
         <Field label="Reference (optional)" id="test-payment-reference"><input id="test-payment-reference" className="input" maxLength={256} value={reference} onChange={event => setReference(event.target.value)} /></Field>
         <button type="submit" className="btn-primary" aria-busy={busy}><FlaskConical size={16} />{busy ? 'Creating test checkout…' : 'Create test checkout'}</button>
       </fieldset>
-    </form> : <section className="card space-y-4 p-5"><h2 className="font-semibold">Sandbox wallet setup required</h2><p className="text-sm text-mist-muted">{wallet.data?.reason || 'Connect your sandbox wallet before creating a test payment.'}</p><div className="flex gap-2"><Link className="btn-ghost" to="/payments">Payment overview</Link><button className="btn-ghost" onClick={wallet.reload}><RefreshCw size={15} />Refresh</button></div></section>}
+    </form> : <section className="card space-y-4 p-5"><h2 className="font-semibold">Sandbox wallet setup required</h2><p className="text-sm text-mist-muted">{wallet.data?.reason || 'Connect your sandbox wallet before creating a test payment.'}</p><div className="flex gap-2"><Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.overview}>Payment overview</Link><button className="btn-ghost" onClick={wallet.reload}><RefreshCw size={15} />Refresh</button></div></section>}
   </div>;
 }

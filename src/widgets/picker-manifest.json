@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
   "sdkVersion": "0.1.5",
-  "fingerprint": "d64d3c6038d6824bae20fa1657b2120df7670b37b879b792c130c7c5bad338b8",
+  "fingerprint": "26c2cd750b392cd34013682a8126d1de74c4d0ef559bd8824484b65a5f7fefcb",
   "sourceFiles": [
+    "admin-styling-guidance.js",
     "calendar-catalog.js",
     "card-catalog.js",
     "card-examples.js",
@@ -15,6 +16,7 @@
     "manifest.mjs",
     "mcp.mjs",
     "radio-catalog.js",
+    "record-editor-guidance.js",
     "rich-text-catalog.js",
     "scrum-catalog.js",
     "select-catalog.js",
@@ -362,7 +364,7 @@
       "id": "dialog",
       "name": "Dialog",
       "category": "Feedback",
-      "description": "An animated modal with focus trapping, Escape dismissal and focus restoration.",
+      "description": "An animated modal with focus trapping, Escape dismissal, focus restoration and automatic stacking above existing SDK dialogs. Use Dialog for modal forms, confirmations and record details; nested Dialog and legacy Modal share the same layer stack.",
       "exports": [
         "Dialog"
       ],

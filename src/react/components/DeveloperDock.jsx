@@ -118,7 +118,7 @@ export function DeveloperDock() {
           <header className="developer-panel-header">
             <div><h2 id="cloudgate-developer-title"><Terminal size={17} />Developer workspace</h2>
               <p id="cloudgate-developer-description">{launch ? `${launch.projectName} · ${launch.appName}` : 'Build and monitor the APIs behind your application.'}</p></div>
-            <span className="developer-project-lock" title={launch?.controllerPath ? `Controller: /${launch.controllerPath}` : 'All accessible controllers in this tenant'}><LockKeyhole size={12} />{launch?.controllerId ? `Controller: ${launch.controllerName || launch.controllerPath}` : 'All controllers'}</span>
+            <span className="developer-project-lock" title={launch?.controllerId ? `Controller: /${launch.controllerPath}` : 'All accessible controllers in this tenant'}><LockKeyhole size={12} />{launch?.controllerId ? `Controller: ${launch.controllerName || launch.controllerPath}` : 'All controllers'}</span>
             {launch && <span className={`developer-env ${launch.environment === 'prod' ? 'is-production' : ''}`}>{launch.environment === 'prod' ? 'Production' : 'Sandbox'}</span>}
             {launch && <button type="button" className="developer-icon" onClick={openTab} aria-label="Open developer workspace in new tab"><ExternalLink size={16} /></button>}
             <button ref={minimize} type="button" className="developer-icon" onClick={() => setOpen(false)} aria-label="Minimize developer workspace"><ChevronDown size={20} /></button>

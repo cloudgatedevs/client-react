@@ -1,5 +1,6 @@
 import { forwardRef, useId, useRef, useState, useLayoutEffect } from "react";
 import * as RadixDialog from "@radix-ui/react-dialog";
+import { DialogLayerContext, useDialogLayer } from '../components/useDialogLayer.js';
 import { useAnimatedNumber } from './motion.js';
 import { useFieldValidation } from './Form.jsx';
 import { buttonClassName } from './button-model.js';
@@ -394,7 +395,7 @@ export function Alert({ title, children, tone = "info", action, onDismiss }) {
       <Info size={18} aria-hidden="true" />
       <div>
         {title && <strong>{title}</strong>}
-        {children && <p>{children}</p>}
+        {children && <div className="cgw-alert-content">{children}</div>}
         {action}
       </div>
       {onDismiss && (
@@ -486,6 +487,7 @@ export function Dialog({
   footer,
   size = "md",
 }) {
+  const { token, layer, release } = useDialogLayer(open);
   const [last, setLast] = useState(null),
     returnFocus = useRef(null);
   useLayoutEffect(() => {
@@ -493,6 +495,7 @@ export function Dialog({
   }, [open, title, description, children, footer]);
   const content = open ? { title, description, children, footer } : last;
   return (
+    <DialogLayerContext.Provider value={token}>
     <RadixDialog.Root
       open={!!open}
       onOpenChange={(value) => {
@@ -500,13 +503,15 @@ export function Dialog({
       }}
     >
       <RadixDialog.Portal>
-        <RadixDialog.Overlay className="dialog-backdrop cgw-dialog-backdrop" />
+        <RadixDialog.Overlay className="dialog-backdrop cgw-dialog-backdrop" style={{ zIndex: layer }} />
         <RadixDialog.Content
           className={`modal-panel cgw-dialog cgw-dialog--${size}`}
+          style={{ zIndex: layer + 1 }}
           onOpenAutoFocus={() => {
             returnFocus.current = document.activeElement;
           }}
           onCloseAutoFocus={(event) => {
+            release();
             onCloseAutoFocus?.(event);
             const handled = event.defaultPrevented;
             event.preventDefault();
@@ -540,5 +545,6 @@ export function Dialog({
         </RadixDialog.Content>
       </RadixDialog.Portal>
     </RadixDialog.Root>
+    </DialogLayerContext.Provider>
   );
 }
