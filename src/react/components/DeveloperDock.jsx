@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink, Info } from 'lucide-react';
+import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink, Info, Sparkles } from 'lucide-react';
 import { useCloudgate } from '../context.jsx';
 import { useAuthContext } from '../auth/index.js';
 import { isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
@@ -103,13 +103,16 @@ export function DeveloperDock() {
   };
   if (import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW === 'true') return null;
   return <>
-    <div className="developer-dock">
-      <button ref={toggle} type="button" onClick={() => open ? setOpen(false) : show()} aria-expanded={open} aria-controls="cloudgate-developer-panel">
+    {/* A click anywhere on the bar toggles the workspace; the buttons inside are the keyboard targets. */}
+    <div className="developer-dock" onClick={() => open ? setOpen(false) : show()}>
+      <button ref={toggle} type="button" aria-expanded={open} aria-controls="cloudgate-developer-panel">
         <Terminal size={16} /><span>Developers</span><span className="developer-dock-status">{launch ? launch.projectName : 'Cloudgate workspace'}</span>
         {sdkUpdate && <span className="developer-sdk-update" title="Cloudgate SDK update available — open Info & updates" aria-label="Cloudgate SDK update available"><Info size={14} /></span>}
         <ChevronUp size={16} className="developer-dock-chevron" aria-hidden="true" />
       </button>
-      <span className="developer-dock-access"><LockKeyhole size={12} />Linked Cloudgate account</span>
+      <button type="button" className="developer-dock-ai" title="Build with AI in the Cloudgate developer workspace">
+        <Sparkles size={13} aria-hidden="true" /><span>Build with AI</span>
+      </button>
     </div>
     {createPortal(<>
         <div className="developer-backdrop" data-state={open ? 'open' : 'closed'} aria-hidden="true" onClick={() => setOpen(false)} />

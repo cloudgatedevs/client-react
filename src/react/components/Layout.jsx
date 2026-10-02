@@ -17,6 +17,7 @@ import { DeveloperDock } from './DeveloperDock.jsx';
 import { EmailVerificationPrompt } from './EmailVerificationPrompt.jsx';
 import { usePermissions, filterPermissionNavigation, RequirePagePermission } from '../auth/permissions.jsx';
 import { BACKOFFICE_PERMISSIONS as P } from '../../platform/backoffice-permissions.js';
+import { ErrorBoundary } from '../widgets/ErrorBoundary.jsx';
 
 export function Layout({ developerMode = true }) {
   const { can } = usePermissions();
@@ -30,6 +31,12 @@ export function Layout({ developerMode = true }) {
   const preferenceKey = `cloudgate.navigation.v1:${JSON.stringify([client.config.apiUrl, client.auth.tenancyName, identity?.webAppId || client.config.webAppId, identity?.environment || client.config.environment, currentUser?.user?.id])}`;
   const [preferences, updatePreferences] = useNavigationPreferences(preferenceKey);
   const location = useLocation();
+  // Inside the Build preview frame, tell the developer workspace which page is showing, so its address bar
+  // follows navigation and a prompt about "this page" carries the route. Only the path is sent.
+  useEffect(() => {
+    if (import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW !== 'true' || window.parent === window) return;
+    window.parent.postMessage({ type: 'cloudgate:build-preview-route', path: `${window.location.pathname}${window.location.search}`.slice(0, 300) }, '*');
+  }, [location.pathname, location.search]);
   const navigate = useNavigate();
   const { settings } = useSettings();
   const main = useRef(null);
@@ -136,7 +143,10 @@ export function Layout({ developerMode = true }) {
             <EmailVerificationPrompt />
             <Suspense fallback={<PageSkeleton />}>
               <div key={location.pathname} className="page-transition">
-                <RequirePagePermission><Outlet /></RequirePagePermission>
+                <ErrorBoundary resetKey={location.pathname} title="This page could not be displayed"
+                  description="Something went wrong while rendering this page. The navigation still works, and you can try again.">
+                  <RequirePagePermission><Outlet /></RequirePagePermission>
+                </ErrorBoundary>
               </div>
             </Suspense>
             {settings.footer_note && (

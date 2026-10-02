@@ -38,7 +38,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+    <div className="flex w-full max-w-xl flex-col gap-6">
       <div>
         <h1 className="hidden text-2xl font-semibold text-mist lg:block">Profile</h1>
         <p className="text-sm text-mist-muted lg:mt-1">Update the details on your IdP account.</p>

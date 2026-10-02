@@ -254,6 +254,16 @@ export function createAccountSecurityClient(options: { request: PlatformRequest;
 };
 export function completeTwoFactorLogin(options: { apiUrl: string; tenancyName: string; challengeToken: string; code: string; fetchImpl?: typeof fetch; signal?: AbortSignal }): Promise<IdpTokens>;
 export function consumeLauncherLogin(options: { apiUrl: string; tenancyName: string; webAppId?: string; auth: CloudgateAuth; onTwoFactorRequired?: TwoFactorHandler; fetcher?: typeof fetch; location?: Location; history?: History }): Promise<unknown>;
+export interface GatewayRequestOptions { method?: string; params?: Record<string, string | number | boolean | null | undefined>; body?: unknown; headers?: Record<string, string>; timeoutMs?: number; raw?: boolean }
+export interface GatewayClient {
+  request<T = any>(path: string, options?: GatewayRequestOptions): Promise<T>;
+  get<T = any>(path: string, options?: GatewayRequestOptions): Promise<T>;
+  post<T = any>(path: string, body?: unknown, options?: GatewayRequestOptions): Promise<T>;
+  put<T = any>(path: string, body?: unknown, options?: GatewayRequestOptions): Promise<T>;
+  patch<T = any>(path: string, body?: unknown, options?: GatewayRequestOptions): Promise<T>;
+  delete<T = any>(path: string, options?: GatewayRequestOptions): Promise<T>;
+}
+export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean> }): GatewayClient;
 export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'idpBaseUrl'> {
   idpBaseUrl?: string; apiUrl?: string; returnUrl?: string; webAppId?: string; environment?: string;
   projectPath?: string; gatewayUrl?: string; mediaFolder?: string; timeoutMs?: number; auth?: CloudgateAuth;
@@ -262,6 +272,8 @@ export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'id
 export interface CloudgatePlatform {
   config: Readonly<{ idpBaseUrl: string; apiUrl: string; tenancyName: string; returnUrl: string; webAppId: string; environment: string; projectPath: string; gatewayUrl: string }>;
   auth: CloudgateAuth; request: PlatformRequest; resolveAppIdentity: IdentityResolver;
+  /** Workflow gateway calls as the signed-in user: refreshes the bearer, retries one 401, ends a dead session. */
+  gateway: GatewayClient;
   profile: ReturnType<typeof createProfileClient>; accountSecurity: ReturnType<typeof createAccountSecurityClient>; accountLink: ReturnType<typeof createAccountLinkClient>;
   developerWorkspace: ReturnType<typeof createDeveloperWorkspaceClient>;
   registration: ReturnType<typeof createRegistrationClient>;

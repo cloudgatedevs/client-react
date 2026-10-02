@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sdkVersion": "0.1.5",
-  "fingerprint": "26c2cd750b392cd34013682a8126d1de74c4d0ef559bd8824484b65a5f7fefcb",
+  "fingerprint": "90399b1abd5c0855ba9ab2b2cf5c61018c641e110a45fb6af438903e6305d2e0",
   "sourceFiles": [
     "admin-styling-guidance.js",
     "calendar-catalog.js",
@@ -433,6 +433,42 @@
       }
     },
     {
+      "id": "disclosure",
+      "name": "Disclosure",
+      "category": "Navigation",
+      "description": "A collapsible section with a full-width header, chevron and padded content; content can load on first open.",
+      "exports": [
+        "Disclosure"
+      ],
+      "kind": "component",
+      "tags": [
+        "navigation",
+        "Disclosure"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/disclosure"
+      }
+    },
+    {
+      "id": "error-boundary",
+      "name": "Error boundary",
+      "category": "Feedback",
+      "description": "Contains a render error to one section and shows a retry alert, so a broken cell, sub table or card does not blank the whole page.",
+      "exports": [
+        "ErrorBoundary"
+      ],
+      "kind": "component",
+      "tags": [
+        "feedback",
+        "ErrorBoundary"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/error-boundary"
+      }
+    },
+    {
       "id": "skeleton",
       "name": "Loading skeleton",
       "category": "Feedback",
@@ -468,6 +504,24 @@
       "preview": {
         "type": "library",
         "path": "/backoffice/widgets/progress"
+      }
+    },
+    {
+      "id": "network-graph",
+      "name": "Network graph (force)",
+      "category": "Charts",
+      "description": "Force-directed relationship graph for wallets, counterparties, accounts or services. Nodes carry a category (legend + colour from --cgw-chart-*), a size and a resolved display label; edges carry weight, direction arrows and an optional dashed style. The focus node is pinned at the centre; nodes are draggable and the view pans/zooms. Selection is controlled so a table or details panel can share it. Includes an accessible node/edge data table.",
+      "exports": [
+        "NetworkGraph"
+      ],
+      "kind": "component",
+      "tags": [
+        "charts",
+        "NetworkGraph"
+      ],
+      "preview": {
+        "type": "library",
+        "path": "/backoffice/widgets/network-graph"
       }
     },
     {

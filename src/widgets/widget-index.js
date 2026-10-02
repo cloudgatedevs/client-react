@@ -2,6 +2,7 @@
 import { advancedChartIndex } from './chart-index.js';
 import { cardIndex } from './card-index.js';
 export const widgetIndex = [
+  { id: 'network-graph', name: 'Network graph (force)', category: 'Charts' },
   { id: "icons", name: "Icon library", category: "Foundations" },
   { id: "typography", name: "Text styles", category: "Foundations" },
   {
@@ -101,6 +102,16 @@ export const widgetIndex = [
   {
     id: "empty-state",
     name: "Empty state",
+    category: "Feedback",
+  },
+  {
+    id: "disclosure",
+    name: "Disclosure",
+    category: "Navigation",
+  },
+  {
+    id: "error-boundary",
+    name: "Error boundary",
     category: "Feedback",
   },
   {

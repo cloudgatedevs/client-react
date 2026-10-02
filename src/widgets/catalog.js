@@ -36,13 +36,15 @@ This library provides optional building blocks, primarily for back-office toolin
 
 DataTable owns its outer border, rounded corners, background, toolbar, footer and scroll region. Place it in a plain layout container with min-width: 0; do not wrap it in another bordered or padded table card, or add a second overflow container. Keep keyboard focus outlines visible. The inner scroll region has square corners between the toolbar and footer. Verify wide and narrow layouts, horizontal scrolling and the Columns menu.
 
+Use DataTable density='compact' for dense operational lists: about 30px rows with a smaller toolbar and footer. Sub tables inside an expanded row are always compact. Do not write application CSS to shrink table padding, badges, toolbars or row height. Anchors rendered inside table cells are styled as links automatically (accent colour, underlined): render a real anchor or router link for every cell that navigates, including the first column of a row that also activates on click, and do not restyle it. Labelled Input and Select fields passed through the DataTable toolbar prop render inline, with the label beside the control on the same line as the search box; do not build a separate filter block above the table. className on Input, Select and Textarea is applied to the field wrapper, not to the control: never pass a class that draws a border, background or padding there, because the control already has its own and the result is a box inside a box. Use Disclosure for collapsible sections instead of bare details and summary elements or a hand-rolled toggle; it mounts its children on first open, so place the data loader inside it and do not ask the user to press a second Load control. NetworkGraph draws its own bordered canvas with a zoom and pan hint: place it directly in a card and do not add another frame or wheel handler. The back-office Layout wraps every routed page in an ErrorBoundary and DataTable wraps each expanded row in one, so a render error shows a retry alert instead of a blank application; wrap other independent sections (a card, a tab panel, a dialog body) in ErrorBoundary with a resetKey, and never rely on it to hide a defect: every new sub table or cell renderer needs a test that renders it with real-shaped rows.
+
 DataTable supports local rows OR loadRows (not both). loadRows receives {page, pageSize, search, sort, filters, signal}; page starts at 1, sort is null or {key,direction:'asc'|'desc'}. Return {rows,total}, where total is the count AFTER filtering and BEFORE pagination. Forward the AbortSignal to fetch. Map sort/filter keys to the server's allowlist, apply tenant scoping and permissions on the server, and translate page to skip/take if needed. Never download the whole dataset to simulate server pagination. Use stable unique getRowId values. Changing reloadKey resets to page 1; use this after create/edit/delete. Use pagination='load-more' or 'infinite' for incremental loading; page-sized requests are merged by row ID. Search is debounced. Avoid permanent loading on failures; show an actionable retry.
 
 For subtables use renderExpandedRow={row => <ChildTable parentId={row.id} />}; child content mounts only while expanded and visible. Put a nested DataTable inside ChildTable with a parent-scoped loadRows and forward its signal. Do not fetch children from the parent render or preload all children. Search, pagination and selection stay independent. getRowCanExpand can hide expansion for leaf rows, and getRowLabel supplies readable accessible names. With selectable, supply bulkActions [{id,label,onAction: async ids => ...}] or handle controlled selectedIds/onSelectionChange in your own UI. Actions receive ALL selected IDs across pages and filters, never just visible records; the header checkbox selects only loaded visible rows. Await the real mutation and throw on failures. Pending actions prevent duplicate submits; failures retain selection, success clears submitted IDs and refreshes by default. For exports use clearSelectionOnSuccess:false and refreshOnSuccess:false. Gate offered actions by permissions and authorize every ID on the server. Reset controlled selection/expansion or key the table when changing tenant or dataset scope.
 
 DataTable includes real .xlsx export by default, including nested tables. Do not add a duplicate CSV/Excel button. The dialog offers all filtered results, loaded/current-page rows and selected rows. Exports use only visible data columns, never row actions or child tables. Set column.exportValue(row) for display-derived fields, exportFormat for Excel number/date formats, exportLabel/exportWidth for workbook presentation, or exportable:false for excluded columns. Raw/accessor values preserve number, boolean and Date types; strings are never treated as formulas. Remote all-results exports reuse loadRows in page-sized, cancellable requests and stop with an error if paging is incomplete or changes. Remote selected exports use the latest loaded snapshots of selected records, even across filters. Use loadExportRows({scope,selectedIds,page,pageSize,search,sort,filters,signal}) returning an array for a dedicated endpoint or preselected IDs not loaded in the table; enforce the same server permissions. Client exports are limited to 50,000 rows; narrow filters or build a server export for larger datasets. Set exportable:false to omit the feature and exportFileName to customize the filename.
 
-Use Button and IconButton for consistent actions. Button variant is primary, secondary, neutral, success, warning, danger, info, ghost or link. Primary is the main action, secondary/neutral are supporting actions, and semantic variants convey intent with clear labels. appearance='solid'|'soft'|'outline' changes visual emphasis without changing intent; omitting it preserves each variant's default. Ghost and link stay quiet and ignore appearance. Link is a button style for actions; use TextLink or an anchor for navigation. Use loading while awaiting a mutation and disabled when unavailable. iconPosition='end' moves the icon or spinner after the label; fullWidth fits forms and cards. IconButton shares the variants, appearances, sizes and loading states. Avoid one-off button CSS and hardcoded colours; semantic fills and foregrounds adapt to custom palettes and dark mode. A danger button does not itself confirm or authorize a destructive operation.
+Use Button and IconButton for consistent actions. Button variant is primary, secondary, neutral, success, warning, danger, info, ghost or link. Primary is the main action, secondary/neutral are supporting actions, and semantic variants convey intent with clear labels. appearance='solid'|'soft'|'outline' changes visual emphasis without changing intent; omitting it preserves each variant's default. Ghost and link stay quiet and ignore appearance: ghost is a transparent button with an outline (icon-only IconButton stays bare), link looks like a link. A labelled action must never look like plain text, so do not remove the border of a button in application CSS and do not hand-roll borderless text buttons; use ghost or secondary for minor actions such as Remove, Refresh or Reset. Link is a button style for actions; use TextLink or an anchor for navigation. Use loading while awaiting a mutation and disabled when unavailable. iconPosition='end' moves the icon or spinner after the label; fullWidth fits forms and cards. IconButton shares the variants, appearances, sizes and loading states. Avoid one-off button CSS and hardcoded colours; semantic fills and foregrounds adapt to custom palettes and dark mode. A danger button does not itself confirm or authorize a destructive operation.
 
 Use Input/Select labels, accessible names on IconButton, descriptive Dialog titles, named Tabs, and chart labels. Use render(value,row) for table cells and accessor(row) for sortable/searchable derived values. Select and Input use native change events; Switch and Slider receive the new value directly. Slider and Switch are controlled. Tabs is controlled and supports arrow/Home/End navigation. Dialog is controlled with open/onClose and uses the SDK's shared entrance/exit animations, focus trap and focus restoration. Keep Dialog mounted while open changes so exit animation can finish.
 
@@ -50,7 +52,7 @@ Charts take plain data and series descriptors; formatValue formats ticks, toolti
 
 Use the saved palette's --cgw-success, --cgw-warning, --cgw-danger and --cgw-info for status colours and --cgw-chart-1 through --cgw-chart-6 for chart series. For a scoped appearance preview, import paletteVariables and PALETTE_PRESETS from the platform entry. Preserve the saved theme_custom_palette when applying a built-in palette; do not replace the user's named custom palette or save preview settings automatically.
 
-Pass numeric values and formatValue to MetricCard (or use CountUp on its own) for count-up animation; preformatted ReactNode values remain static. Charts animate on meaningful data changes, not hover or equivalent data. Use loading on cards, metrics and charts, and loadRows or loading on tables instead of building custom spinners. WidgetSkeleton offers card, metric, chart and donut shapes. Animations respect prefers-reduced-motion and can be disabled with animate={false}. Never block wheel events or contain vertical overscroll on tables; page scrolling must continue when the table cannot scroll further.
+For a clickable metric or filter tile pass onClick (and selected for the active one) to MetricCard: it becomes one button with one outline. Never wrap a card or metric in a bordered button or link. Pass numeric values and formatValue to MetricCard (or use CountUp on its own) for count-up animation; preformatted ReactNode values remain static. Charts animate on meaningful data changes, not hover or equivalent data. Use loading on cards, metrics and charts, and loadRows or loading on tables instead of building custom spinners. WidgetSkeleton offers card, metric, chart and donut shapes. Animations respect prefers-reduced-motion and can be disabled with animate={false}. Never block wheel events or contain vertical overscroll on tables; page scrolling must continue when the table cannot scroll further.
 
 Use CodeEditor for source previews, snippets and code fields rather than a plain pre/textarea or another editor dependency. It uses CodeMirror with palette-aware syntax colours, line numbers, folding, search and copy. Set language and a descriptive label; readOnly defaults to true. Editing requires readOnly={false}, value and onChange. Never execute source to display it. The editor loads lazily, respects its maxHeight and lets wheel scrolling continue to the page. Tab moves focus out of the editor.
 
@@ -227,9 +229,11 @@ export const widgets = [
         "Selection persists across pages and filters. The header selects only loaded visible rows. Control IDs when changing dataset or tenant scope.",
       ),
       prop("bulkActions", "TableBulkAction[]", "{id,label,icon?,variant?,disabled?,onAction(ids),clearSelectionOnSuccess?,refreshOnSuccess?}. Receives every selected ID. Await success or throw; busy/error feedback is built in. Success clears submitted IDs and refreshes unless opted out."),
-      prop("rowSelectable / activeRowId / defaultActiveRowId", "boolean / RowId | null", "Enable one active highlighted row for connected widgets. activeRowId controls it; defaultActiveRowId initializes internal state. Null means none, zero is valid. The active ID persists across pagination, search and refresh; clear controlled state when deleting the record or changing dataset/tenant."),
+      prop("defaultHiddenColumns", "string[]", "Column keys that start hidden. The user shows them from the Columns menu; use it for long or secondary columns so the default view fits without horizontal scrolling. Read once on mount."),
+      prop("rowSelectable / activeRowId / defaultActiveRowId", "boolean / RowId | null", "Enable one active highlighted row for connected widgets. The user selects by clicking the row, which is highlighted; no radio column is drawn. Set activeRowIndicator only when a visible radio mark per row is wanted. Never add your own radio or checkbox column for single selection. activeRowId controls it; defaultActiveRowId initializes internal state. Null means none, zero is valid. The active ID persists across pagination, search and refresh; clear controlled state when deleting the record or changing dataset/tenant."),
       prop("onActiveRowChange", "(id:RowId, row:T) => void", "Fires when the user activates a different row. Store its ID to load related detail widgets; abort obsolete requests and handle loading/error states. Re-clicking the active row keeps it active. Independent of bulk selection and Excel's selected scope."),
       prop("getRowCanActivate", "(row:T) => boolean", "Optional predicate for active-row interaction. Plain cells activate; embedded links, controls, expansion buttons and elements marked data-row-selection-ignore retain their own actions. Native activation buttons support Enter/Space and Up/Down/Home/End within the loaded view."),
+      prop("density", "'comfortable' | 'compact'", "compact gives about 30px rows with a smaller toolbar and footer for dense operational lists. Sub tables in expanded rows are always compact."),
       prop("renderExpandedRow", "(row:T) => ReactNode", "Return a nested DataTable or detail component. Mounted only while expanded and visible; child loaders are lazy and abort on collapse. Each subtable owns its query and selection."),
       prop("getRowCanExpand / getRowLabel", "(row) => boolean / (row) => string | number", "Optional leaf-row predicate and readable row name for expansion and selection controls. All rows are expandable by default; names default to IDs."),
       prop("expandedIds / onExpandedChange", "RowId[] / (ids) => void", "Optional controlled expansion across pages. Collapsing or paging away unmounts child content, resetting its local state."),
@@ -367,6 +371,11 @@ export default function Example() {
         "label / value / description",
         "ReactNode",
         "Metric title, prominent value and supporting context.",
+      ),
+      prop(
+        "onClick / selected",
+        "() => void / boolean",
+        "Make the whole metric one button (a filter tile). selected draws the active outline and sets aria-pressed. Never wrap a metric or card in your own bordered button or link: that draws two outlines.",
       ),
       prop(
         "trend / tone",
@@ -670,6 +679,38 @@ ${example('Button, IconButton', `export default function Example() {
     ),
   },
   {
+    ...widgetMetadata["disclosure"],
+    exports: ["Disclosure"],
+    description: "A collapsible section with a full-width header, chevron and padded content; content can load on first open.",
+    props: [
+      prop("title / subtitle", "ReactNode", "Header text; the muted subtitle stays on the same line and truncates."),
+      prop("defaultOpen / open / onOpenChange", "boolean / (open:boolean) => void", "Uncontrolled by default; pass open and onOpenChange to control it."),
+      prop("lazy", "boolean", "Defaults to true: children mount on first open and stay mounted, so a closed section costs nothing and a loader inside runs when the user opens it."),
+      prop("actions", "ReactNode", "Optional controls at the right of the header, outside the toggle button."),
+      prop("icon / className", "React component / string", "Optional leading icon and wrapper class."),
+    ],
+    example: example(
+      "Disclosure, Button",
+      `export default function Example() {\n  return <Disclosure title="History coverage" subtitle="3 of 3 wallets loaded" actions={<Button size="sm" variant="secondary">Refresh</Button>}>\n    <p>Mounted when the section is first opened.</p>\n  </Disclosure>;\n}`,
+    ),
+  },
+  {
+    ...widgetMetadata["error-boundary"],
+    exports: ["ErrorBoundary"],
+    description: "Contains a render error to one section and shows a retry alert, so a broken cell, sub table or card does not blank the whole page.",
+    props: [
+      prop("children", "ReactNode", "The section to protect."),
+      prop("title / description", "string", "Text of the default danger alert."),
+      prop("fallback", "ReactNode | (error, reset) => ReactNode", "Replaces the default alert."),
+      prop("resetKey", "unknown", "Changing it (a route path, a record id) clears a caught error."),
+      prop("onError", "(error, info) => void", "Report the error to logging."),
+    ],
+    example: example(
+      "ErrorBoundary, Card",
+      `export default function Example({ accountId }) {\n  return <ErrorBoundary resetKey={accountId} title="Balances could not be displayed">\n    <Card title="Balances">Balances for {accountId}</Card>\n  </ErrorBoundary>;\n}`,
+    ),
+  },
+  {
     ...widgetMetadata["skeleton"],
     exports: ["Skeleton", "WidgetSkeleton"],
     description: "A quiet loading placeholder that respects reduced motion.",
@@ -713,6 +754,32 @@ ${example('Button, IconButton', `export default function Example() {
 ];
 
 const tableWidget = widgets.find(widget => widget.id === 'data-table');
+widgets.push({
+  ...widgetMetadata['network-graph'],
+  exports: ['NetworkGraph'],
+  description: 'Force-directed relationship graph for wallets, counterparties, accounts or services. Nodes carry a category (legend + colour from --cgw-chart-*), a size and a resolved display label; edges carry weight, direction arrows and an optional dashed style. The focus node is pinned at the centre; nodes are draggable and the view pans/zooms. Selection is controlled so a table or details panel can share it. Includes an accessible node/edge data table.',
+  props: [
+    prop('nodes', 'NetworkGraphNode[]', 'Unique id per node. label is the resolved display name (person, business, account). sublabel is always drawn under the name, so put the identifier the reader needs without hovering there (wallet address; 0x addresses are shortened to start…end). details is an optional [{label,value}] list shown in the hover tooltip for resolved nodes (email, wallet type, KYC level); leave it out for unresolved nodes — the tooltip then only appears when the label had to be shortened. category maps to categories; size scales the node (event count).'),
+    prop('edges', 'NetworkGraphEdge[]', "source/target reference node ids. weight scales stroke width; direction 'forward' (default), 'both' or 'none' controls arrowheads; dashed marks non-transfer relations; label shows in the tooltip."),
+    prop('categories', 'NetworkGraphCategory[]', 'Ordered legend entries; colours follow --cgw-chart-1…6. Node categories missing here are added automatically.'),
+    prop('focusId / selectedId / onSelect / onEdgeSelect', "string | null / string | null / (id, node) => void / (source, target, edge) => void", 'focusId pins the subject at the centre of the canvas (re-centred on resize) and enlarges it; every other node is laid out by the force simulation and can be dragged. selectedId is controlled: clicking a node calls onSelect(id); clicking empty canvas calls onSelect(null).'),
+    prop('layout / maxLabelLength / height', "'force' | 'circular' / number / number", "Force by default; circular for small static sets. Labels truncate (0x addresses keep start and end). Height defaults to 360px."),
+    prop('label / loading / error / showDataTable / animate', 'string / boolean / Error | string / boolean / boolean', 'Accessible name, loading skeleton, caller error, expandable nodes+edges tables (keep enabled) and animation that respects reduced motion (layout animation off too).'),
+  ],
+  example: example('NetworkGraph', `export default function Example({ counterparties, subject, selected, onSelect }) {
+  const categories = [{ id: 'personal', label: 'Personal' }, { id: 'business', label: 'Business' }, { id: 'private', label: 'Private' }, { id: 'unknown', label: 'Unknown wallet' }, { id: 'contract', label: 'Contract' }];
+  const details = row => row.displayName ? [{ label: 'Email', value: row.email }, { label: 'Wallet type', value: row.walletCategory }] : undefined;
+  const nodes = [{ id: subject.address, label: subject.displayName, sublabel: subject.address, details: details(subject), category: subject.walletCategory, size: subject.eventCount }]
+    .concat(counterparties.map(row => ({ id: row.address, label: row.displayName ?? 'Unknown wallet', sublabel: row.address, details: details(row), category: row.isContract ? 'contract' : (row.walletCategory ?? 'unknown').toLowerCase(), size: row.events.length })));
+  const edges = counterparties.flatMap(row => [
+    row.inbound ? { source: row.address, target: subject.address, weight: row.inbound, label: row.inbound + ' transfers in' } : null,
+    row.outbound ? { source: subject.address, target: row.address, weight: row.outbound, label: row.outbound + ' transfers out' } : null,
+    row.contractCalls ? { source: subject.address, target: row.address, weight: row.contractCalls, direction: 'none', dashed: true, label: row.contractCalls + ' calls' } : null,
+  ].filter(Boolean));
+  return <NetworkGraph label="Counterparty network" focusId={subject.address} nodes={nodes} edges={edges} categories={categories}
+    selectedId={selected} onSelect={onSelect} height={420} />;
+}`),
+});
 widgets.push(...advancedChartWidgets);
 widgets.push(cardGalleryWidget,...cardWidgets);
 widgets.push(richTextWidget);

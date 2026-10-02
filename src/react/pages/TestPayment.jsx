@@ -31,7 +31,7 @@ export function TestPayment() {
     } catch (failure) { setError(failure); }
     finally { submitting.current = false; setBusy(false); }
   };
-  return <div className="mx-auto max-w-3xl space-y-5">
+  return <div className="max-w-3xl space-y-5">
     <PageHead title="Test payment" subtitle="Try your payment flow using the Cloudgate sandbox wallet."><Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.history}>All payments</Link></PageHead>
     <Notice>Sandbox only. This screen creates test payments and cannot charge real money.</Notice>
     {new URLSearchParams(window.location.search).has('checkout') && <Notice>Checkout returned to your app. Check All payments for the confirmed payment status.</Notice>}

@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   Check,
   ChevronDown,
+  ChevronRight,
   Info,
   LoaderCircle,
   SearchX,
@@ -132,10 +133,17 @@ export function MetricCard({
   duration = 700,
   children,
   className,
+  onClick,
+  selected,
 }) {
+  // A clickable metric is one button with one outline: never wrap a card in a bordered button.
+  const Root = onClick ? "button" : "section";
   return (
-    <section
-      className={cx("cgw-card cgw-metric", className)}
+    <Root
+      type={onClick ? "button" : undefined}
+      onClick={onClick}
+      aria-pressed={onClick && selected != null ? Boolean(selected) : undefined}
+      className={cx("cgw-card cgw-metric", onClick && "cgw-metric--action", selected && "is-selected", className)}
       aria-busy={loading || undefined}
     >
       <div className="cgw-metric-top">
@@ -165,7 +173,7 @@ export function MetricCard({
         {description && <span>{description}</span>}
       </div>}
       {!loading && children}
-    </section>
+    </Root>
   );
 }
 function FieldShell({ id, label, hint, error, required, children, className }) {
@@ -546,5 +554,64 @@ export function Dialog({
       </RadixDialog.Portal>
     </RadixDialog.Root>
     </DialogLayerContext.Provider>
+  );
+}
+
+/**
+ * A collapsible section. The header is one full-width button (chevron, title, muted subtitle); optional
+ * actions sit outside the button. With lazy (default) the children mount on first open and then stay
+ * mounted, so a closed section costs nothing and a loader placed inside runs when the user opens it.
+ */
+export function Disclosure({
+  title,
+  subtitle,
+  children,
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+  actions,
+  lazy = true,
+  icon: Icon,
+  className,
+  id: suppliedId,
+}) {
+  const uid = useId(),
+    id = suppliedId || uid;
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const open = controlledOpen === undefined ? internalOpen : !!controlledOpen;
+  const [mounted, setMounted] = useState(open);
+  if (open && !mounted) setMounted(true);
+  const toggle = () => {
+    if (controlledOpen === undefined) setInternalOpen(!open);
+    onOpenChange?.(!open);
+  };
+  return (
+    <section className={cx("cgw-disclosure", open && "cgw-disclosure--open", className)}>
+      <div className="cgw-disclosure-header">
+        <button
+          type="button"
+          id={`${id}-trigger`}
+          className="cgw-disclosure-trigger"
+          aria-expanded={open}
+          aria-controls={`${id}-panel`}
+          onClick={toggle}
+        >
+          <ChevronRight size={16} aria-hidden="true" className="cgw-disclosure-chevron" />
+          {Icon && <Icon size={16} aria-hidden="true" />}
+          <span className="cgw-disclosure-title">{title}</span>
+          {subtitle && <span className="cgw-disclosure-subtitle">{subtitle}</span>}
+        </button>
+        {actions && <div className="cgw-disclosure-actions">{actions}</div>}
+      </div>
+      <div
+        id={`${id}-panel`}
+        role="region"
+        aria-labelledby={`${id}-trigger`}
+        className="cgw-disclosure-panel"
+        hidden={!open}
+      >
+        {(!lazy || mounted) && children}
+      </div>
+    </section>
   );
 }

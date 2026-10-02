@@ -16,6 +16,7 @@ import { createEmailTemplateClient } from './email-template.js';
 import { createNotificationAdminClient } from './notification-admin.js';
 import { createDeveloperWorkspaceClient } from './developer-workspace.js';
 import { consumeLauncherLogin } from './launcher.js';
+import { createGatewayClient } from './gateway.js';
 
 export * from './transport.js';
 export * from './identity.js';
@@ -39,6 +40,7 @@ export * from './registration.js';
 export * from './email-template.js';
 export * from './notification-admin.js';
 export * from './developer-workspace.js';
+export * from './gateway.js';
 
 /** A per-app platform client. Configuration is explicit; the SDK reads no bundler environment. */
 export function createCloudgatePlatform(options = {}) {
@@ -57,9 +59,15 @@ export function createCloudgatePlatform(options = {}) {
   const resolveAppIdentity = createAppIdentityResolver({ ...config, resolvePublishedApp: published });
   const profile = createProfileClient({ request });
   const notifications = createNotificationsClient({ request, resolveAppIdentity });
-  let initialization;
+  let initialization, sessionCheck;
+  // One IdP round trip decides whether a refused bearer means the session is over.
+  const verifySession = () => sessionCheck ??= profile.get().then(() => true, error => {
+    if (error?.status !== 401 && error?.status !== 403) return true;
+    auth.logout({ redirectToLogin: false }); return false;
+  }).finally(() => { sessionCheck = undefined; });
   const platform = {
     config, auth, request, resolveAppIdentity, profile,
+    gateway: createGatewayClient({ auth, gatewayUrl: config.gatewayUrl, environment: config.environment, resolveAppIdentity, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, verifySession }),
     accountSecurity: createAccountSecurityClient({ request, auth }),
     users: createUsersClient({ request, resolveAppIdentity }),
     roles: createRolesClient({ request }),

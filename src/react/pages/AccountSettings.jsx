@@ -41,7 +41,7 @@ export function AccountSettings() {
     try { await navigator.clipboard.writeText(text); setNotice(message); }
     catch { setError('Could not copy. Select and copy the text manually.'); }
   };
-  return <div className="account-settings mx-auto w-full max-w-2xl">
+  return <div className="account-settings w-full max-w-2xl">
     <div className="account-settings-heading"><div><h1 className="text-xl font-semibold">Account settings</h1><p className="text-sm text-mist-muted mt-1">Email verification and sign-in security.</p></div>
       <button type="button" className="btn-ghost" onClick={refresh} disabled={busy} aria-label="Refresh security status"><RefreshCw size={16} /></button></div>
     {error && <div className="account-message is-error" role="alert">{error}{!security && <button type="button" className="btn-ghost" disabled={busy} onClick={refresh}>Try again</button>}</div>}

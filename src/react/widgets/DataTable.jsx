@@ -34,6 +34,7 @@ import {
 import { TableExport } from './TableExport.jsx';
 import { collectExportRows } from './table-export.js';
 import { FilterChips, TableFilters } from './TableFilters.jsx';
+import { ErrorBoundary } from './ErrorBoundary.jsx';
 import { EMPTY_ADVANCED_FILTERS } from './filter-model.js';
 
 const EMPTY_ROWS = [],
@@ -63,6 +64,8 @@ export function DataTable({
   selectedIds,
   onSelectionChange,
   rowSelectable = false,
+  activeRowIndicator = false,
+  defaultHiddenColumns = EMPTY_ROWS,
   activeRowId: controlledActiveRowId,
   defaultActiveRowId = null,
   onActiveRowChange,
@@ -84,6 +87,7 @@ export function DataTable({
   error: externalError,
   onRetry,
   onQueryChange,
+  density = "comfortable",
   className = "",
 }) {
   const [query, setQuery] = useState({
@@ -95,7 +99,7 @@ export function DataTable({
   const [search, setSearch] = useState(""),
     [internalAdvancedFilters, setInternalAdvancedFilters] = useState(defaultAdvancedFilters),
     [revision, setRevision] = useState(0),
-    [hidden, setHidden] = useState([]),
+    [hidden, setHidden] = useState(() => [...defaultHiddenColumns]),
     [selection, setSelection] = useState([]),
     [internalActiveRowId, setInternalActiveRowId] = useState(defaultActiveRowId),
     [expansion, setExpansion] = useState([]),
@@ -272,6 +276,9 @@ export function DataTable({
   const ids = result.rows.map(getRowId),
     allSelected = ids.length > 0 && ids.every((id) => activeIds.includes(id)),
     someSelected = ids.some((id) => activeIds.includes(id));
+  // The row itself is the click target. The button column stays for the keyboard and screen readers, and is
+  // only drawn (as a radio mark) when activeRowIndicator is set.
+  const activateCell = activeRowIndicator ? 'cgw-table-activate' : 'cgw-table-activate cgw-table-activate--hidden';
   const canActivate = row => rowSelectable && !loading && !error && pendingAction === null && (getRowCanActivate?.(row) ?? true);
   const activatableRows = result.rows.filter(canActivate);
   const tabStopRowId = activatableRows.some(row => getRowId(row) === activeRowId)
@@ -378,7 +385,7 @@ export function DataTable({
     visibleColumns.length + Number(selectable) + Number(rowSelectable) + Number(!!rowActions) + Number(!!renderExpandedRow);
   return (
     <section
-      className={`cgw-table ${className}`}
+      className={`cgw-table${density === "compact" ? " cgw-table--compact" : ""} ${className}`}
       aria-label={label}
       aria-busy={loading}
     >
@@ -489,7 +496,7 @@ export function DataTable({
           <caption className="cgw-sr-only">{label}</caption>
           <thead>
             <tr>
-              {rowSelectable && <th scope="col" className="cgw-table-activate"><span className="cgw-sr-only">Active row</span></th>}
+              {rowSelectable && <th scope="col" className={activateCell}><span className="cgw-sr-only">Active row</span></th>}
               {renderExpandedRow && <th scope="col" className="cgw-table-expand"><span className="cgw-sr-only">Expand row</span></th>}
               {selectable && (
                 <th className="cgw-table-check">
@@ -570,7 +577,7 @@ export function DataTable({
                 onClick={rowSelectable ? event => clickRow(event, row) : undefined}
                 data-expanded={expanded || undefined}
               >
-                {rowSelectable && <td className="cgw-table-activate">
+                {rowSelectable && <td className={activateCell}>
                   <button type="button" className="cgw-table-active-button"
                     ref={node => { if (node) rowButtons.current.set(id, node); else rowButtons.current.delete(id); }}
                     aria-label={`Activate row ${rowLabel}`} aria-pressed={isActive}
@@ -619,7 +626,7 @@ export function DataTable({
               </tr>
               {expanded && <tr className="cgw-table-detail-row"><td colSpan={columnCount}>
                 <div id={detailId} className="cgw-table-detail" role="region" aria-label={`Details for ${rowLabel}`}>
-                  {renderExpandedRow(row)}
+                  <ErrorBoundary title="These details could not be displayed">{renderExpandedRow(row)}</ErrorBoundary>
                 </div>
               </td></tr>}
               </Fragment>;

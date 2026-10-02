@@ -25,6 +25,8 @@ export interface AuthContextValue {
   currentUser?: { user: { id: string | number; name: string; surname: string; emailAddress: string; userName: string; photoUrl?: string; role?: string | null; rolePermissions?: IdpRolePermission[]; isEmailConfirmed?: boolean | null; promptForEmailVerification?: boolean }; tenant: { tenancyName: string } };
   headerUser?: AuthContextValue['currentUser']; logout(redirect?: boolean): void;
   updateUser(values: Pick<IdpProfile, 'name' | 'surname' | 'email'>): Promise<void>; refreshLoginDetails(options?: { silent?: boolean }): Promise<IdpProfile | undefined>;
+  /** True when a session was lost without signing out (the token could not be refreshed). */
+  sessionEnded: boolean; acknowledgeSessionEnd(): void;
   updateProfilePicture(file: Blob | null): Promise<void>;
 }
 export const AuthContext: Context<AuthContextValue | null>;

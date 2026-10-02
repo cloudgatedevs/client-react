@@ -10,6 +10,10 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
   currentUserRef.current = currentUser;
   const [error, setError] = useState(null);
   const [challenge, setChallenge] = useState(null);
+  // True when a session existed and was lost without the user signing out: the refresh token
+  // expired or the IdP refused it. RequireAuth uses it to choose between sign in and the public site.
+  const [sessionEnded, setSessionEnded] = useState(false);
+  const hadSession = useRef(false), signingOut = useRef(false);
   const challengePromise = useRef(null), mounted = useRef(false);
   const requestTwoFactor = useCallback(value => new Promise((resolve, reject) => {
     if (!mounted.current) { reject(new Error('Sign-in cancelled.')); return; }
@@ -38,7 +42,12 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
     const unsubscribe = client.auth.subscribe(session => {
       if (!active) return;
       setAuth(session || undefined);
-      if (!session) { revision.current++; setCurrentUser(undefined); }
+      if (session) { hadSession.current = true; signingOut.current = false; setSessionEnded(false); }
+      else {
+        revision.current++; setCurrentUser(undefined);
+        if (hadSession.current && !signingOut.current) setSessionEnded(true);
+        hadSession.current = false;
+      }
       if (bootstrapped && session && session.accessToken !== lastToken) {
         if (session.user?.id !== lastUser) setCurrentUser(undefined);
         lastToken = session.accessToken; lastUser = session.user?.id;
@@ -46,9 +55,13 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
       }
     });
     const stop = client.auth.startSessionMonitor();
+    // Tokens left in storage that no longer yield a session mean an earlier session has ended.
+    let stored = false;
+    try { stored = !!(globalThis.localStorage?.getItem('idp_refresh_token') || globalThis.localStorage?.getItem('idp_access_token')); } catch { /* storage unavailable */ }
     client.initialize({ onTwoFactorRequired: requestTwoFactor }).then(async session => {
       if (!active) return;
       setAuth(session || undefined);
+      if (session) hadSession.current = true; else if (stored) setSessionEnded(true);
       lastToken = session?.accessToken; lastUser = session?.user?.id; bootstrapped = true;
       if (session) await loadProfile();
       if (active) setLoading(false);
@@ -56,6 +69,7 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
     return () => { active = false; mounted.current = false; revision.current++; unsubscribe(); stop(); challengePromise.current?.reject(new Error('Sign-in cancelled.')); challengePromise.current = null; };
   }, [client, loadProfile, requestTwoFactor]);
   const logout = useCallback((redirect = true) => {
+    signingOut.current = true;
     client.auth.logout({ redirectToLogin: false });
     if (redirect && onLogoutRedirect) onLogoutRedirect();
     else if (redirect && publicAccess) window.location.assign('/');
@@ -73,7 +87,8 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
       } : previous);
     }
   }, [client]);
-  const value = useMemo(() => ({ loading, auth, currentUser, error, headerUser: currentUser, logout, updateUser, updateProfilePicture, refreshLoginDetails: loadProfile }), [loading, auth, currentUser, error, logout, updateUser, updateProfilePicture, loadProfile]);
+  const acknowledgeSessionEnd = useCallback(() => setSessionEnded(false), []);
+  const value = useMemo(() => ({ loading, auth, currentUser, error, headerUser: currentUser, logout, updateUser, updateProfilePicture, refreshLoginDetails: loadProfile, sessionEnded, acknowledgeSessionEnd }), [loading, auth, currentUser, error, logout, updateUser, updateProfilePicture, loadProfile, sessionEnded, acknowledgeSessionEnd]);
   if (challenge) return <TwoFactorLogin client={client} challenge={challenge}
     onSuccess={tokens => { challengePromise.current?.resolve(tokens); challengePromise.current = null; setChallenge(null); }}
     onCancel={() => { challengePromise.current?.reject(new Error('Sign-in cancelled.')); challengePromise.current = null; setChallenge(null); }} />;

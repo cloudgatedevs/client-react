@@ -3,19 +3,8 @@ import { Alert, Button, EmptyState, WidgetSkeleton } from './primitives.jsx';
 import { DataTable } from './DataTable.jsx';
 import { useReducedMotion } from './motion.js';
 import { buildAdvancedChart } from './advanced-chart-model.js';
+import { readTheme } from './chart-theme.js';
 
-// Resolve rgb(), color-mix() and inherited palette variables before passing them to SVG.
-function readTheme(element) {
-  const probe=document.createElement('span');
-  probe.style.display='none';element.append(probe);
-  const resolve=value=>{probe.style.color=value;return getComputedStyle(probe).color;};
-  const colors=Array.from({length:6},(_,i)=>resolve(`var(--cgw-chart-${i+1})`));
-  const result={colors,text:resolve('rgb(var(--mist))'),muted:resolve('rgb(var(--mist-muted))'),
-    border:resolve('rgb(var(--ink-700))'),surface:resolve('rgb(var(--ink-850))'),
-    success:resolve('rgb(var(--cgw-success))'),danger:resolve('rgb(var(--cgw-danger))'),
-    fontFamily:getComputedStyle(element).fontFamily};
-  probe.remove();return result;
-}
 export function AdvancedChart({ kind, ...props }) {
   const {label='Chart',height=320,loading=false,error,showDataTable=true,animate=true,duration=700}=props;
   const host=useRef(null),container=useRef(null),chart=useRef(null);

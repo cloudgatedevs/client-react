@@ -22,16 +22,18 @@ export const Notice = ({ children, error = false }) =>
       <div className="min-w-0">{children}</div>
     </div>
   ) : null;
-export function Modal({ open, title, description, onClose, onAfterClose, returnFocusRef, onEscapeKeyDown, children }) {
+// The heading and the footer stay in place; only the body scrolls. Pass the action buttons as footer, or leave
+// them as the last row of the content (or of its form), which then sticks to the bottom of the body.
+export function Modal({ open, title, description, onClose, onAfterClose, returnFocusRef, onEscapeKeyDown, footer, children }) {
   const { token, layer, release } = useDialogLayer(open);
   // Callers clear their form model on close. Retain the last committed content
   // just long enough for Radix's exit animation, then release it.
   const [lastContent, setLastContent] = useState(null);
   const returnFocus = useRef(null);
   useLayoutEffect(() => {
-    if (open) setLastContent({ title, description, children });
-  }, [open, title, description, children]);
-  const content = open ? { title, description, children } : lastContent;
+    if (open) setLastContent({ title, description, footer, children });
+  }, [open, title, description, footer, children]);
+  const content = open ? { title, description, footer, children } : lastContent;
   return (
     <DialogLayerContext.Provider value={token}>
     <Dialog.Root
@@ -43,7 +45,7 @@ export function Modal({ open, title, description, onClose, onAfterClose, returnF
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-backdrop fixed inset-0" style={{ zIndex: layer }} />
         <Dialog.Content
-          className="modal-panel card fixed left-1/2 top-1/2 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-5 overflow-y-auto p-6 outline-none"
+          className="modal-panel card fixed left-1/2 top-1/2 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden outline-none"
           style={{ zIndex: layer + 1 }}
           onOpenAutoFocus={() => { returnFocus.current = document.activeElement; }}
           onCloseAutoFocus={(event) => {
@@ -73,7 +75,8 @@ export function Modal({ open, title, description, onClose, onAfterClose, returnF
               <X size={18} />
             </Dialog.Close>
           </div>
-          {content?.children}
+          <div className="modal-body">{content?.children}</div>
+          {content?.footer && <footer className="modal-foot">{content.footer}</footer>}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

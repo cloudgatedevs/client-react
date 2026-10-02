@@ -499,6 +499,32 @@ export function EmptyState(props: {
   icon?: Icon;
   action?: React.ReactNode;
 }): React.JSX.Element;
+export class ErrorBoundary extends React.Component<{
+  children?: React.ReactNode;
+  /** Replaces the default alert. A function receives the error and a reset callback. */
+  fallback?: React.ReactNode | ((error: Error, reset: () => void) => React.ReactNode);
+  title?: string;
+  description?: string;
+  /** Changing this value (a route path, a record id) clears a caught error. */
+  resetKey?: unknown;
+  onError?: (error: Error, info: React.ErrorInfo) => void;
+}> {}
+export function Disclosure(props: {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  children?: React.ReactNode;
+  /** Controlled state; omit to let the widget manage it from defaultOpen. */
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Controls at the right of the header, outside the toggle button. */
+  actions?: React.ReactNode;
+  /** Defaults to true: children mount on first open and stay mounted afterwards. */
+  lazy?: boolean;
+  icon?: Icon;
+  className?: string;
+  id?: string;
+}): React.JSX.Element;
 export function Skeleton(props: {
   width?: React.CSSProperties["width"];
   height?: React.CSSProperties["height"];
@@ -635,6 +661,8 @@ export interface DataTableProps<T> {
   loadExportRows?: (query: TableExportQuery) => Promise<T[]>;
   /** Mounted only while expanded and visible. Return a nested DataTable for lazy subtables. */
   renderExpandedRow?: (row: T) => React.ReactNode;
+  /** compact gives about 30px rows with a smaller toolbar and footer; sub tables in expanded rows are always compact. */
+  density?: 'comfortable' | 'compact';
   getRowCanExpand?: (row: T) => boolean;
   /** Accessible row name for selection and expansion controls; defaults to the row ID. */
   getRowLabel?: (row: T) => string | number;
@@ -713,6 +741,17 @@ export function TreemapChart(props: HierarchyChartProps): React.JSX.Element;
 export function SunburstChart(props: HierarchyChartProps): React.JSX.Element;
 export function SankeyChart(props: NetworkChartProps): React.JSX.Element;
 export function GraphChart(props: NetworkChartProps): React.JSX.Element;
+export interface NetworkGraphNodeDetail {label:string;value?:string|number|null;}
+export interface NetworkGraphNode {id:string;label?:string;sublabel?:string;details?:NetworkGraphNodeDetail[];category?:string;size?:number;[key:string]:unknown;}
+export interface NetworkGraphEdge {source:string;target:string;weight?:number;direction?:'forward'|'both'|'none';dashed?:boolean;label?:string;kind?:string;[key:string]:unknown;}
+export interface NetworkGraphCategory {id:string;label?:string;}
+export interface NetworkGraphProps extends AdvancedChartBase {
+  nodes?:NetworkGraphNode[];edges?:NetworkGraphEdge[];categories?:NetworkGraphCategory[];
+  focusId?:string|null;selectedId?:string|null;onSelect?:(id:string|null,node:NetworkGraphNode|null)=>void;
+  onEdgeSelect?:(source:string,target:string,edge:NetworkGraphEdge)=>void;layout?:'force'|'circular';maxLabelLength?:number;
+  emptyTitle?:string;emptyDescription?:string;fitLabel?:string;hint?:string|false;
+}
+export function NetworkGraph(props: NetworkGraphProps): React.JSX.Element;
 export function BarChart(props: ChartProps): React.JSX.Element;
 export function DonutChart(
   props: Omit<ChartProps, "series" | "xKey" | "height"> & {

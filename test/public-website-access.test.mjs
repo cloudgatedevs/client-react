@@ -144,3 +144,30 @@ test('settings editor saves both access flags with the revision and respects vie
     } finally { await view.close(); }
   }
 });
+
+test('a session that ends in the back office returns to an open website, otherwise to sign in', async () => {
+  // Open website (enabled, no sign-in required): the visitor lands on the public home, not on the login page.
+  const open = makeClient({ signedIn: true });
+  const view = await mount(website(open.client, open.calls, '/backoffice'));
+  try {
+    assert.match(view.host.textContent, /Back office access required/);
+    await act(async () => open.client.auth.logout());
+    assert.match(view.host.textContent, /Member wallet/); assert.deepEqual(open.calls.login, []);
+  } finally { await view.close(); }
+  // Website that requires sign-in, or is disabled: sign in again and come back to the same page.
+  for (const values of [{ require_public_website_login: 'true' }, { enable_public_website: 'false' }]) {
+    const closed = makeClient({ signedIn: true, values });
+    const gated = await mount(website(closed.client, closed.calls, '/backoffice'));
+    try {
+      await act(async () => closed.client.auth.logout());
+      assert.doesNotMatch(gated.host.textContent, /Member wallet/); assert.equal(closed.calls.login.length, 1);
+    } finally { await gated.close(); }
+  }
+});
+
+test('a guest opening the back office signs in even when the website is open', async () => {
+  const { client, calls } = makeClient();
+  const view = await mount(website(client, calls, '/backoffice'));
+  try { assert.equal(calls.login.length, 1); assert.doesNotMatch(view.host.textContent, /Member wallet/); }
+  finally { await view.close(); }
+});
