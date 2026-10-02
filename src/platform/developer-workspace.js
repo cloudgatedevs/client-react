@@ -1,10 +1,12 @@
 /** The app receives a one-use launch URL, never an ABP access or refresh token. */
 export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, projectPath = '' }) {
+  // No configured controller (a fresh template) opens every controller the linked account can access; the
+  // session always carries that account's own permissions. Set VITE_CLOUDGATE_API_PROJECT to focus one controller.
   const configuredFocus = String(projectPath ?? '').trim();
-  const focus = configuredFocus.replace(/^\/+|\/+$/g, '');
+  const focus = configuredFocus === '' ? '*' : configuredFocus.replace(/^\/+|\/+$/g, '');
   return {
     async open({ returnUrl, sdkVersion, sdkSource }, options) {
-      if (!focus) throw new Error('Set VITE_CLOUDGATE_API_PROJECT to a controller path, or "*" for all accessible controllers, before opening developer mode.');
+      if (!focus) throw Object.assign(new Error('Developer mode is not set up for this app yet. Set VITE_CLOUDGATE_API_PROJECT to the Cloudgate controller path this app uses, or to * for every controller your account can access, then redeploy the app.'), { code: 'developer-controller-required' });
       if (focus !== '*' && !/^[a-zA-Z0-9_-]{1,256}$/.test(focus)) throw new Error('The configured developer controller path is invalid. Use one controller path or "*".');
       const app = await resolveAppIdentity();
       const url = new URL(returnUrl);

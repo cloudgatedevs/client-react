@@ -14,7 +14,9 @@ export function DeveloperDock() {
   const { currentUser } = useAuthContext();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false), [launch, setLaunch] = useState(null);
-  const [status, setStatus] = useState('idle'), [error, setError] = useState('');
+  // error: { kind: 'connect' | 'access' | 'setup' | 'ended' | 'failed', message }
+  const [status, setStatus] = useState('idle'), [error, setErrorState] = useState(null);
+  const setError = (message, kind = 'failed') => setErrorState(message ? { kind, message } : null);
   const [sdkUpdate, setSdkUpdate] = useState(false);
   useEffect(() => {
     setSdkUpdate(false);
@@ -54,7 +56,16 @@ export function DeveloperDock() {
       const result = await client.developerWorkspace.open({ returnUrl: window.location.href, sdkVersion, sdkSource }, { signal: abort.current.signal });
       if (attempt === generation.current) setLaunch(result);
     } catch (err) {
-      if (attempt === generation.current) { setStatus('error'); setError(err.message || 'Developer mode could not be opened.'); }
+      if (attempt !== generation.current) return;
+      setStatus('error');
+      if (err?.code === 'developer-controller-required' || err?.body?.code === 'developer-controller-required') setError(err.message, 'setup');
+      else if (err?.status === 403 && err?.body?.code === 'developer-link-required') {
+        // Tell someone who never connected a Cloudgate account how to connect, rather than to reconnect.
+        let linked = true;
+        try { linked = (await client.accountLink.get({ signal: abort.current?.signal }))?.linked === true; } catch { /* keep the server's message */ }
+        if (attempt !== generation.current) return;
+        setError(err.message, linked ? 'access' : 'connect');
+      } else setError(err?.message || 'Developer mode could not be opened.');
     }
   };
   useEffect(() => {
@@ -68,7 +79,8 @@ export function DeveloperDock() {
       else if (event.data.type === 'ended') { reset(); }
       else {
         setStatus('error');
-        setError(event.data.type === 'expired' ? 'Developer access ended. Reopen the workspace to verify your linked account.' : 'Cloudgate could not open this developer session. Reconnect to try again.');
+        if (event.data.type === 'expired') setError('Your developer session ended. Open developer mode again to continue.', 'ended');
+        else setError('Cloudgate could not open this developer session. Try again.');
         setLaunch(null);
       }
     };
@@ -129,9 +141,23 @@ export function DeveloperDock() {
           <div className="developer-panel-body">
             {status === 'connecting' && <div className="developer-connecting" role="status"><RefreshCw size={16} className="animate-spin" />Connecting to Cloudgate…</div>}
             {status === 'ending' && <div className="developer-connecting" role="status">Ending developer session…</div>}
-            {error && <div className="developer-recovery"><Terminal size={28} /><h2>Developer access</h2><p role="alert">{error}</p>
-              <p>Developer mode uses the permissions of your linked Cloudgate account. Manage the link in your profile.</p>
-              <div><button className="btn-primary" onClick={start}>Reconnect</button><button className="btn-ghost" onClick={() => { end(); navigate(backofficePath('/profile')); }}>Open my profile</button></div></div>}
+            {error && <div className="developer-recovery" data-kind={error.kind}><Terminal size={28} />
+              {error.kind === 'connect' ? <>
+                <h2>Connect your Cloudgate account</h2>
+                <p role="alert">Developer mode opens Cloudgate, where you build this app's APIs and workflows, with the permissions of your Cloudgate account.</p>
+                <p>Connect your Cloudgate account in your profile, then open developer mode again.</p>
+                <div><button className="btn-primary" onClick={() => { end(); navigate(backofficePath('/profile')); }}>Connect Cloudgate account</button><button className="btn-ghost" onClick={start}>Try again</button></div>
+              </> : error.kind === 'access' ? <>
+                <h2>Developer access unavailable</h2>
+                <p role="alert">{error.message}</p>
+                <p>Your Cloudgate account is connected. Developer mode also needs developer access in this app and access to this Cloudgate project.</p>
+                <div><button className="btn-primary" onClick={start}>Try again</button><button className="btn-ghost" onClick={() => { end(); navigate(backofficePath('/profile')); }}>Open my profile</button></div>
+              </> : <>
+                <h2>{error.kind === 'ended' ? 'Developer session ended' : error.kind === 'setup' ? 'Developer mode is not set up' : 'Developer mode could not open'}</h2>
+                <p role="alert">{error.message}</p>
+                <div><button className="btn-primary" onClick={start}>{error.kind === 'ended' ? 'Open again' : 'Try again'}</button></div>
+              </>}
+            </div>}
             {launch && <iframe ref={frame} title="Cloudgate developer workspace" src={launch.frameUrl}
               allow="microphone" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals allow-popups allow-popups-to-escape-sandbox" referrerPolicy="no-referrer" />}
           </div>

@@ -58,6 +58,8 @@ export const SearchSelect = forwardRef(function SearchSelect({
     if (typeof forwardedRef === 'function') forwardedRef(node);
     else if (forwardedRef) forwardedRef.current = node;
   }, [forwardedRef]);
+  // Focus returned to the input after a choice must not reopen the list.
+  const reopenBlocked = useRef(false);
   function close() { setOpen(false); setSearch(null); setActive(-1); }
   function choose(option) {
     if (locked || option?.disabled) return;
@@ -66,7 +68,9 @@ export const SearchSelect = forwardRef(function SearchSelect({
     setChosen(option || null);
     onChange?.(next, option || null);
     close();
+    reopenBlocked.current = true;
     input.current?.focus();
+    queueMicrotask(() => { reopenBlocked.current = false; });
   }
   useEffect(() => { setActive(-1); }, [search, results.options]);
   useEffect(() => { if (locked) close(); }, [locked]);
@@ -117,7 +121,7 @@ export const SearchSelect = forwardRef(function SearchSelect({
           if (required && !hasValue) return validationMessages?.required || 'Choose an option.';
           return validate?.(hasValue ? String(current) : '', data);
         }}
-        onFocus={event => { if (!locked) { setOpen(true); event.currentTarget.select(); } }}
+        onFocus={event => { if (!locked && !reopenBlocked.current) { setOpen(true); event.currentTarget.select(); } }}
         onClick={() => { if (!locked) setOpen(true); }}
         onChange={event => { setSearch(event.target.value); setOpen(true); }}
         onBlur={event => { if (!popup.current?.contains(event.relatedTarget)) close(); }}
@@ -132,7 +136,11 @@ export const SearchSelect = forwardRef(function SearchSelect({
     <Popover.Portal>
       <Popover.Content ref={popup} role="presentation" className="cgw-search-popover" style={popupStyle} sideOffset={5} align="start" collisionPadding={10} hideWhenDetached
         onOpenAutoFocus={event => event.preventDefault()} onCloseAutoFocus={event => event.preventDefault()}
-        onInteractOutside={event => { if (wrapper.current?.contains(event.target)) event.preventDefault(); }}>
+        onInteractOutside={event => { if (wrapper.current?.contains(event.target)) event.preventDefault(); }}
+        // Keep focus in the input when the list's scrollbar, status or footer is pressed.
+        onMouseDown={event => event.preventDefault()}
+        // The list is portaled outside a modal Dialog, whose scroll lock would otherwise cancel wheel and touch scrolling here.
+        onWheel={event => event.stopPropagation()} onTouchMove={event => event.stopPropagation()}>
         <div className="cgw-search-status" role="status">{status}</div>
         <ul id={listId} role="listbox" aria-label={typeof label === 'string' ? label : ariaLabel || 'Search options'} aria-busy={results.loading}>
           {results.options.map((option, index) => <li key={String(option.value)} id={`${listId}-${index}`} role="option"

@@ -34,11 +34,20 @@ test('Explicit controller focus is sent and must be confirmed by the server', as
     await assert.rejects(api.open({ returnUrl: 'https://app.test' }), /did not apply.*focus/);
   }
   const invalid = createDeveloperWorkspaceClient({ projectPath: '/', request: () => assert.fail('Must not launch'), resolveAppIdentity: () => assert.fail('Must not resolve') });
-  await assert.rejects(invalid.open({ returnUrl: 'https://app.test' }), /VITE_CLOUDGATE_API_PROJECT/);
+  await assert.rejects(invalid.open({ returnUrl: 'https://app.test' }), error => /VITE_CLOUDGATE_API_PROJECT/.test(error.message) && error.code === 'developer-controller-required');
 });
 
-test('Empty configuration never grants all controllers and wildcard must be confirmed', async () => {
-  for (const projectPath of [undefined, '', ' ', '/', '*/orders', 'orders/*']) {
+test('Empty configuration opens all accessible controllers, which the server must confirm', async () => {
+  for (const projectPath of [undefined, '', ' ']) {
+    let sent;
+    const api = createDeveloperWorkspaceClient({ projectPath, resolveAppIdentity: async () => ({ webAppId: 'app' }),
+      request: async (_path, options) => { sent = options.body; return { frameUrl: 'https://hub.test/developer', controllerPath: '*' }; } });
+    assert.equal((await api.open({ returnUrl: 'https://app.test' })).controllerPath, '*'); assert.equal(sent.projectPath, '*');
+  }
+});
+
+test('Invalid configuration never launches and a wildcard must be confirmed', async () => {
+  for (const projectPath of ['/', '*/orders', 'orders/*']) {
     const api = createDeveloperWorkspaceClient({ projectPath, request: () => assert.fail('Must not launch'), resolveAppIdentity: () => assert.fail('Must not resolve') });
     await assert.rejects(api.open({ returnUrl: 'https://app.test' }));
   }
