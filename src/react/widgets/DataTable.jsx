@@ -36,6 +36,7 @@ import { collectExportRows } from './table-export.js';
 import { FilterChips, TableFilters } from './TableFilters.jsx';
 import { ErrorBoundary } from './ErrorBoundary.jsx';
 import { EMPTY_ADVANCED_FILTERS } from './filter-model.js';
+import { agentWatchProps } from '../../platform/agent-watch.js';
 
 const EMPTY_ROWS = [],
   EMPTY_FILTERS = {};
@@ -43,6 +44,7 @@ const defaultRowId = (row) => row.id;
 /** Remote loading stays page-sized; the loader owns authorization and server-side filtering. */
 export function DataTable({
   columns,
+  feed,
   rows = EMPTY_ROWS,
   loadRows,
   getRowId = defaultRowId,
@@ -388,6 +390,7 @@ export function DataTable({
       className={`cgw-table${density === "compact" ? " cgw-table--compact" : ""} ${className}`}
       aria-label={label}
       aria-busy={loading}
+      {...agentWatchProps(feed)}
     >
       <div className="cgw-table-toolbar">
         <div className="cgw-table-tools">

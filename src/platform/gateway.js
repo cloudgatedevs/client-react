@@ -8,16 +8,23 @@ import { createCloudgateClient } from '@cloudgatedevs/cloudgate-client';
  * problem (the workflow or its upstream refused the call) and is returned to the caller. Only
  * when the IdP will not issue a new token and the stored one is no longer valid is the session
  * ended, which sends the user to sign in again (see RequireAuth).
+ *
+ * When the gateway project enforces API-key validation, pass `apiKey` and `apiSecret`: every request is
+ * then also signed with X-Api-Key / X-Timestamp / X-Authentication-Signature (HMAC-SHA512) by
+ * @cloudgatedevs/cloudgate-client, alongside the IdP bearer. Both are required for signing; either
+ * one alone is ignored and requests go out unsigned.
  */
-export function createGatewayClient({ auth, gatewayUrl, environment = 'sbx', resolveAppIdentity, fetchImpl, timeoutMs, verifySession }) {
+export function createGatewayClient({ auth, gatewayUrl, environment = 'sbx', resolveAppIdentity, fetchImpl, timeoutMs, verifySession, apiKey = '', apiSecret = '' }) {
   const origin = String(gatewayUrl || '').trim().replace(/\/+$/, '').replace(/\/(sbx|prod|sandbox|production)$/i, '');
   const clients = new Map();
   const segment = value => /^prod/i.test(String(value || '')) ? 'prod' : 'sbx';
+  const key = String(apiKey || '').trim(), secret = String(apiSecret || '').trim();
+  const signing = key && secret ? { apiKey: key, apiSecret: secret } : {};
   async function client() {
     if (!origin) throw new Error('Set gatewayUrl to the workflow gateway host of this app.');
     let env = segment(environment);
     try { env = segment((await resolveAppIdentity?.())?.environment ?? environment); } catch { /* keep the configured environment */ }
-    if (!clients.has(env)) clients.set(env, createCloudgateClient({ baseUrl: origin, environment: env, fetch: fetchImpl, ...(timeoutMs ? { timeoutMs } : {}) }));
+    if (!clients.has(env)) clients.set(env, createCloudgateClient({ baseUrl: origin, environment: env, fetch: fetchImpl, ...signing, ...(timeoutMs ? { timeoutMs } : {}) }));
     return clients.get(env);
   }
   async function request(path, options = {}) {

@@ -213,6 +213,8 @@ export function createNotificationsClient(options: { request: PlatformRequest; r
   unreadCount(): Promise<{ unreadCount: number }>; read(id: string): Promise<Record<string, any>>; readAll(): Promise<Record<string, any>>;
 };
 export interface NotificationSocketOptions {
+  /** Receives `ready` and `agentsChanged` frames for the AI agents provider. */
+  onAgents?: (message: AgentsChangedMessage) => void;
   apiUrl: string; environment: string; getAccessToken: () => Promise<string | null> | string | null;
   onChange: () => void; onStatus?: (status: string) => void; WebSocketImpl?: typeof WebSocket;
   retryDelayMs?: number; heartbeatMs?: number; handshakeMs?: number;
@@ -263,14 +265,18 @@ export interface GatewayClient {
   patch<T = any>(path: string, body?: unknown, options?: GatewayRequestOptions): Promise<T>;
   delete<T = any>(path: string, options?: GatewayRequestOptions): Promise<T>;
 }
-export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean> }): GatewayClient;
+export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean>;
+  /** Gateway API key; with `apiSecret`, requests are signed (X-Api-Key, X-Timestamp, X-Authentication-Signature) in addition to the IdP bearer. */
+  apiKey?: string; apiSecret?: string }): GatewayClient;
 export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'idpBaseUrl'> {
   idpBaseUrl?: string; apiUrl?: string; returnUrl?: string; webAppId?: string; environment?: string;
   projectPath?: string; gatewayUrl?: string; mediaFolder?: string; timeoutMs?: number; auth?: CloudgateAuth;
+  /** Workflow-gateway signing credentials for projects that enforce API-key validation (e.g. VITE_API_KEY / VITE_API_SECRET). */
+  apiKey?: string; apiSecret?: string;
   resolvePublishedApp?: () => Promise<PublishedApp | null>;
 }
 export interface CloudgatePlatform {
-  config: Readonly<{ idpBaseUrl: string; apiUrl: string; tenancyName: string; returnUrl: string; webAppId: string; environment: string; projectPath: string; gatewayUrl: string }>;
+  config: Readonly<{ idpBaseUrl: string; apiUrl: string; tenancyName: string; returnUrl: string; webAppId: string; environment: string; projectPath: string; gatewayUrl: string; apiKey: string }>;
   auth: CloudgateAuth; request: PlatformRequest; resolveAppIdentity: IdentityResolver;
   /** Workflow gateway calls as the signed-in user: refreshes the bearer, retries one 401, ends a dead session. */
   gateway: GatewayClient;
@@ -285,6 +291,72 @@ export interface CloudgatePlatform {
   analytics: ReturnType<typeof createAppAnalyticsClient>; logs: ReturnType<typeof createWorkflowLogsClient>;
   payments: ReturnType<typeof createPaymentsClient>;
   notifications: ReturnType<typeof createNotificationsClient> & { connect(options: Omit<NotificationSocketOptions, 'apiUrl' | 'environment' | 'getAccessToken'>): () => void };
+  /** AI agents, run on the server as the Cloudgate account linked in the user's profile. */
+  agents: AgentsClient;
   initialize(options?: { onTwoFactorRequired?: TwoFactorHandler }): Promise<CloudgateSession | null>; loginUrl(returnUrl?: string): string; login(returnUrl?: string): string; signupUrl(returnUrl?: string): string;
 }
 export function createCloudgatePlatform(options?: CloudgatePlatformOptions): CloudgatePlatform;
+export const AGENT_SEVERITY: { readonly info: 0; readonly warning: 1; readonly critical: 2 };
+export const AGENT_INSIGHT_STATUS: { readonly open: 0; readonly handled: 1; readonly dismissed: 2 };
+export const AGENT_SEVERITY_LABELS: readonly ['Info', 'Warning', 'Critical'];
+export interface AgentsChangedMessage { type: 'ready' | 'agentsChanged'; environment: 'sbx' | 'prod'; agentId?: string; conversationId?: string | null; isShared?: boolean; kind?: string }
+export interface BackofficeAgent {
+  id: string; name: string; typeKey: string; typeDisplayName: string; description?: string | null; avatarKey?: string | null; avatarColor?: string | null; avatarUrl: string;
+  status: 0 | 1; openInsightCount: number; scheduledTaskCount: number; lastActivityAtUtc?: string | null;
+  /** The agent's chat group for the linked account; null when that account is not a member. */
+  chatConversationId?: string | null; unreadCount: number; lastMessagePreview?: string | null; people: Array<{ personId: number; name: string }>;
+  /** True when the agent has the Testing tools it needs to run a workflow on a schedule. */
+  canRunWorkflows: boolean;
+}
+export interface BackofficeAgentsOverview { agents: BackofficeAgent[]; openCritical: number; openWarning: number; openInfo: number; latestInsightAtUtc?: string | null; canApprove: boolean; canChat: boolean; myPersonId: number }
+export interface BackofficeInsight { id: string; agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; severity: 0 | 1 | 2; title: string; bodyMarkdown?: string | null; status: 0 | 1 | 2; createdAtUtc: string; conversationId?: string | null; proposedAction?: string | null; approvedBy?: string | null; resolvedBy?: string | null }
+/** A message of the agent chat group. Sender person 0 is the agent; finding messages carry the insight fields. */
+export interface AgentChatMessage {
+  id: string; conversationId: string; senderPersonId: number; content: string; creationTimeUtc: string; parentMessageId?: string | null;
+  isEdited: boolean; isDeleted: boolean; isSystem: boolean; replyCount: number; unreadReplyCount: number; lastReplyAtUtc?: string | null;
+  insightId?: string | null; insightSeverity?: 0 | 1 | 2 | null; insightStatus?: 0 | 1 | 2 | null; insightProposedAction?: string | null; insightResolvedBy?: string | null; insightApprovedBy?: string | null;
+}
+export interface AgentChatStream { conversationId: string; rootMessageId?: string | null; text?: string | null }
+export interface AgentsClient {
+  overview(options?: PlatformRequestOptions): Promise<BackofficeAgentsOverview>;
+  attention(query?: { skip?: number; take?: number; includeHandled?: boolean; agentId?: string }, options?: PlatformRequestOptions): Promise<{ items: BackofficeInsight[]; totalCount: number }>;
+  acknowledge(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>; dismiss(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
+  reopen(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>; approve(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
+  chatMessages(query: { conversationId: string; beforeUtc?: string; take?: number }, options?: PlatformRequestOptions): Promise<{ items: AgentChatMessage[]; streams: AgentChatStream[] }>;
+  chatThread(query: { conversationId: string; rootMessageId: string }, options?: PlatformRequestOptions): Promise<{ items: AgentChatMessage[] }>;
+  chatSend(input: { conversationId: string; content: string; replyToMessageId?: string }, options?: PlatformRequestOptions): Promise<AgentChatMessage>;
+  chatRead(conversationId: string, options?: PlatformRequestOptions): Promise<{ read: boolean }>;
+  watchResolve(routes: AgentWatchRoute[], options?: PlatformRequestOptions): Promise<{ items: Array<{ key: string; workflows: AgentWatchWorkflow[] }>; canWatch: boolean }>;
+  watchWorkflows(options?: PlatformRequestOptions): Promise<{ items: AgentWatchWorkflow[]; canWatch: boolean }>;
+  watchList(query?: { agentId?: string }, options?: PlatformRequestOptions): Promise<{ items: AgentWatchWorkflow[]; canWatch: boolean }>;
+  watchSet(input: { agentId: string; endpointId: string; attached?: boolean; watchPrompt?: string; watchSandbox?: boolean; watchProduction?: boolean }, options?: PlatformRequestOptions): Promise<AgentWatchWorkflow>;
+  watchScheduleSet(input: AgentWatchCadence & { id?: string; agentId: string; endpointId: string; prompt: string; isEnabled?: boolean; sampleUrl?: string; enableWorkflowRuns?: boolean }, options?: PlatformRequestOptions): Promise<AgentWatchWorkflow>;
+  watchScheduleDelete(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
+  watchScheduleRun(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
+  watchScheduleTest(id: string, options?: PlatformRequestOptions): Promise<{ statusCode: number; ok: boolean; signedIn: boolean; responseTimeMs: number; preview: string }>;
+}
+export interface AgentWatchFeed { route: string; method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; label?: string }
+export interface AgentWatchRoute { key?: string; path: string; method?: string; label?: string; /** The call the page made (path and query). */ url?: string }
+export interface AgentWatch { agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; watchPrompt?: string | null; watchSandbox: boolean; watchProduction: boolean }
+export interface AgentWatchSchedule { id: string; agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; prompt: string; intervalMinutes: number; timeOfDayUtcMinutes?: number | null; dayOfWeek?: number | null; isEnabled: boolean; isProduction: boolean; sampleRequestId?: string | null; lastRunAtUtc?: string | null; nextRunAtUtc: string }
+/** `watches` fire on every run (actions); `schedules` are checks the agent makes itself on a cadence (reads). */
+export interface AgentWatchWorkflow { endpointId: string; name?: string | null; route: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'ANY'; /** The workflow starts with a sign-in check; a scheduled check of it runs as the app user who created the schedule. */ requiresSignIn: boolean; watches: AgentWatch[]; schedules: AgentWatchSchedule[] }
+export interface AgentWatchCadence { intervalMinutes?: number; timeOfDayUtcMinutes?: number | null; dayOfWeek?: number | null }
+export const WATCH_INTERVALS: ReadonlyArray<{ minutes: number; label: string }>;
+/** What an undeclared element is (an action or data) and its label, for matching it to a workflow. */
+export function describeWatchElement(element: Element | null): { kind: 'action' | 'data'; label: string };
+export function watchWords(text: string): string[];
+/** Orders workflows by how likely each is behind an element: shared words, workflows the page called, and read or write fit. */
+export function rankWorkflows<T extends AgentWatchWorkflow>(workflows: T[], options?: { label?: string; kind?: 'action' | 'data'; calledIds?: Iterable<string>; /** The page's own path without the app's base path: it names the resource in the backend's words. */ context?: string; /** Routes the page called: a weak extra hint for actions. */ routes?: string }): Array<T & { score: number; matched: boolean }>;
+export function routeMatches(route: string, path: string): boolean;
+export function lastCallFor(entries: Array<{ name: string; startTime?: number }>, gatewayUrl: string, route: string): string;
+export function localScheduleToUtc(local?: { time?: string; day?: number }, offsetMinutes?: number): { timeOfDayUtcMinutes?: number; dayOfWeek?: number };
+export function utcScheduleToLocal(utc?: AgentWatchCadence, offsetMinutes?: number): { time?: string; day?: number };
+export function describeCadence(cadence?: AgentWatchCadence, offsetMinutes?: number): string;
+/** Attributes that make an element a drop target for AI agents: the route a data component loads from, or the route an action calls. */
+export function agentWatchProps(feed?: string | AgentWatchFeed | null): Record<string, string>;
+export function readWatchTarget(element: Element | null): (AgentWatchRoute & { key: string; label: string }) | null;
+export function watchRouteKey(route: { path: string; method?: string }): string;
+export function gatewayRoutesFromEntries(entries: Array<{ name: string; startTime?: number }>, gatewayUrl: string, since?: number, limit?: number): Array<AgentWatchRoute & { key: string; label: string }>;
+export function createAgentsClient(options: { request: PlatformRequest; resolveAppIdentity?: IdentityResolver; projectPath?: string }): AgentsClient;
+export function agentsAccessState(error: unknown): 'unlinked' | 'forbidden' | 'unavailable' | 'error';

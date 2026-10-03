@@ -58,3 +58,33 @@ test('a refused bearer that still looks valid is checked with the IdP, which end
   await assert.rejects(platform.gateway.get('admin-reads/blockchains'), error => error.status === 401);
   assert.equal(platform.auth.isAuthenticated(), false); assert.equal(store.getItem('idp_refresh_token'), null);
 });
+
+test('gateway requests are signed with the API key and secret when both are configured', async () => {
+  const headers = [];
+  const auth = createCloudgateAuth({ idpBaseUrl: 'https://hub.test', idpApiUrl: 'https://api.test', tenancyName: 'qa', storage: storage(), fetch: async () => Response.json({}) });
+  auth.setSession({ accessToken: jwt(), refreshToken: 'initial' });
+  const gateway = createGatewayClient({ auth, gatewayUrl: 'https://gw.test', apiKey: 'key-1', apiSecret: 'secret-1',
+    fetchImpl: async (_url, options) => { headers.push(options.headers); return Response.json({ ok: true }); } });
+  await gateway.get('admin-reads/blockchains');
+  assert.equal(headers[0]['X-Api-Key'], 'key-1');
+  assert.match(headers[0]['X-Timestamp'], /^\d{13}$/);
+  assert.match(headers[0]['X-Authentication-Signature'], /^[0-9a-f]{128}$/);
+  assert.match(headers[0].Authorization, /^Bearer /);
+  // A key without its secret must not produce a half-signed request.
+  const unsigned = createGatewayClient({ auth, gatewayUrl: 'https://gw.test', apiKey: 'key-1',
+    fetchImpl: async (_url, options) => { headers.push(options.headers); return Response.json({ ok: true }); } });
+  await unsigned.get('admin-reads/blockchains');
+  assert.equal(headers[1]['X-Api-Key'], undefined);
+});
+
+test('createCloudgatePlatform forwards signing credentials to the gateway and exposes only the key on config', async () => {
+  const headers = [];
+  const platform = createCloudgatePlatform({ idpBaseUrl: 'https://hub.test', apiUrl: 'https://api.test', tenancyName: 'qa', gatewayUrl: 'https://gw.test',
+    apiKey: 'key-1', apiSecret: 'secret-1', storage: storage(), fetch: async (_url, options) => { headers.push(options.headers); return Response.json({ ok: true }); } });
+  platform.auth.setSession({ accessToken: jwt(), refreshToken: 'initial' });
+  await platform.gateway.get('admin-reads/blockchains');
+  assert.equal(platform.config.apiKey, 'key-1');
+  assert.equal('apiSecret' in platform.config, false);
+  assert.equal(headers.at(-1)['X-Api-Key'], 'key-1');
+  assert.ok(headers.at(-1)['X-Authentication-Signature']);
+});

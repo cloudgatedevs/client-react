@@ -5,6 +5,9 @@ import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink,
 import { useCloudgate } from '../context.jsx';
 import { useAuthContext } from '../auth/index.js';
 import { isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
+import { AgentDockIcons } from '../agents/AgentDock.jsx';
+import { useAgents } from '../agents/AgentsProvider.jsx';
+import { ErrorBoundary } from '../widgets/ErrorBoundary.jsx';
 import { version as sdkVersion } from '../../../package.json';
 
 const sdkSource = import.meta.env?.VITE_CLOUDGATE_SDK_SOURCE === 'local' ? 'local' : 'npm';
@@ -36,8 +39,10 @@ export function DeveloperDock() {
     return () => { controller.abort(); clearInterval(timer); window.removeEventListener('focus', check); };
   }, [client, currentUser?.user?.id]);
   const frame = useRef(null), abort = useRef(null), generation = useRef(0), closing = useRef(null), toggle = useRef(null), minimize = useRef(null);
+  // A workspace page asked for before the workspace was ready; it is sent once the frame reports ready.
+  const pendingPath = useRef(null);
   const reset = () => {
-    clearTimeout(closing.current);
+    clearTimeout(closing.current); pendingPath.current = null;
     generation.current++; abort.current?.abort(); setLaunch(null); setStatus('idle'); setOpen(false); setError('');
   };
   const end = () => {
@@ -75,7 +80,10 @@ export function DeveloperDock() {
       if (event.data.type === 'environment') {
         if (['prod', 'sbx'].includes(event.data.environment)) setLaunch(value => value ? { ...value, environment: event.data.environment } : value);
       } else if (event.data.type === 'sdk-update') { setSdkUpdate(event.data.updateAvailable === true); }
-      else if (event.data.type === 'ready') { setStatus('ready'); setError(''); }
+      else if (event.data.type === 'ready') {
+        setStatus('ready'); setError('');
+        if (pendingPath.current) { event.source.postMessage({ source: 'cloudgate-app', type: 'navigate', path: pendingPath.current }, launch.frameOrigin); pendingPath.current = null; }
+      }
       else if (event.data.type === 'ended') { reset(); }
       else {
         setStatus('error');
@@ -105,6 +113,15 @@ export function DeveloperDock() {
     return () => { document.removeEventListener('keydown', keydown); toggle.current?.focus(); };
   }, [open]);
   const show = () => { setOpen(true); if (!launch && status !== 'connecting') void start(); };
+  // Opens the workspace on one of its pages, such as the agents page.
+  const showAt = path => {
+    if (launch && status === 'ready' && frame.current?.contentWindow) frame.current.contentWindow.postMessage({ source: 'cloudgate-app', type: 'navigate', path }, launch.frameOrigin);
+    else pendingPath.current = path;
+    show();
+  };
+  // Agents created or changed in the workspace show in the bar as soon as it closes.
+  const agents = useAgents(), refreshAgents = agents?.refresh, wasOpen = useRef(false);
+  useEffect(() => { if (wasOpen.current && !open) refreshAgents?.(); wasOpen.current = open; }, [open]);
   const openTab = async () => {
     const destination = window.open('about:blank', '_blank');
     if (!destination) { setError('Allow popups to open the developer workspace in a new tab.'); return; }
@@ -124,6 +141,7 @@ export function DeveloperDock() {
         {sdkUpdate && <span className="developer-sdk-update" title="Cloudgate SDK update available — open Info & updates" aria-label="Cloudgate SDK update available"><Info size={14} /></span>}
         <ChevronUp size={16} className="developer-dock-chevron" aria-hidden="true" />
       </button>
+      <ErrorBoundary fallback={null}><AgentDockIcons disabled={open} onDisabledClick={() => setOpen(false)} onCreate={() => showAt('/flows/agents')} /></ErrorBoundary>
       <button type="button" className="developer-dock-ai" title="Build with AI in the Cloudgate developer workspace">
         <Sparkles size={13} aria-hidden="true" /><span>Build with AI</span>
       </button>

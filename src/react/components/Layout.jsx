@@ -18,10 +18,16 @@ import { EmailVerificationPrompt } from './EmailVerificationPrompt.jsx';
 import { usePermissions, filterPermissionNavigation, RequirePagePermission } from '../auth/permissions.jsx';
 import { BACKOFFICE_PERMISSIONS as P } from '../../platform/backoffice-permissions.js';
 import { ErrorBoundary } from '../widgets/ErrorBoundary.jsx';
+import { AgentsProvider } from '../agents/AgentsProvider.jsx';
+import { AgentsBar } from '../agents/AgentDock.jsx';
+import { AgentChatBubble } from '../agents/AgentChatBubble.jsx';
+import { AgentWatchLayer, AgentWatchDialog } from '../agents/AgentWatch.jsx';
 
-export function Layout({ developerMode = true }) {
+export function Layout({ developerMode = true, agents = true }) {
   const { can } = usePermissions();
   const showDeveloperDock = developerMode && can(P.DeveloperAccess) && import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW !== 'true';
+  // AI agents show as icons in the bottom bar for users whose profile links a Cloudgate account; the provider decides.
+  const showAgents = agents && import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW !== 'true';
   const { navigation: allNavigation, identity, client, basePath, backofficePath, publicWebsite } = useCloudgate();
   const navigation = filterPermissionNavigation(allNavigation, can, basePath);
   const { currentUser } = useAuthContext();
@@ -76,6 +82,7 @@ export function Layout({ developerMode = true }) {
     </>
   );
   return (
+    <AgentsProvider enabled={showAgents}>
     <div className={`app-shell flex h-[100dvh] w-full overflow-hidden ${showDeveloperDock ? 'has-developer-dock' : ''}`}>
       <a className="skip-link" href="#main-content">Skip to content</a>
       <aside id={sidebarId} aria-label="Sidebar" aria-hidden={preferences.hidden || undefined} ref={element => { if (element) element.inert = preferences.hidden; }}
@@ -158,6 +165,10 @@ export function Layout({ developerMode = true }) {
         </main>
       </div>
       {showDeveloperDock && <DeveloperDock />}
+      {/* With the developer bar the icons live inside it; otherwise the agents get the bar to themselves.
+          A fault in the agents surface must never blank the back office, so it is contained here. */}
+      {showAgents && <ErrorBoundary fallback={null} resetKey={location.pathname}>{!showDeveloperDock && <AgentsBar />}<AgentChatBubble /><AgentWatchLayer /><AgentWatchDialog /></ErrorBoundary>}
     </div>
+    </AgentsProvider>
   );
 }

@@ -29,7 +29,7 @@ export function createNotificationsClient({ request, resolveAppIdentity }) {
 }
 
 /** Native WebSocket, backed by Cloudgate's Redis fan-out across instances. */
-export function connectNotificationSocket({ apiUrl, environment, getAccessToken, onChange, onStatus = () => {}, WebSocketImpl = WebSocket,
+export function connectNotificationSocket({ apiUrl, environment, getAccessToken, onChange, onAgents, onStatus = () => {}, WebSocketImpl = WebSocket,
   retryDelayMs = 1000, heartbeatMs = 25000, handshakeMs = 20000 }) {
   let stopped = false, socket, retry, heartbeat, handshake, attempt = 0;
   const clearConnectionTimers = () => { clearInterval(heartbeat); clearTimeout(handshake); };
@@ -62,7 +62,10 @@ export function connectNotificationSocket({ apiUrl, environment, getAccessToken,
         try {
           const message = JSON.parse(event.data);
           // 'ready' arrives after server registration, closing the reconnect/inbox race.
-          if (message.environment === environment && ['ready', 'notificationsChanged'].includes(message.type)) onChange();
+          if (message.environment !== environment) return;
+          if (['ready', 'notificationsChanged'].includes(message.type)) onChange();
+          // Agent activity shares the socket: the same frame reaches the AI agents provider.
+          if (['ready', 'agentsChanged'].includes(message.type)) onAgents?.(message);
         } catch { /* Ignore malformed frames. REST remains the source of notification content. */ }
       };
       current.onerror = () => { if (!stopped) onStatus('disconnected'); };

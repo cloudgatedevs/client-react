@@ -1,3 +1,4 @@
+export { agentWatchProps } from '../../platform/agent-watch.js';
 export {
   Button,
   IconButton,

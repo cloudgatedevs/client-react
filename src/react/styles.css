@@ -5,6 +5,7 @@
 @import './users.css';
 @import './media.css';
 @import './integrations/DeveloperDock.css';
+@import './integrations/agents.css';
 @import './integrations/cloudgate-about.css';
 @import './integrations/cloudgate-app-analytics.css';
 @import './integrations/cloudgate-smtp.css';

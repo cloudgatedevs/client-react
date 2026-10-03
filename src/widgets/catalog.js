@@ -16,7 +16,9 @@ const scrumGuidelines = `Use ScrumBoard (KanbanBoard alias) for task boards, sal
 
 /** The gallery, CLI and MCP tools all read this catalogue. Examples are compiled in tests. */
 export const widgetImport = "@cloudgatedevs/cloudgate-client-react/react/widgets";
-export const widgetGuidelines = `Use the installed @cloudgatedevs/cloudgate-client-react package as the source of truth. Read its package.json version and exports before choosing components. Import reusable React widgets from @cloudgatedevs/cloudgate-client-react/react/widgets and the shared stylesheet once from @cloudgatedevs/cloudgate-client-react/react/styles.css. These widgets work without authentication, a router, or a Cloudgate provider.
+export const widgetGuidelines = `The back office already surfaces Cloudgate AI agents: one icon per agent in the bottom bar with a notification badge, and a chat bubble (findings, replies, reports) mounted by the SDK layout, plus toasts from ToastProvider. Users attach an agent by dragging its icon onto the page, so name the workflow behind what you build: pass feed='controller/route' to every DataTable that loads from the gateway, and spread agentWatchProps({ route, method, label }) (from '@cloudgatedevs/cloudgate-client-react/react/widgets') onto cards or charts fed by one route and onto every button or form submit that calls a create, update or delete workflow. Do not build application-level agent chat, alert panels or toast systems; call useAgents() or useToast() from '@cloudgatedevs/cloudgate-client-react/react' when a page needs them.
+
+Use the installed @cloudgatedevs/cloudgate-client-react package as the source of truth. Read its package.json version and exports before choosing components. Import reusable React widgets from @cloudgatedevs/cloudgate-client-react/react/widgets and the shared stylesheet once from @cloudgatedevs/cloudgate-client-react/react/styles.css. These widgets work without authentication, a router, or a Cloudgate provider.
 
 ${scrumGuidelines}
 

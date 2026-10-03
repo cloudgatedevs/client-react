@@ -622,7 +622,12 @@ export interface TableBulkAction {
   /** Defaults to true. Reloads remote data after a successful action. */
   refreshOnSuccess?: boolean;
 }
+export interface AgentWatchFeed { route: string; method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; label?: string }
+/** Attributes that make an element a drop target for AI agents. Spread onto a data component or an action button. */
+export function agentWatchProps(feed?: string | AgentWatchFeed | null): Record<string, string>;
 export interface DataTableProps<T> {
+  /** The gateway route that loads these rows. Lets a user drop an AI agent on the table to watch that workflow. */
+  feed?: string | AgentWatchFeed;
   columns: TableColumn<T>[];
   rows?: T[];
   loadRows?: (query: TableQuery) => Promise<{ rows: T[]; total: number }>;

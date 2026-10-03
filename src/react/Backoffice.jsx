@@ -4,6 +4,7 @@ import { CloudgateProvider } from './context.jsx';
 import { AuthProvider, RequireAuth, RequireAdmin } from './auth/index.js';
 import { SettingsProvider } from './settings/SettingsProvider.jsx';
 import { NotificationsProvider } from './notifications/NotificationsProvider.jsx';
+import { ToastProvider } from './components/Toaster.jsx';
 import { Layout } from './components/Layout.jsx';
 import { ScreenLoader } from './components/ScreenLoader.jsx';
 import { PLATFORM_NAV } from './components/navConfig.jsx';
@@ -30,7 +31,7 @@ const AppNotifications = page(() => import('./pages/AppNotifications.jsx'), 'App
 const WebsiteSettings = page(() => import('./pages/WebsiteSettings.jsx'), 'WebsiteSettings');
 const WidgetLibrary = page(() => import('./pages/WidgetLibrary.jsx'), 'WidgetLibrary');
 function Workspace({ sharedSettings }) {
-  const content = <NotificationsProvider><Suspense fallback={<ScreenLoader />}><Outlet /></Suspense></NotificationsProvider>;
+  const content = <ToastProvider><NotificationsProvider><Suspense fallback={<ScreenLoader />}><Outlet /></Suspense></NotificationsProvider></ToastProvider>;
   return sharedSettings ? content : <SettingsProvider>{content}</SettingsProvider>;
 }
 const relativeRoutes = children => Children.map(children, child => isValidElement(child) ? cloneElement(child,
@@ -42,7 +43,7 @@ function LegacyRedirect({ to }) {
   return <Navigate to={{ pathname: to, search, hash }} replace />;
 }
 /** Mount inside your router. Children are your application's own Route elements. */
-export function CloudgateBackoffice({ client, metadata, navigation = [], children, fallback = '/profile', developerMode = true, basePath = '', publicHome, publicRoutes }) {
+export function CloudgateBackoffice({ client, metadata, navigation = [], children, fallback = '/profile', developerMode = true, agents = true, basePath = '', publicHome, publicRoutes }) {
   const navigate = useNavigate();
   const base = normalizeBackofficeBasePath(basePath);
   if (publicHome && !base) throw new Error('Set a back office basePath when providing a public home page.');
@@ -68,7 +69,7 @@ export function CloudgateBackoffice({ client, metadata, navigation = [], childre
   assertNoPlatformRouteConflicts(appPaths, collectRoutePaths(createRoutesFromChildren(platformRoutes)));
   const paymentRedirects = legacyPaymentRedirects(appPaths);
   const routes = <Routes>
-    <Route path={base || '/'} element={<RequireAuth />}><Route element={<RequireAdmin />}><Route element={<Workspace sharedSettings={!!publicHome} />}><Route element={<Layout developerMode={developerMode} />}>
+    <Route path={base || '/'} element={<RequireAuth />}><Route element={<RequireAdmin />}><Route element={<Workspace sharedSettings={!!publicHome} />}><Route element={<Layout developerMode={developerMode} agents={agents} />}>
       {appRoutes}
       {platformRoutes}
       {paymentRedirects.map(({ from, to }) => <Route key={from} path={from.slice(1)} element={<LegacyRedirect to={path(to)} />} />)}

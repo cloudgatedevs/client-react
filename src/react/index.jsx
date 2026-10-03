@@ -6,6 +6,8 @@ export * from './auth/index.js';
 export { SettingsProvider, useSettings } from './settings/SettingsProvider.jsx';
 export { NotificationsProvider, useNotifications } from './notifications/NotificationsProvider.jsx';
 export { NotificationBell } from './notifications/NotificationBell.jsx';
+export { ToastProvider, useToast } from './components/Toaster.jsx';
+export { AgentsProvider, useAgents, AgentDockIcons, AgentsBar, AgentChatBubble, AgentAvatar, AgentWatchLayer, AgentWatchDialog, agentWatchProps } from './agents/index.js';
 export { Layout } from './components/Layout.jsx';
 export { EmailVerificationPrompt } from './components/EmailVerificationPrompt.jsx';
 export { PLATFORM_NAV } from './components/navConfig.jsx';

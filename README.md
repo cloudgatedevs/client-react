@@ -629,6 +629,62 @@ allowed by backend CORS, and the hub deployment must allow the app to frame `/de
 `Content-Security-Policy: frame-ancestors` policy. Use the hub built for that backend; an unrelated
 dedicated server selected in the normal hub is intentionally ignored by developer mode.
 
+## AI agents in the back office
+
+Cloudgate AI agents (the tenant's **AI Agents** in the hub) appear in every SDK back office as icons in the dark
+bottom bar, next to **Build with AI**. Hovering an icon shows the agent's name and the badge above it counts
+that agent's unread messages. Clicking an icon opens an animated chat bubble above the bar. The bubble is the
+agent's normal Cloudgate chat group: findings arrive there as cards with *Handled*, *Dismiss*, *Reply* and, for
+approvers, *Approve & run*; scheduled reports arrive as messages; and anything typed is answered by the agent in
+the same chat. There is no separate private agent chat. New warning and critical findings also raise a toast.
+
+The icons appear only when all of these hold: the app passes `agents` (default `true`) to `CloudgateBackoffice`,
+the user's role has `backoffice.agents.access`, the user linked a Cloudgate account in their profile, and that
+account holds the hub's AiAgents permission. Chat additionally needs the hub Chat permission and membership of
+the agent's chat group (managed under the agent's **Chat** tab in Cloudgate). Every call runs on the server as
+the linked account, so the app never receives a hub token, and only agent chats of the app's tenant are
+reachable. Users without the developer bar get the same dark bar holding only the agents. Pass `agents={false}`
+to omit them. Agents are tenant-wide, so the sandbox and production apps of one tenant see the same agents.
+
+**Attaching an agent.** Drag an agent's icon from the bar onto the page. Everything that names its workflow is
+highlighted; dropping the agent on one opens *Watch settings*: an instruction ("what to look for and what to do"),
+the Sandbox and Production switches, and *Save instructions*. This is the same whole-workflow watch the hub
+creates, so it shows in both places and survives republishing. Mark an element as a drop target by spreading
+`agentWatchProps` onto it: a data component names the route that loads it, an action names the route it calls.
+
+```jsx
+import { agentWatchProps } from '@cloudgatedevs/cloudgate-client-react/react';
+<DataTable feed="orders/list" columns={columns} loadRows={loadRows} />
+<Button {...agentWatchProps({ route: 'deposits/create', method: 'POST', label: 'Create deposit' })}>Create deposit</Button>
+```
+
+The dialog offers two ways for the agent to look. **When this runs** watches every run of the workflow and suits
+actions: a create runs whoever triggers it. **On a schedule** suits reads, which otherwise only run when someone
+opens the page: the agent replays the page's own request on a cadence (every 15 minutes up to weekly), judges the
+result against the instruction, and alerts everyone in its chat only when the condition is met. Reads default to
+a schedule and actions to a watch. A scheduled check runs in the app's environment, needs the agent's Testing
+tools (the dialog asks before adding them), and has **Run now** to try an instruction at once. A workflow that
+starts with an IdP sign-in check is run as the app user who created the schedule: the server issues a five-minute
+app token for that user at each run, never stores it, and stops issuing it if the user is deactivated, unlinked
+or loses `backoffice.agents.access`. After saving, the dialog tries the request once and says whether the
+workflow answered.
+
+Elements that declare nothing are targets too: while dragging, the table, card, tile or button under the pointer
+lights up, and dropping on it lists the app's workflows with the most likely one first (matched on the element's
+label, the workflows the page called, and whether it is an action or data). Declaring the route removes the
+guesswork and also lets the element show which agent watches it. Watched elements show the
+agent's small portrait, and the eye button in an agent's chat bubble lists what it watches, with edit and a
+click-to-pick alternative to dragging. Saving a watch needs the linked account's AiAgents.Approve permission,
+because prescribed actions run on their own; only workflows of the app's own controllers can be attached.
+
+Live updates arrive on the existing IdP notification socket as `agentsChanged` frames, with polling as the
+fallback. `useAgents()` exposes the same state to application pages (`agents`, `counts`, `attention`,
+`openChat(agentId)`, `closeChat()`), and `client.agents` is the platform client (`overview`, `attention`,
+`acknowledge`, `dismiss`, `reopen`, `approve`, `chatMessages`, `chatThread`, `chatSend`, `chatRead`,
+`watchResolve`, `watchList`, `watchSet`, `watchScheduleSet`, `watchScheduleDelete`, `watchScheduleRun`).
+`ToastProvider`/`useToast()` are exported for application use as well. This requires the matching backend update
+(`api/idp/{tenant}/agents/*` and the `backoffice.agents.access` permission migration).
+
 ## Tests
 
 ```bash

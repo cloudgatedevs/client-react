@@ -40,7 +40,8 @@ export const BACKOFFICE_PERMISSIONS = Object.freeze({
   "ThemeEdit": "backoffice.theme.edit",
   "SettingsView": "backoffice.settings.view",
   "SettingsEdit": "backoffice.settings.edit",
-  "DeveloperAccess": "backoffice.developer.access"
+  "DeveloperAccess": "backoffice.developer.access",
+  "AgentsAccess": "backoffice.agents.access"
 });
 export const BACKOFFICE_PERMISSION_TREE = [
   {
@@ -281,6 +282,15 @@ export const BACKOFFICE_PERMISSION_TREE = [
       {
         "key": "backoffice.developer.access",
         "label": "Open developer workspace (linked Cloudgate account required)"
+      }
+    ]
+  },
+  {
+    "label": "AI agents",
+    "children": [
+      {
+        "key": "backoffice.agents.access",
+        "label": "See AI agent findings and chat with agents (linked Cloudgate account required)"
       }
     ]
   }

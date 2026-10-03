@@ -6,6 +6,9 @@ export function NotificationsProvider({ children }) {
   const { client } = useCloudgate();
   const [unread, setUnread] = useState(0), [revision, setRevision] = useState(0), [connection, setConnection] = useState('connecting');
   const sequence = useRef(0);
+  // Agent activity arrives on the same socket; the AI agents provider subscribes here instead of opening another.
+  const agentListeners = useRef(new Set());
+  const onAgentsChanged = useCallback(listener => { agentListeners.current.add(listener); return () => agentListeners.current.delete(listener); }, []);
   const refresh = useCallback(async () => {
     const request = ++sequence.current;
     setRevision(value => value + 1);
@@ -14,10 +17,10 @@ export function NotificationsProvider({ children }) {
   }, [client]);
   useEffect(() => {
     refresh();
-    const disconnect = client.notifications.connect({ onChange: refresh, onStatus: setConnection });
+    const disconnect = client.notifications.connect({ onChange: refresh, onStatus: setConnection, onAgents: message => { for (const listener of agentListeners.current) { try { listener(message); } catch { /* one listener must not break the others */ } } } });
     const timer = setInterval(refresh, 60000);
     window.addEventListener('focus', refresh);
     return () => { sequence.current++; disconnect(); clearInterval(timer); window.removeEventListener('focus', refresh); };
   }, [client, refresh]);
-  return <Context.Provider value={{ api: client.notifications, unread, revision, connection, refresh }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ api: client.notifications, unread, revision, connection, refresh, onAgentsChanged }}>{children}</Context.Provider>;
 }

@@ -17,6 +17,7 @@ import { createNotificationAdminClient } from './notification-admin.js';
 import { createDeveloperWorkspaceClient } from './developer-workspace.js';
 import { consumeLauncherLogin } from './launcher.js';
 import { createGatewayClient } from './gateway.js';
+import { createAgentsClient } from './agents.js';
 
 export * from './transport.js';
 export * from './identity.js';
@@ -41,6 +42,8 @@ export * from './email-template.js';
 export * from './notification-admin.js';
 export * from './developer-workspace.js';
 export * from './gateway.js';
+export * from './agents.js';
+export * from './agent-watch.js';
 
 /** A per-app platform client. Configuration is explicit; the SDK reads no bundler environment. */
 export function createCloudgatePlatform(options = {}) {
@@ -51,6 +54,8 @@ export function createCloudgatePlatform(options = {}) {
     webAppId: options.webAppId || '', environment: options.environment || 'sbx',
     projectPath: String(options.projectPath || '').trim().replace(/^\/+|\/+$/g, ''),
     gatewayUrl: trim(options.gatewayUrl),
+    // Gateway API key (sent as X-Api-Key). The matching secret is never placed on config.
+    apiKey: String(options.apiKey || '').trim(),
   });
   const auth = options.auth ?? createCloudgateAuth({ ...config, idpApiUrl: config.apiUrl, allowTenantOverride: false, storage: options.storage, fetch: options.fetch });
   const request = createIdpClient({ auth, apiUrl: config.apiUrl, fetchImpl: options.fetch, timeoutMs: options.timeoutMs });
@@ -67,7 +72,7 @@ export function createCloudgatePlatform(options = {}) {
   }).finally(() => { sessionCheck = undefined; });
   const platform = {
     config, auth, request, resolveAppIdentity, profile,
-    gateway: createGatewayClient({ auth, gatewayUrl: config.gatewayUrl, environment: config.environment, resolveAppIdentity, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, verifySession }),
+    gateway: createGatewayClient({ auth, gatewayUrl: config.gatewayUrl, environment: config.environment, resolveAppIdentity, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, verifySession, apiKey: config.apiKey, apiSecret: options.apiSecret }),
     accountSecurity: createAccountSecurityClient({ request, auth }),
     users: createUsersClient({ request, resolveAppIdentity }),
     roles: createRolesClient({ request }),
@@ -86,6 +91,7 @@ export function createCloudgatePlatform(options = {}) {
     registration: createRegistrationClient({ request }),
     emailTemplate: createEmailTemplateClient({ request }),
     notificationAdmin: createNotificationAdminClient({ request, resolveAppIdentity }),
+    agents: createAgentsClient({ request, resolveAppIdentity, projectPath: config.projectPath }),
     notifications: { ...notifications, connect({ onChange, onStatus, ...socketOptions }) {
       let stopped = false, disconnect;
       resolveAppIdentity().then(scope => {
