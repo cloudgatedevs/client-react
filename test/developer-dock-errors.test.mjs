@@ -81,3 +81,49 @@ test('a server failure is reported as such without blaming the account link', as
   assert.match(view.text, /Developer mode could not open/);
   assert.doesNotMatch(view.text, /linked Cloudgate account|Reconnect/);
 });
+
+test('a slow workspace retains its frame while waiting and accepts a late ready message', async () => {
+  const originalTimeout = globalThis.setTimeout;
+  let expireHandshake;
+  globalThis.setTimeout = (callback, delay, ...args) => {
+    const timer = originalTimeout(callback, delay, ...args);
+    if (delay === 45000) expireHandshake = () => { clearTimeout(timer); callback(); };
+    return timer;
+  };
+  let launches = 0;
+  const client = {
+    resolveAppIdentity: async () => ({ webAppId: 'app', environment: 'sbx' }),
+    developerWorkspace: {
+      open: async () => { launches++; return { frameUrl: 'https://hub.test/developer#code=one-use', frameOrigin: 'https://hub.test' }; },
+      sdkStatus: async () => ({ updateAvailable: false }),
+    },
+  };
+  const host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  try {
+    await act(async () => root.render(h(MemoryRouter, null, h(CloudgateProvider, { client, basePath: '/backoffice' },
+      h(AuthContext.Provider, { value: { currentUser: { user: { id: 1 } } } }, h(DeveloperDock))))));
+    await act(async () => document.querySelector('.developer-dock').click());
+    const frame = document.querySelector('iframe');
+    assert.ok(frame);
+    await act(async () => expireHandshake());
+    assert.equal(document.querySelector('.developer-recovery').dataset.kind, 'slow');
+    assert.equal(document.querySelector('iframe'), frame);
+    await act(async () => [...document.querySelectorAll('.developer-recovery button')].find(b => b.textContent === 'Keep waiting').click());
+    assert.equal(launches, 1);
+    assert.equal(document.querySelector('iframe'), frame);
+    assert.equal(document.querySelector('.developer-recovery'), null);
+    // Even after another slow-load notice, the original session can recover itself.
+    await act(async () => expireHandshake());
+    await act(async () => window.dispatchEvent(new window.MessageEvent('message', {
+      source: frame.contentWindow, origin: 'https://hub.test', data: { source: 'cloudgate-developer', type: 'ready' },
+    })));
+    assert.equal(document.querySelector('.developer-recovery'), null);
+    assert.equal(document.querySelector('.developer-connecting'), null);
+    assert.equal(document.querySelector('iframe'), frame);
+    assert.equal(launches, 1);
+  } finally {
+    await act(async () => root.unmount()); host.remove();
+    globalThis.setTimeout = originalTimeout;
+  }
+});

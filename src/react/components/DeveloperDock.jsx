@@ -14,7 +14,7 @@ export function DeveloperDock() {
   const { currentUser } = useAuthContext();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false), [launch, setLaunch] = useState(null);
-  // error: { kind: 'connect' | 'access' | 'setup' | 'ended' | 'failed', message }
+  // error: { kind: 'connect' | 'access' | 'setup' | 'ended' | 'slow' | 'failed', message }
   const [status, setStatus] = useState('idle'), [error, setErrorState] = useState(null);
   const setError = (message, kind = 'failed') => setErrorState(message ? { kind, message } : null);
   const [sdkUpdate, setSdkUpdate] = useState(false);
@@ -90,8 +90,10 @@ export function DeveloperDock() {
   useEffect(() => {
     if (status !== 'connecting' || !launch) return;
     const timeout = setTimeout(() => {
-      setError('Cloudgate is taking too long to load. Check that the hub allows this app to embed /developer, then reconnect.');
-      setStatus('error');
+      // A slow handshake does not mean the session failed. Keep its frame alive so
+      // a delayed ready message can finish connecting without launching again.
+      setError('Cloudgate is still loading. You can keep waiting for this session, or reconnect if it does not finish.', 'slow');
+      setStatus('waiting');
     }, 45000);
     return () => clearTimeout(timeout);
   }, [status, launch?.frameUrl]);
@@ -142,7 +144,11 @@ export function DeveloperDock() {
             {status === 'connecting' && <div className="developer-connecting" role="status"><RefreshCw size={16} className="animate-spin" />Connecting to Cloudgate…</div>}
             {status === 'ending' && <div className="developer-connecting" role="status">Ending developer session…</div>}
             {error && <div className="developer-recovery" data-kind={error.kind}><Terminal size={28} />
-              {error.kind === 'connect' ? <>
+              {error.kind === 'slow' ? <>
+                <h2>Developer workspace is still loading</h2>
+                <p role="status">{error.message}</p>
+                <div><button className="btn-primary" onClick={() => { setError(''); setStatus('connecting'); }}>Keep waiting</button><button className="btn-ghost" onClick={start}>Reconnect</button></div>
+              </> : error.kind === 'connect' ? <>
                 <h2>Connect your Cloudgate account</h2>
                 <p role="alert">Developer mode opens Cloudgate, where you build this app's APIs and workflows, with the permissions of your Cloudgate account.</p>
                 <p>Connect your Cloudgate account in your profile, then open developer mode again.</p>
