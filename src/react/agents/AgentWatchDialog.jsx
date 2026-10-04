@@ -39,12 +39,15 @@ export function AgentWatchDialog() {
     let stopped = false;
     setWorkflows(null); setError(null); setEndpointId(''); setPrompt(''); setAllowRuns(false); setFilter('');
     // An element that declares its workflow resolves to it. Anything else is matched against all of the app's
-    // workflows, best match first, with the ones this page called ranked up.
+    // workflows, best match first, with the ones this page called ranked up. A call elsewhere on the page
+    // does not establish a match for this widget: unmatched workflows must never become a default choice.
     Promise.all([api.watchResolve(watch.targets), watch.auto ? api.watchWorkflows() : null]).then(([result, all]) => {
       if (stopped) return;
       const items = result?.items || [];
       const resolved = [...new Map(items.flatMap(item => item.workflows || []).map(workflow => [workflow.endpointId, workflow])).values()];
-      const found = watch.auto ? rankWorkflows(all?.items || resolved, { ...watch.auto, calledIds: resolved.map(workflow => workflow.endpointId) }) : resolved;
+      const found = watch.auto
+        ? rankWorkflows(all?.items || resolved, { ...watch.auto, calledIds: resolved.map(workflow => workflow.endpointId) }).filter(workflow => workflow.matched)
+        : resolved;
       // Remember the call the page made for each workflow: a schedule replays it.
       const calls = {};
       for (const item of items) {
@@ -144,7 +147,7 @@ export function AgentWatchDialog() {
     </div>}>
     <div className="cg-watch-form">
       {workflows === null && <p className="cg-agents-muted">Finding the workflow…</p>}
-      {workflows?.length === 0 && !error && <p className="cg-agents-error" role="alert">No workflow of this app answers {watch?.label ? `“${watch.label}”` : 'this item'}. Check the route it declares.</p>}
+      {workflows?.length === 0 && !error && <p className="cg-agents-error" role="alert">No workflow available for {watch?.label ? `“${watch.label}”` : 'this item'}. The agent can only watch items with a matching workflow.</p>}
       {workflows?.length > 1 && <label className="cg-watch-field">
         <span>{watch?.auto ? `Workflow behind “${watch.label}”` : watch?.page ? 'Workflow used by this page' : 'Workflow'}</span>
         {workflows.length > 8 && <input className="input" type="search" value={filter} placeholder="Filter workflows…" aria-label="Filter workflows" disabled={busy} onChange={event => setFilter(event.target.value)} />}
@@ -152,7 +155,7 @@ export function AgentWatchDialog() {
           {shown.map(workflow => <option key={workflow.endpointId} value={workflow.endpointId}>{workflow.method === 'ANY' ? '' : `${workflow.method} `}/{workflow.route}{workflow.name ? ` · ${workflow.name}` : ''}{mine(workflow, 'watches') || mine(workflow, 'schedules') ? ' (watching)' : ''}</option>)}
         </select>
       </label>}
-      {watch?.auto && selected && <p className="cg-agents-muted">{selected.matched ? 'Best match first.' : 'No workflow name matched, so these are in route order.'} Check that this is the workflow behind it before saving.</p>}
+      {watch?.auto && selected && <p className="cg-agents-muted">Best match first. Check that this is the workflow behind it before saving.</p>}
       {selected && <>
         {workflows.length === 1 && <p className="cg-watch-route"><strong>{selected.name || 'Workflow'}</strong><code>{selected.method === 'ANY' ? '' : `${selected.method} `}/{selected.route}</code></p>}
         <div className="cg-watch-modes" role="radiogroup" aria-label={`When ${agent.name} looks`}>

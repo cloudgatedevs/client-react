@@ -59,6 +59,7 @@ export function AgentDockIcons({ disabled = false, onDisabledClick, onCreate }) 
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   };
   return <div className="cg-agent-dock" role="group" aria-label="AI agents" onClick={event => event.stopPropagation()}>
+    {!disabled && <span className="cg-agent-dock-hint">Drag an agent onto a widget</span>}
     {agents.agents.map(agent => {
       const count = agentNotificationCount(agent), active = agents.chatAgentId === agent.id;
       return <button key={agent.id} type="button" className="cg-agent-dock-item" data-active={active || undefined} data-paused={agent.status === 1 || undefined}
