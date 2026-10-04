@@ -37,7 +37,7 @@ export function MetricsAppDialog({ open, onClose }) {
             <li>Sign in with the Cloudgate account connected under your profile and allow notifications.</li>
           </ol>
           <a className="cg-metrics-app-link" href={store.url} target="_blank" rel="noopener noreferrer">
-            <Logo size={15} />Open {store.label} in a new tab<ExternalLink size={13} aria-hidden="true" />
+            <Logo size={15} />Open {store.label}<ExternalLink size={13} aria-hidden="true" />
           </a>
         </div>
       </div>

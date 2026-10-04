@@ -7,8 +7,9 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const dom = new JSDOM('<!doctype html><html><body></body></html>', { url: 'http://localhost/backoffice' });
-globalThis.window = dom.window;
-globalThis.document = dom.window.document;
+for (const key of ['window', 'document', 'HTMLElement', 'Element', 'Node', 'NodeFilter', 'MutationObserver', 'CustomEvent', 'HTMLInputElement'])
+  globalThis[key] = key === 'window' ? dom.window : key === 'document' ? dom.window.document : dom.window[key];
+globalThis.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 const require = createRequire(import.meta.url);
@@ -18,13 +19,63 @@ const compiled = await build({ stdin: { contents: `
   export { DeveloperDock } from './src/react/components/DeveloperDock.jsx';
   export { CloudgateProvider } from './src/react/context.jsx';
   export { AuthContext } from './src/react/auth/AuthProvider.jsx';
+  export { AgentsProvider } from './src/react/agents/AgentsProvider.jsx';
 `, resolveDir: fileURLToPath(new URL('..', import.meta.url)), loader: 'jsx' },
   bundle: true, write: false, format: 'cjs', platform: 'node', packages: 'external', jsx: 'automatic',
   loader: { '.svg': 'dataurl', '.css': 'empty', '.json': 'json' }, logLevel: 'silent' });
 const module = { exports: {} };
 new Function('require', 'module', 'exports', compiled.outputFiles[0].text)(require, module, module.exports);
-const { DeveloperDock, CloudgateProvider, AuthContext } = module.exports;
+const { DeveloperDock, CloudgateProvider, AuthContext, AgentsProvider } = module.exports;
 const h = React.createElement, { act } = React;
+
+for (const withAgents of [false, true]) for (const dismissal of ['close button', 'Escape']) test(`Phone links ${withAgents ? 'with agents' : 'without agents'} open above the workspace and ${dismissal} leaves its session open`, async () => {
+  let launches = 0;
+  const client = {
+    resolveAppIdentity: async () => ({ webAppId: 'app', environment: 'sbx' }),
+    agents: {
+      overview: async () => ({ agents: withAgents ? [{ id: 'test-agent', name: 'Test agent' }] : [] }),
+      attention: async () => ({ items: [], totalCount: 0 }),
+    },
+    developerWorkspace: {
+      open: async () => { launches++; return { frameUrl: 'https://hub.test/developer#code=one-use', frameOrigin: 'https://hub.test' }; },
+      sdkStatus: async () => ({ updateAvailable: false }),
+    },
+  };
+  const host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  try {
+    await act(async () => root.render(h(MemoryRouter, null, h(CloudgateProvider, { client, basePath: '/backoffice' },
+      h(AuthContext.Provider, { value: { currentUser: { user: { id: 1, rolePermissions: [
+        { key: 'backoffice.access', value: true }, { key: 'backoffice.agents.access', value: true },
+      ] } } } }, h(AgentsProvider, null, h(DeveloperDock)))))));
+    await act(async () => document.querySelector('.developer-dock').click());
+    const workspace = document.getElementById('cloudgate-developer-panel'), frame = workspace.querySelector('iframe');
+    await act(async () => window.dispatchEvent(new window.MessageEvent('message', {
+      source: frame.contentWindow, origin: 'https://hub.test', data: { source: 'cloudgate-developer', type: 'ready' },
+    })));
+    const phone = document.querySelector('[aria-label="Download Metrics app"]');
+    assert.equal(!!document.querySelector('[aria-label="Test agent"]'), withAgents);
+    assert.equal(phone.getAttribute('aria-disabled'), null);
+    await act(async () => { phone.focus(); phone.click(); });
+    const modal = document.querySelector('.modal-panel');
+    assert.ok(modal?.textContent.includes('Get agent alerts on your phone'));
+    assert.ok(Number(modal.style.zIndex) > 61, 'The modal must appear above the developer panel');
+    assert.equal(workspace.dataset.state, 'open');
+    assert.equal(workspace.querySelector('iframe'), frame);
+    await act(async () => {
+      if (dismissal === 'Escape') document.activeElement.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      else modal.querySelector('[aria-label="Close dialog"]').click();
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
+    assert.equal(document.querySelector('.modal-panel'), null);
+    assert.equal(workspace.dataset.state, 'open');
+    assert.notEqual(workspace.getAttribute('aria-hidden'), 'true');
+    assert.equal(workspace.querySelector('iframe'), frame);
+    assert.equal(launches, 1);
+    assert.equal(document.activeElement, phone);
+  } finally { await act(async () => root.unmount()); host.remove(); }
+});
 
 function platformError(message, status, body) { return Object.assign(new Error(message), { status, body }); }
 

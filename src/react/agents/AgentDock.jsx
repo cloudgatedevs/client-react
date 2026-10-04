@@ -13,9 +13,11 @@ export const agentNotificationCount = agent => Math.max(0, Number(agent?.chatCon
 /**
  * One icon per agent for the dark bottom bar. Hover shows the name, the badge above the icon counts that
  * agent's notifications, and a click opens (or closes) its chat bubble. Dragging an icon onto the page starts
- * a watch on whatever it is dropped on. Renders nothing until agents are available. `disabled` greys the icons
- * out, which the developer bar uses while its workspace is open: a click then only calls `onDisabledClick`.
- * With `onCreate`, an app that has no agents yet shows a dashed "Create agent" circle instead of nothing.
+ * a watch on whatever it is dropped on. The Metrics-app phone button is always present, whether or not a
+ * Cloudgate account is linked or any agents exist: the store links and QR codes need no session. `disabled`
+ * greys the agent icons out while the developer workspace is open: clicking an agent calls `onDisabledClick`.
+ * The phone still opens its modal above the workspace. With `onCreate`, an app that has no agents yet also
+ * shows a dashed "Create agent" circle.
  */
 export function AgentDockIcons({ disabled = false, onDisabledClick, onCreate }) {
   const agents = useAgents();
@@ -24,13 +26,14 @@ export function AgentDockIcons({ disabled = false, onDisabledClick, onCreate }) 
   // While the developer workspace is open the agents step aside: no chat, no dragging, and an open bubble closes.
   useEffect(() => { if (disabled && chatting) closeChat?.(); }, [disabled, chatting]);
   if (!agents?.available) {
-    if (!agents?.empty || !onCreate) return null;
+    // No agents to show (not linked, no permission, or none created yet): the phone still has its place,
+    // and an app that could create agents offers that beside it.
     return <div className="cg-agent-dock" role="group" aria-label="AI agents" onClick={event => event.stopPropagation()}>
-      <button type="button" className="cg-agent-dock-item cg-agent-dock-create" aria-label="Create agent" onClick={() => onCreate()}>
+      {agents?.empty && onCreate && <button type="button" className="cg-agent-dock-item cg-agent-dock-create" aria-label="Create agent" onClick={() => onCreate()}>
         <Plus size={14} aria-hidden="true" />
         <span className="cg-agent-dock-tip" role="tooltip">Create agent</span>
-      </button>
-      <MetricsAppButton disabled={disabled} onDisabledClick={onDisabledClick} />
+      </button>}
+      <MetricsAppButton />
     </div>;
   }
   // A press that travels a few pixels becomes a drag; the click that may follow it is ignored.
@@ -70,7 +73,7 @@ export function AgentDockIcons({ disabled = false, onDisabledClick, onCreate }) 
       </button>;
     })}
     {/* The agents' alerts also reach a phone: the app that delivers them is offered right beside them. */}
-    <MetricsAppButton disabled={disabled} onDisabledClick={onDisabledClick} />
+    <MetricsAppButton />
   </div>;
 }
 
