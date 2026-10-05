@@ -307,6 +307,10 @@ export interface FieldProps {
   validate?: (value: string, formData?: FormData) => string | undefined;
   validationMessages?: Partial<Record<'required' | 'email' | 'url' | 'invalid' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max' | 'step', string>>;
 }
+export interface LabelPlacementProps {
+  /** Keep the label above the field (default), or notch it into the control's top border. */
+  labelPlacement?: 'above' | 'floating';
+}
 export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'noValidate'> {
   /** Called only after validation passes. Native navigation is prevented. */
   onSubmit?: (data: FormData, event: React.FormEvent<HTMLFormElement>) => void | Promise<void>;
@@ -361,7 +365,7 @@ export function RichTextContent(props:{value?:string;label?:string;className?:st
 export function CodeEditor(props: CodeEditorProps): React.JSX.Element;
 export const Input: React.ForwardRefExoticComponent<
   React.InputHTMLAttributes<HTMLInputElement> &
-    FieldProps & { icon?: Icon; endAdornment?: React.ReactNode } & React.RefAttributes<HTMLInputElement>
+    FieldProps & LabelPlacementProps & { icon?: Icon; endAdornment?: React.ReactNode } & React.RefAttributes<HTMLInputElement>
 >;
 export interface SearchOption {
   value: string | number;
@@ -369,7 +373,7 @@ export interface SearchOption {
   description?: string;
   disabled?: boolean;
 }
-export interface SearchSelectProps extends FieldProps {
+export interface SearchSelectProps extends FieldProps, LabelPlacementProps {
   options?: SearchOption[];
   loadOptions?: (query: {search: string; limit: number; signal: AbortSignal}) => Promise<SearchOption[]>;
   value?: string | number | null;
@@ -418,12 +422,12 @@ export interface RadioGroupProps extends FieldProps {
 export const RadioGroup: React.ForwardRefExoticComponent<RadioGroupProps & React.RefAttributes<HTMLInputElement>>;
 export const Textarea: React.ForwardRefExoticComponent<
   React.TextareaHTMLAttributes<HTMLTextAreaElement> &
-    FieldProps &
+    FieldProps & LabelPlacementProps &
     React.RefAttributes<HTMLTextAreaElement>
 >;
 export const Select: React.ForwardRefExoticComponent<
   React.SelectHTMLAttributes<HTMLSelectElement> &
-    FieldProps & {
+    FieldProps & LabelPlacementProps & {
       options: { value: string | number; label: string; disabled?: boolean }[];
       placeholder?: string;
     } & React.RefAttributes<HTMLSelectElement>

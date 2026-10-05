@@ -176,9 +176,9 @@ export function MetricCard({
     </Root>
   );
 }
-function FieldShell({ id, label, hint, error, required, children, className }) {
+function FieldShell({ id, label, labelPlacement, hint, error, required, children, className }) {
   return (
-    <div className={cx("cgw-field", error && "cgw-field--error", className)}>
+    <div className={cx("cgw-field", label && labelPlacement === "floating" && "cgw-field--floating", error && "cgw-field--error", className)}>
       {label && <label htmlFor={id}>{label}{required && <span className="cgw-required" aria-hidden="true"> *</span>}</label>}
       {children}
       {(error || hint) && (
@@ -203,7 +203,7 @@ const fieldProps = (id, hint, error, props) => ({
       .join(" ") || undefined,
 });
 export const Input = forwardRef(function Input(
-  { label, hint, error, validate, validationMessages, id: suppliedId, className, icon: Icon, endAdornment, ...props },
+  { label, labelPlacement, hint, error, validate, validationMessages, id: suppliedId, className, icon: Icon, endAdornment, ...props },
   ref,
 ) {
   const uid = useId(),
@@ -211,7 +211,7 @@ export const Input = forwardRef(function Input(
   const validation = useFieldValidation({ id, error, validate, validationMessages, props }, ref);
   error = validation.error;
   return (
-    <FieldShell {...{ id, label, hint, error, className }} required={props.required}>
+    <FieldShell {...{ id, label, labelPlacement, hint, error, className }} required={props.required}>
       <div className="cgw-input-wrap">
         {Icon && <Icon size={16} aria-hidden="true" />}
         <input
@@ -225,7 +225,7 @@ export const Input = forwardRef(function Input(
   );
 });
 export const Textarea = forwardRef(function Textarea(
-  { label, hint, error, validate, validationMessages, id: suppliedId, className, ...props },
+  { label, labelPlacement, hint, error, validate, validationMessages, id: suppliedId, className, ...props },
   ref,
 ) {
   const uid = useId(),
@@ -233,7 +233,7 @@ export const Textarea = forwardRef(function Textarea(
   const validation = useFieldValidation({ id, error, validate, validationMessages, props }, ref);
   error = validation.error;
   return (
-    <FieldShell {...{ id, label, hint, error, className }} required={props.required}>
+    <FieldShell {...{ id, label, labelPlacement, hint, error, className }} required={props.required}>
       <textarea
         rows={4}
         {...fieldProps(id, hint, error, props)}
@@ -246,6 +246,7 @@ export const Textarea = forwardRef(function Textarea(
 export const Select = forwardRef(function Select(
   {
     label,
+    labelPlacement,
     hint,
     error,
     validate,
@@ -263,7 +264,7 @@ export const Select = forwardRef(function Select(
   const validation = useFieldValidation({ id, error, validate, validationMessages, props }, ref);
   error = validation.error;
   return (
-    <FieldShell {...{ id, label, hint, error, className }} required={props.required}>
+    <FieldShell {...{ id, label, labelPlacement, hint, error, className }} required={props.required}>
       <div className="cgw-select-wrap">
         <select
           {...fieldProps(id, hint, error, props)}

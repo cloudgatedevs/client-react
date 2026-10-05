@@ -57,8 +57,46 @@ const compiled = await build({ entryPoints:[fileURLToPath(new URL('../src/react/
   bundle:true, write:false, format:'cjs', platform:'node', packages:'external', jsx:'automatic', logLevel:'silent' });
 const module = {exports:{}};
 new Function('require', 'module', 'exports', compiled.outputFiles[0].text)(createRequire(import.meta.url), module, module.exports);
-const {Input, Form} = module.exports;
+const {Input, Form, Select, Textarea, SearchSelect} = module.exports;
 const errorText = view => view.root.findAllByProps({role:'alert'}).map(node => node.children.join(''));
+
+test('floating field labels preserve accessible names and errors without leaking presentation props to controls', async () => {
+  for (const [Component, tag, extra] of [
+    [Input, 'input', {type:'date'}],
+    [Select, 'select', {options:[{value:'pending',label:'Pending approval'}]}],
+    [Textarea, 'textarea', {}],
+    [SearchSelect, 'input', {className:null,options:[{value:'pending',label:'Pending approval'}]}],
+    [SearchSelect, 'input', {className:'cgw-field--floating',labelPlacement:undefined}],
+  ]) {
+    let view;
+    await act(async () => { view = create(React.createElement(Component, {
+      id:'filter', label:'Show', labelPlacement:'floating', required:true,
+      error:'Choose a value.', ...extra,
+    })); });
+    try {
+      const label = view.root.findByType('label');
+      const control = view.root.findAllByType(tag).find(node => node.props.id === 'filter');
+      assert.equal(label.props.htmlFor, control.props.id);
+      assert.equal(label.parent.props.className.includes('cgw-field--floating'), true);
+      assert.equal(label.children[0], 'Show');
+      assert.equal(control.props['aria-invalid'], true);
+      assert.equal(control.props['aria-describedby'], 'filter-help');
+      assert.equal(control.props.labelPlacement, undefined);
+      assert.deepEqual(errorText(view), ['Choose a value.']);
+    } finally { await act(async () => view.unmount()); }
+  }
+});
+
+test('floating placement is opt-in and needs a visible label', async () => {
+  for (const props of [{label:'Name'}, {label:'Name',labelPlacement:'above'}, {labelPlacement:'floating'}]) {
+    let view;
+    await act(async () => { view = create(React.createElement(Input, props)); });
+    try {
+      assert.equal(view.root.findAll(node => typeof node.type === 'string' && node.props.className?.includes('cgw-field--floating')).length, 0);
+      assert.equal(view.root.findByType('input').props.labelPlacement, undefined);
+    } finally { await act(async () => view.unmount()); }
+  }
+});
 
 test('fields wait for blur, update feedback on change and preserve native handlers and refs', async () => {
   let blurred = 0, changed = 0, view;

@@ -2,6 +2,7 @@ export const selectWidget = {
   id: 'select', name: 'Select', category: 'Forms', exports: ['Select', 'SearchSelect'],
   description: 'Standard, searchable and server-side dropdowns in one place. Choose a native Select for short lists or SearchSelect for local filtering and debounced remote search.',
   props: [
+    {name:'Both: labelPlacement', type:"'above' | 'floating'", description:'Defaults to above. Floating keeps the label in the top border, including empty values, for compact table filters. Preserve label rather than relying only on placeholder.'},
     {name:'Select: options', type:'{value:string|number,label:string,disabled?:boolean}[]', description:'Native select options with unique values. Includes mobile platform pickers and native keyboard behaviour.'},
     {name:'Select: value / defaultValue / onChange', type:'Native select attributes', description:'onChange receives the native event; read event.target.value as a string. defaultValue initializes an uncontrolled field.'},
     {name:'SearchSelect: options', type:'SearchOption[]', description:'Local {value,label,description?,disabled?} options. Values are unique non-empty strings or numbers; zero is valid. Filters labels and descriptions.'},

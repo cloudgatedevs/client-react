@@ -28,6 +28,47 @@ new Function('require', 'module', 'exports', compiled.outputFiles[0].text)(requi
 const { DeveloperDock, CloudgateProvider, AuthContext, AgentsProvider } = module.exports;
 const h = React.createElement, { act } = React;
 
+test('the update icon clears on failed checks and unconfirmed workspace signals', async () => {
+  const originalNow = Date.now;
+  let now = originalNow(), value = { latestVersion: '99.0.0', updateAvailable: true }, calls = 0;
+  Date.now = () => now;
+  const client = {
+    resolveAppIdentity: async () => ({ webAppId: 'app', environment: 'sbx' }),
+    developerWorkspace: {
+      open: async () => ({ frameUrl: 'https://hub.test/developer#code=one-use', frameOrigin: 'https://hub.test' }),
+      sdkStatus: async () => { calls++; if (value instanceof Error) throw value; return value; },
+    },
+  };
+  const host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  const visible = () => !!document.querySelector('.developer-sdk-update');
+  try {
+    await act(async () => root.render(h(MemoryRouter, null, h(CloudgateProvider, { client, basePath: '/backoffice' },
+      h(AuthContext.Provider, { value: { currentUser: { user: { id: 1 } } } }, h(DeveloperDock))))));
+    assert.equal(visible(), true);
+    value = new Error('Status unavailable'); now += 60 * 60 * 1000;
+    await act(async () => window.dispatchEvent(new window.Event('focus')));
+    assert.equal(calls, 2); assert.equal(visible(), false);
+    value = { latestVersion: '99.0.0', updateAvailable: true }; now += 60 * 60 * 1000;
+    await act(async () => window.dispatchEvent(new window.Event('focus')));
+    assert.equal(visible(), true);
+    value = { ...value, checkError: 'Registry unavailable' }; now += 60 * 60 * 1000;
+    await act(async () => window.dispatchEvent(new window.Event('focus')));
+    assert.equal(visible(), false);
+    await act(async () => document.querySelector('.developer-dock').click());
+    const frame = document.querySelector('iframe');
+    const send = async data => act(async () => window.dispatchEvent(new window.MessageEvent('message', {
+      source: frame.contentWindow, origin: 'https://hub.test', data: { source: 'cloudgate-developer', type: 'sdk-update', ...data },
+    })));
+    for (const status of [{ updateAvailable: true }, { updateAvailable: true, latestVersion: null },
+      { updateAvailable: true, latestVersion: require('../package.json').version },
+      { updateAvailable: true, latestVersion: '99.0.0', checkError: 'Unable to verify' }, { updateAvailable: false }]) {
+      await send({ latestVersion: '99.0.0', updateAvailable: true }); assert.equal(visible(), true);
+      await send(status); assert.equal(visible(), false, JSON.stringify(status));
+    }
+  } finally { await act(async () => root.unmount()); host.remove(); Date.now = originalNow; }
+});
+
 for (const withAgents of [false, true]) for (const dismissal of ['close button', 'Escape']) test(`Phone links ${withAgents ? 'with agents' : 'without agents'} open above the workspace and ${dismissal} leaves its session open`, async () => {
   let launches = 0;
   const client = {

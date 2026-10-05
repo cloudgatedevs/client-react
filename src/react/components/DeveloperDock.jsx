@@ -5,6 +5,7 @@ import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink,
 import { useCloudgate } from '../context.jsx';
 import { useAuthContext } from '../auth/index.js';
 import { handleDeveloperAppRefresh, isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
+import { hasConfirmedSdkUpdate } from '../../platform/sdk-update.js';
 import { AgentDockIcons } from '../agents/AgentDock.jsx';
 import { useAgents } from '../agents/AgentsProvider.jsx';
 import { ErrorBoundary } from '../widgets/ErrorBoundary.jsx';
@@ -30,8 +31,11 @@ export function DeveloperDock() {
       pending = true; checked = Date.now();
       try {
         const value = await client.developerWorkspace.sdkStatus({ runningVersion: sdkVersion, sdkSource }, { signal: controller.signal });
-        if (!controller.signal.aborted) setSdkUpdate(value.updateAvailable === true);
-      } catch { /* Older or temporarily unavailable servers must not interrupt the app. */ }
+        if (!controller.signal.aborted) setSdkUpdate(hasConfirmedSdkUpdate(value, sdkVersion, sdkSource));
+      } catch {
+        // A previous result no longer confirms an update when the check fails.
+        if (!controller.signal.aborted) setSdkUpdate(false);
+      }
       finally { pending = false; }
     };
     void check(); const timer = setInterval(check, 60 * 60 * 1000);
@@ -80,7 +84,7 @@ export function DeveloperDock() {
       if (handleDeveloperAppRefresh(event, frame.current?.contentWindow, launch.frameOrigin)) return;
       if (event.data.type === 'environment') {
         if (['prod', 'sbx'].includes(event.data.environment)) setLaunch(value => value ? { ...value, environment: event.data.environment } : value);
-      } else if (event.data.type === 'sdk-update') { setSdkUpdate(event.data.updateAvailable === true); }
+      } else if (event.data.type === 'sdk-update') { setSdkUpdate(hasConfirmedSdkUpdate(event.data, sdkVersion, sdkSource)); }
       else if (event.data.type === 'ready') {
         setStatus('ready'); setError('');
         if (pendingPath.current) { event.source.postMessage({ source: 'cloudgate-app', type: 'navigate', path: pendingPath.current }, launch.frameOrigin); pendingPath.current = null; }

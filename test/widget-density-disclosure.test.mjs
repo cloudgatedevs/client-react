@@ -47,9 +47,9 @@ test('density is opt-in: only compact adds the modifier class, and sub tables ar
   } finally { await normal.close(); await compact.close(); }
 });
 
-test('anchors in cells are links and labelled toolbar fields are inline without application styles', () => {
+test('anchors in cells are links and ordinary toolbar labels remain inline without overriding floating fields', () => {
   assert.match(css, /\.cgw-table-scroll :where\(tbody td\) a:where\(:not\(\.cgw-button, \.cgw-icon-button\)\) \{\s*color: rgb\(var\(--accent-text\)\);\s*text-decoration: underline;/);
-  assert.match(css, /\.cgw-table-tools > \.cgw-field:has\(> label\) \{[^}]*flex-direction: row;/);
+  assert.match(css, /\.cgw-table-tools > \.cgw-field:not\(\.cgw-field--floating\):has\(> label\) \{[^}]*flex-direction: row;/);
   // The palette tokens are bare RGB triplets: a colour written without rgb() would silently be dropped.
   const added = css.slice(css.indexOf('/* Compact density'));
   assert.equal(/:\s*var\(--(accent|ink|mist)/.test(added), false);

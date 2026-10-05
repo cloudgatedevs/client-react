@@ -32,7 +32,7 @@ function usePopupAppearance(reference, open) {
 
 export const SearchSelect = forwardRef(function SearchSelect({
   options = EMPTY, loadOptions, value, defaultValue = '', selectedOption, onChange,
-  label, hint, error, name, id: suppliedId, placeholder = 'Search and select…',
+  label, labelPlacement, hint, error, name, id: suppliedId, placeholder = 'Search and select…',
   required = false, disabled = false, readOnly = false, clearable = true,
   debounceMs = 300, minSearchLength = 0, limit = 50, reloadKey,
   validate, validationMessages, className = '', 'aria-label': ariaLabel,
@@ -111,7 +111,8 @@ export const SearchSelect = forwardRef(function SearchSelect({
   return <Popover.Root open={visible} onOpenChange={next => { if (!next) close(); else if (!locked) setOpen(true); }}>
     <div className={`cgw-search-select ${className}`} ref={wrapper}>
       <Popover.Anchor virtualRef={input} />
-      <Input ref={setRef} id={id} label={fieldLabel} hint={hint} error={error} icon={Search}
+      <Input ref={setRef} id={id} label={fieldLabel} labelPlacement={labelPlacement} hint={hint} error={error} icon={Search}
+        className={String(className || '').split(/\s+/).includes('cgw-field--floating') ? 'cgw-field--floating' : undefined}
         value={search === null ? display : search} disabled={disabled} readOnly={readOnly}
         placeholder={placeholder} autoComplete="off" role="combobox" aria-label={ariaLabel}
         aria-autocomplete="list" aria-expanded={visible} aria-controls={visible ? listId : undefined}

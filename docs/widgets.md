@@ -435,6 +435,31 @@ handlers. Backend validation remains required. Customize built-in wording with
 For controlled fields, also restore your values in `Form`'s `onReset`. The gallery
 includes a working **Form validation** example and matching agent cookbook entry.
 
+## Compact floating labels
+
+Pass `labelPlacement="floating"` to `Input`, `Select`, `SearchSelect` or `Textarea`
+to keep its label in the top border. Labels remain visible for empty fields and
+date inputs, and retain their native label association, required marker, and
+validation feedback. Existing fields default to labels above the control.
+
+```jsx
+<Select label="Show" labelPlacement="floating" value={status}
+  options={statusOptions} onChange={event => setStatus(event.target.value)} />
+<Input label="From" labelPlacement="floating" type="date" />
+```
+
+Use these in wrapping table toolbars with a gap between fields; control heights
+still follow the SDK density setting. The label notch uses the input surface
+token in light and dark themes. If the host overrides that surface, set
+`--cgw-floating-label-bg` to the matching CSS color. This option does not change
+filter values or filtering behavior.
+
+Shared app adapters may also use `className="cgw-field--floating"` with a native
+SDK `label`. `SearchSelect` forwards this field class to its inner input shell.
+This lets an app prepare its markup while still on an older SDK without passing
+an unknown prop to native controls. The floating appearance requires the updated
+SDK stylesheet; applications should not copy that styling into their own CSS.
+
 ## Searchable dropdowns
 
 Use `SearchSelect` for a search input with a dropdown. Pass `options` for local
