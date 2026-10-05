@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { Terminal, ChevronUp, ChevronDown, LockKeyhole, RefreshCw, ExternalLink, Info, Sparkles } from 'lucide-react';
 import { useCloudgate } from '../context.jsx';
 import { useAuthContext } from '../auth/index.js';
-import { isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
+import { handleDeveloperAppRefresh, isDeveloperWorkspaceMessage } from '../../platform/developer-workspace.js';
 import { AgentDockIcons } from '../agents/AgentDock.jsx';
 import { useAgents } from '../agents/AgentsProvider.jsx';
 import { ErrorBoundary } from '../widgets/ErrorBoundary.jsx';
@@ -77,6 +77,7 @@ export function DeveloperDock() {
     if (!launch) return;
     const receive = event => {
       if (!isDeveloperWorkspaceMessage(event, frame.current?.contentWindow, launch.frameOrigin)) return;
+      if (handleDeveloperAppRefresh(event, frame.current?.contentWindow, launch.frameOrigin)) return;
       if (event.data.type === 'environment') {
         if (['prod', 'sbx'].includes(event.data.environment)) setLaunch(value => value ? { ...value, environment: event.data.environment } : value);
       } else if (event.data.type === 'sdk-update') { setSdkUpdate(event.data.updateAvailable === true); }

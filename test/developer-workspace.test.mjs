@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDeveloperWorkspaceClient, isDeveloperWorkspaceMessage } from '../src/platform/developer-workspace.js';
+import { createDeveloperWorkspaceClient, handleDeveloperAppRefresh, isDeveloperWorkspaceMessage } from '../src/platform/developer-workspace.js';
 import { createIdpClient } from '../src/platform/transport.js';
 
 test('Developer launch uses IdP bearer and resolved application scope, not a caller-supplied ABP identity', async () => {
@@ -77,4 +77,16 @@ test('SDK version is carried into the workspace and automatic checks do not laun
   assert.equal(result.updateAvailable, true); assert.equal(requests[1].options.method, 'GET');
   assert.equal(requests[1].path, 'developer-workspace/sdk-status?webAppId=app&runningVersion=0.1.2&sdkSource=npm');
   assert.equal(requests[1].options.body, undefined);
+});
+
+test('Release refresh reloads the parent app only for its trusted active developer frame', () => {
+  const calls = [], frame = { postMessage: (...args) => calls.push(args) };
+  const event = { source: frame, origin: 'https://hub.test', data: { source: 'cloudgate-developer', type: 'refresh-app', requestId: crypto.randomUUID(), url: 'https://untrusted.test' } };
+  const reload = () => calls.push('reload-current-route');
+  for (const invalid of [{ ...event, source: {} }, { ...event, origin: 'https://untrusted.test' }, { ...event, data: { ...event.data, requestId: '' } },
+    { ...event, data: { ...event.data, type: 'ready' } }])
+    assert.equal(handleDeveloperAppRefresh(invalid, frame, 'https://hub.test', reload), false);
+  assert.deepEqual(calls, []);
+  assert.equal(handleDeveloperAppRefresh(event, frame, 'https://hub.test', reload), true);
+  assert.deepEqual(calls, [[{ source: 'cloudgate-app', type: 'refresh-app-accepted', requestId: event.data.requestId }, 'https://hub.test'], 'reload-current-route']);
 });

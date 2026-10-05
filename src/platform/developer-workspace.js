@@ -37,5 +37,15 @@ export function createDeveloperWorkspaceClient({ request, resolveAppIdentity, pr
 
 export function isDeveloperWorkspaceMessage(event, frameWindow, frameOrigin) {
   return Boolean(frameWindow && event.source === frameWindow && event.origin === frameOrigin
-    && event.data?.source === 'cloudgate-developer' && ['ready', 'expired', 'error', 'ended', 'environment', 'sdk-update'].includes(event.data.type));
+    && event.data?.source === 'cloudgate-developer' && (['ready', 'expired', 'error', 'ended', 'environment', 'sdk-update'].includes(event.data.type)
+      || event.data.type === 'refresh-app' && typeof event.data.requestId === 'string' && /^[a-f0-9-]{36}$/i.test(event.data.requestId)));
+}
+
+// Only the active, trusted workspace can request a reload. Use the parent's own
+// location, never a URL supplied by a frame, so the current app route is retained.
+export function handleDeveloperAppRefresh(event, frameWindow, frameOrigin, reload = () => window.location.reload()) {
+  if (!isDeveloperWorkspaceMessage(event, frameWindow, frameOrigin) || event.data.type !== 'refresh-app') return false;
+  event.source.postMessage({ source: 'cloudgate-app', type: 'refresh-app-accepted', requestId: event.data.requestId }, frameOrigin);
+  reload();
+  return true;
 }
