@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "0.1.10",
-  "fingerprint": "39abedbef41d7023026cd63c2a5c282108161073f14fbaa49963fb75c925537c",
+  "sdkVersion": "0.1.11",
+  "fingerprint": "8e74aff4682df22d6b9d348a5331a299e90eda184a45cd16e84cf302c14046a4",
   "sourceFiles": [
     "admin-styling-guidance.js",
     "calendar-catalog.js",
