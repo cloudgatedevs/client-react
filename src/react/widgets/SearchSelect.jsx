@@ -31,9 +31,9 @@ function usePopupAppearance(reference, open) {
 }
 
 export const SearchSelect = forwardRef(function SearchSelect({
-  options = EMPTY, loadOptions, value, defaultValue = '', selectedOption, onChange,
+  options = EMPTY, loadOptions, value, defaultValue = '', selectedOption, onChange, onSearchChange,
   label, labelPlacement, hint, error, name, id: suppliedId, placeholder = 'Search and select…',
-  required = false, disabled = false, readOnly = false, clearable = true,
+  required = false, disabled = false, readOnly = false, clearable = true, clearSelectionOnSearch = false,
   debounceMs = 300, minSearchLength = 0, limit = 50, reloadKey,
   validate, validationMessages, className = '', 'aria-label': ariaLabel,
 }, forwardedRef) {
@@ -71,6 +71,19 @@ export const SearchSelect = forwardRef(function SearchSelect({
     reopenBlocked.current = true;
     input.current?.focus();
     queueMicrotask(() => { reopenBlocked.current = false; });
+  }
+  function changeSearch(event) {
+    // Store the keystroke before notifying parents: clearing a controlled ID in
+    // an ancestor's input capture handler can restore the old DOM value first.
+    const next = event.target.value;
+    setSearch(next);
+    setOpen(true);
+    if (clearSelectionOnSearch && hasValue) {
+      if (value === undefined) setInternal('');
+      setChosen(null);
+      onChange?.('', null);
+    }
+    onSearchChange?.(next);
   }
   useEffect(() => { setActive(-1); }, [search, results.options]);
   useEffect(() => { if (locked) close(); }, [locked]);
@@ -124,7 +137,7 @@ export const SearchSelect = forwardRef(function SearchSelect({
         }}
         onFocus={event => { if (!locked && !reopenBlocked.current) { setOpen(true); event.currentTarget.select(); } }}
         onClick={() => { if (!locked) setOpen(true); }}
-        onChange={event => { setSearch(event.target.value); setOpen(true); }}
+        onChange={changeSearch}
         onBlur={event => { if (!popup.current?.contains(event.relatedTarget)) close(); }}
         onKeyDown={keyboard} endAdornment={<span className="cgw-search-tools">
         {results.loading ? <LoaderCircle size={15} className="cgw-spin" aria-label="Searching" /> : null}

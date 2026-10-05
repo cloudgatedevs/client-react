@@ -482,6 +482,18 @@ ID needs `selectedOption` with its label. Typing only changes the search; Escape
 or blur restores the committed selection. Arrow keys move through enabled options
 and Enter selects. The popup flips to fit the viewport and works inside dialogs.
 
+For a destination picker where editing must invalidate the previous choice, set
+`clearSelectionOnSearch`. The SDK clears the ID with `onChange('', null)` on the
+first edit while preserving the typed text and input focus. Free text still needs
+a new selection before submission. The default remains `false` for existing
+pickers that restore their choice on Escape or blur.
+
+Use `onSearchChange(search)` for immediate query notifications (for example, to
+reset paging); it runs on each edit before the remote-search debounce, after the
+SDK stores the input text. Do not clear controlled values in an ancestor's
+`onInputCapture` handler, which can erase the current keystroke before the SDK
+receives it. Query callbacks do not run for selecting or clearing an option.
+
 Set `name` to submit the ID in `FormData`. `required` checks a committed selection,
 so free text cannot satisfy it. Custom `validate` receives the ID as a string and
 uses the shared form validation behavior. The **Searchable select** gallery page

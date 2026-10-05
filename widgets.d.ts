@@ -381,6 +381,10 @@ export interface SearchSelectProps extends FieldProps, LabelPlacementProps {
   /** Supplies the label for an existing remote ID before a search returns it. */
   selectedOption?: SearchOption;
   onChange?: (value: string | number, option: SearchOption | null) => void;
+  /** Called immediately for typed search changes, before the remote-search debounce. */
+  onSearchChange?: (search: string) => void;
+  /** Clear the committed selection on the first edit. Defaults to false. */
+  clearSelectionOnSearch?: boolean;
   name?: string;
   id?: string;
   placeholder?: string;
