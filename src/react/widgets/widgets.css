@@ -770,8 +770,8 @@ a > .cgw-card:only-child {
 /* Opt-in persistent labels: keep ordinary forms and unlabelled search inputs unchanged. */
 .cgw-field--floating:has(> label) {
   position: relative;
-  margin-block-start: .4rem;
 }
+/* The label overlays the border; it must not offset the control from toolbar buttons. */
 .cgw-field--floating > label {
   position: absolute;
   z-index: 1;

@@ -449,7 +449,10 @@ validation feedback. Existing fields default to labels above the control.
 ```
 
 Use these in wrapping table toolbars with a gap between fields; control heights
-still follow the SDK density setting. The label notch uses the input surface
+still follow the SDK density setting. Floating labels do not add vertical spacing
+to the field, so controls stay aligned with adjacent buttons. Keep toolbar wrappers
+free of extra top padding or margins added only to make room for the labels; use
+the toolbar's shared padding and gap instead. The label notch uses the input surface
 token in light and dark themes. If the host overrides that surface, set
 `--cgw-floating-label-bg` to the matching CSS color. This option does not change
 filter values or filtering behavior.
