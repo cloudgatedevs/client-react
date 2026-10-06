@@ -240,7 +240,8 @@ function WatchList({ agents, agent, onBack }) {
       .catch(error => { if (!stopped) setState({ items: [], error }); });
     return () => { stopped = true; };
   }, [agents.api, agent.id, agents.watchRevision]);
-  const edit = (workflow, mode) => agents.openWatch({ agent, mode, endpointId: workflow.endpointId, label: workflow.name || workflow.route,
+  const edit = (workflow, mode, schedule) => agents.openWatch({ agent, mode, endpointId: workflow.endpointId, scheduleId: schedule?.id,
+    widgetKey: schedule?.widgetKey, label: schedule?.widgetLabel || workflow.name || workflow.route,
     targets: [{ path: workflow.route, method: workflow.method === 'ANY' ? '' : workflow.method }] });
   const runNow = async schedule => {
     setRunning(schedule.id); setNote(null);
@@ -271,13 +272,13 @@ function WatchList({ agents, agent, onBack }) {
       {rows.map(({ key, workflow, mode, icon: Icon, schedule, text, meta }) => <article key={key} className="cg-watch-item">
         <Icon size={14} className="cg-watch-item-icon" aria-hidden="true" />
         <div className="cg-watch-item-text">
-          <p className="cg-watch-item-name">{workflow.name || workflow.route}</p>
+          <p className="cg-watch-item-name">{schedule?.widgetLabel || workflow.name || workflow.route}</p>
           <code>{workflow.method === 'ANY' ? '' : `${workflow.method} `}/{workflow.route}</code>
           <p className="cg-agents-muted">{text}</p>
           <p className="cg-watch-item-env">{meta}</p>
         </div>
-        {schedule && <button type="button" className="cg-agent-bubble-close" disabled={running === schedule.id} title="Run now" aria-label={`Run the check on ${workflow.name || workflow.route} now`} onClick={() => runNow(schedule)}><Play size={13} /></button>}
-        <button type="button" className="cg-agent-bubble-close" title="Edit" aria-label={`Edit the watch on ${workflow.name || workflow.route}`} onClick={() => edit(workflow, mode)}><Pencil size={13} /></button>
+        {schedule && <button type="button" className="cg-agent-bubble-close" disabled={running === schedule.id} title="Run now" aria-label={`Run the check on ${schedule.widgetLabel || workflow.name || workflow.route} now`} onClick={() => runNow(schedule)}><Play size={13} /></button>}
+        <button type="button" className="cg-agent-bubble-close" title="Edit" aria-label={`Edit the watch on ${schedule?.widgetLabel || workflow.name || workflow.route}`} onClick={() => edit(workflow, mode, schedule)}><Pencil size={13} /></button>
       </article>)}
     </div>
     <div className="cg-watch-list-foot">

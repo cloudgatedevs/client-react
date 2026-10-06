@@ -4,7 +4,7 @@ import { useAgents } from './AgentsProvider.jsx';
 import { useCloudgate } from '../context.jsx';
 import { Modal } from '../components/forms.jsx';
 import { useToast } from '../components/Toaster.jsx';
-import { WATCH_INTERVALS, describeCadence, localScheduleToUtc, rankWorkflows, utcScheduleToLocal } from '../../platform/agent-watch.js';
+import { WATCH_INTERVALS, describeCadence, localScheduleToUtc, rankWorkflows, utcScheduleToLocal, watchWidgetKey } from '../../platform/agent-watch.js';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -21,6 +21,8 @@ export function AgentWatchDialog() {
   const watch = agents?.available ? agents.watch : null;
   const [workflows, setWorkflows] = useState(null);
   const [urls, setUrls] = useState({});
+  const [chosenUrls, setChosenUrls] = useState([]);
+  const [supportsGroups, setSupportsGroups] = useState(false);
   const [endpointId, setEndpointId] = useState('');
   const [filter, setFilter] = useState('');
   const [mode, setMode] = useState('runs');
@@ -33,11 +35,12 @@ export function AgentWatchDialog() {
   // The agent list refreshes while the dialog is open; read the live copy for its abilities.
   const agent = watch ? agents.agents.find(item => item.id === watch.agent.id) || watch.agent : null;
   const environment = /^prod/i.test(String(identity?.environment || client?.config?.environment || '')) ? 'Production' : 'Sandbox';
+  const widgetKey = watchWidgetKey(watch);
 
   useEffect(() => {
     if (!watch) return undefined;
     let stopped = false;
-    setWorkflows(null); setError(null); setEndpointId(''); setPrompt(''); setAllowRuns(false); setFilter('');
+    setWorkflows(null); setError(null); setEndpointId(''); setPrompt(''); setAllowRuns(false); setFilter(''); setChosenUrls([]);
     // An element that declares its workflow resolves to it. Anything else is matched against all of the app's
     // workflows, best match first, with the ones this page called ranked up. A call elsewhere on the page
     // does not establish a match for this widget: unmatched workflows must never become a default choice.
@@ -46,26 +49,37 @@ export function AgentWatchDialog() {
       const items = result?.items || [];
       const resolved = [...new Map(items.flatMap(item => item.workflows || []).map(workflow => [workflow.endpointId, workflow])).values()];
       const found = watch.auto
-        ? rankWorkflows(all?.items || resolved, { ...watch.auto, calledIds: resolved.map(workflow => workflow.endpointId) }).filter(workflow => workflow.matched)
+        ? rankWorkflows(all?.items || resolved, { ...watch.auto, calledIds: resolved.map(workflow => workflow.endpointId) })
+          .filter(workflow => workflow.matched || resolved.some(item => item.endpointId === workflow.endpointId))
         : resolved;
       // Remember the call the page made for each workflow: a schedule replays it.
       const calls = {};
       for (const item of items) {
         const url = watch.targets.find(target => (target.key || target.path) === item.key)?.url;
-        if (url) for (const workflow of item.workflows || []) calls[workflow.endpointId] ??= url;
+        if (url) for (const workflow of item.workflows || []) {
+          calls[workflow.endpointId] ??= [];
+          if (!calls[workflow.endpointId].includes(url)) calls[workflow.endpointId].push(url);
+        }
       }
-      setUrls(calls); setWorkflows(found);
-      select(found, watch.endpointId && found.some(workflow => workflow.endpointId === watch.endpointId) ? watch.endpointId : found[0]?.endpointId || '', watch.mode);
+      setUrls(calls); setWorkflows(found); setSupportsGroups(result?.supportsRequestGroups === true);
+      const suggested = watch.auto ? found.find(workflow => workflow.matched) : found[0];
+      select(found, watch.endpointId && found.some(workflow => workflow.endpointId === watch.endpointId) ? watch.endpointId : suggested?.endpointId || '', watch.mode, calls);
     }).catch(failure => { if (!stopped) { setWorkflows([]); setError(failure?.message || 'The workflow could not be found.'); } });
     return () => { stopped = true; };
   }, [watch]);
 
-  const mine = (workflow, kind) => workflow?.[kind]?.find(item => item.agentId === agent?.id);
+  const mine = (workflow, kind) => workflow?.[kind]?.find(item => item.agentId === agent?.id &&
+    (kind !== 'schedules' || !watch?.scheduleId || item.id === watch.scheduleId) &&
+    (kind !== 'schedules' || !widgetKey || item.widgetKey === widgetKey) &&
+    (kind !== 'schedules' || watch?.scheduleId || item.isProduction == null || item.isProduction === (environment === 'Production')));
 
-  function select(list, id, wanted) {
+  function select(list, id, wanted, calls = urls) {
     const workflow = list.find(item => item.endpointId === id);
     setEndpointId(id);
     const live = mine(workflow, 'watches'), scheduled = mine(workflow, 'schedules');
+    const inputs = scheduled?.sampleUrls?.length ? scheduled.sampleUrls : calls[id] || [];
+    // Multiple observed requests may belong to several widgets. Let the user choose, never silently take one.
+    setChosenUrls(scheduled?.sampleUrls?.length || inputs.length === 1 ? inputs : []);
     // Reads default to a schedule, actions to a watch on every run; what already exists wins.
     load(workflow, wanted || (scheduled && !live ? 'schedule' : live ? 'runs' : watch?.auto?.kind !== 'action' && workflow?.method === 'GET' ? 'schedule' : 'runs'));
   }
@@ -87,6 +101,7 @@ export function AgentWatchDialog() {
   // Nothing below may assume an agent once the dialog has closed: the Modal keeps this component mounted.
   const selected = watch && agent ? workflows?.find(workflow => workflow.endpointId === endpointId) : null;
   const live = mine(selected, 'watches'), scheduled = mine(selected, 'schedules');
+  const wrongEnvironment = scheduled?.isProduction != null && scheduled.isProduction !== (environment === 'Production');
   const needle = filter.trim().toLowerCase();
   // The selected workflow stays listed whatever the filter says, so the select never shows a stale choice.
   const shown = (workflows || []).filter(workflow => !needle || workflow.endpointId === endpointId || `${workflow.method} ${workflow.route} ${workflow.name || ''}`.toLowerCase().includes(needle));
@@ -115,8 +130,9 @@ export function AgentWatchDialog() {
       // its workflow is known now rather than at the first alert.
       let tried = null;
       run(async () => {
-        const saved = await api.watchScheduleSet({ id: scheduled?.id, agentId: agent.id, endpointId: selected.endpointId, prompt, ...cadence, sampleUrl: urls[selected.endpointId], enableWorkflowRuns: needsTools && allowRuns });
-        const id = saved?.schedules?.find(item => item.agentId === agent.id)?.id;
+        const saved = await api.watchScheduleSet({ id: scheduled?.id, agentId: agent.id, endpointId: selected.endpointId, prompt, ...cadence,
+          ...(chosenUrls.length ? { sampleUrls: chosenUrls } : {}), widgetKey, widgetLabel: watch.label, enableWorkflowRuns: needsTools && allowRuns });
+        const id = saved?.schedules?.find(item => item.agentId === agent.id && (!widgetKey || item.widgetKey === widgetKey))?.id;
         if (id) { try { tried = await api.watchScheduleTest(id); } catch { tried = null; } }
       }, () => {
         agents.refresh(); agents.watchChanged(); agents.closeWatch();
@@ -136,6 +152,8 @@ export function AgentWatchDialog() {
   const runNow = () => run(() => api.watchScheduleRun(scheduled.id), () => toaster?.toast({ tone: 'info', duration: 6000, title: `${agent.name} is checking ${name} now`, description: 'A message arrives in the chat only if the condition is met.' }));
 
   const current = mode === 'schedule' ? scheduled : live;
+  const requestOptions = [...new Set([...(urls[endpointId] || []), ...(scheduled?.sampleUrls || [])])];
+  const missingInputs = mode === 'schedule' && requestOptions.length > 0 && chosenUrls.length === 0;
   return <Modal open={Boolean(watch)} onClose={() => { if (!busy) agents.closeWatch(); }}
     title={`Watch settings — ${agent?.name || 'Agent'}`}
     description={`Tell ${agent?.name || 'the agent'} what to look for in this workflow and what to do when a condition is met. Actions you prescribe here are carried out automatically with the agent's tools.`}
@@ -143,18 +161,20 @@ export function AgentWatchDialog() {
       <button type="button" className="btn-ghost" disabled={busy} onClick={() => agents.closeWatch()}>Cancel</button>
       {current && canWatch && <button type="button" className="btn-ghost cg-watch-remove" disabled={busy} onClick={stop}>{mode === 'schedule' ? 'Stop checking' : 'Stop watching'}</button>}
       {mode === 'schedule' && scheduled && <button type="button" className="btn-ghost" disabled={busy} onClick={runNow}>Run now</button>}
-      <button type="button" className="btn-primary" disabled={busy || !selected || !canWatch} onClick={save}>{busy ? 'Saving…' : mode === 'schedule' ? 'Save schedule' : 'Save instructions'}</button>
+      <button type="button" className="btn-primary" disabled={busy || !selected || !canWatch || missingInputs || (mode === 'schedule' && (!supportsGroups || wrongEnvironment))} onClick={save}>{busy ? 'Saving…' : mode === 'schedule' ? 'Save schedule' : 'Save instructions'}</button>
     </div>}>
     <div className="cg-watch-form">
       {workflows === null && <p className="cg-agents-muted">Finding the workflow…</p>}
       {workflows?.length === 0 && !error && <p className="cg-agents-error" role="alert">No workflow available for {watch?.label ? `“${watch.label}”` : 'this item'}. The agent can only watch items with a matching workflow.</p>}
-      {workflows?.length > 1 && <label className="cg-watch-field">
+      {workflows?.length > 0 && (workflows.length > 1 || !selected) && <label className="cg-watch-field">
         <span>{watch?.auto ? `Workflow behind “${watch.label}”` : watch?.page ? 'Workflow used by this page' : 'Workflow'}</span>
         {workflows.length > 8 && <input className="input" type="search" value={filter} placeholder="Filter workflows…" aria-label="Filter workflows" disabled={busy} onChange={event => setFilter(event.target.value)} />}
         <select className="input" value={endpointId} disabled={busy} onChange={event => select(workflows, event.target.value)}>
+          <option value="" disabled>Choose a workflow used by this page…</option>
           {shown.map(workflow => <option key={workflow.endpointId} value={workflow.endpointId}>{workflow.method === 'ANY' ? '' : `${workflow.method} `}/{workflow.route}{workflow.name ? ` · ${workflow.name}` : ''}{mine(workflow, 'watches') || mine(workflow, 'schedules') ? ' (watching)' : ''}</option>)}
         </select>
       </label>}
+      {watch?.auto && workflows?.length > 0 && !selected && <p className="cg-agents-muted">This widget combines or shares page data. Choose its workflow, then the requests and values the agent should check.</p>}
       {watch?.auto && selected && <p className="cg-agents-muted">Best match first. Check that this is the workflow behind it before saving.</p>}
       {selected && <>
         {workflows.length === 1 && <p className="cg-watch-route"><strong>{selected.name || 'Workflow'}</strong><code>{selected.method === 'ANY' ? '' : `${selected.method} `}/{selected.route}</code></p>}
@@ -174,6 +194,16 @@ export function AgentWatchDialog() {
               : 'e.g. Monitor the transactions in this workflow. If any transaction amount exceeds 5000, raise a critical insight and create a support ticket with the transaction details.'} />
         </label>
         {mode === 'schedule' ? <>
+          {wrongEnvironment && <p className="cg-agents-error" role="alert">Open this app in {scheduled.isProduction ? 'Production' : 'Sandbox'} to edit this check.</p>}
+          {!supportsGroups && <p className="cg-agents-error" role="alert">The Cloudgate server needs an update before this SDK can save widget checks with their request inputs.</p>}
+          {requestOptions.length > 0 && <fieldset className="cg-watch-requests" disabled={busy || !canWatch}>
+            <legend>Requests to check together</legend>
+            <p className="cg-agents-muted">Choose the inputs used by this widget. The agent evaluates the selected responses together using your instructions.</p>
+            {requestOptions.length > 1 && <button type="button" className="btn-ghost" onClick={() => setChosenUrls(chosenUrls.length === requestOptions.length ? [] : requestOptions)}> {chosenUrls.length === requestOptions.length ? 'Clear selection' : 'Select all requests'}</button>}
+            {requestOptions.map(url => <label key={url} className="cg-watch-consent"><input type="checkbox" checked={chosenUrls.includes(url)} onChange={event => setChosenUrls(old => event.target.checked ? [...old, url] : old.filter(item => item !== url))} /><code>{url}</code></label>)}
+            {missingInputs && <p className="cg-agents-muted">Select at least one request.</p>}
+          </fieldset>}
+          {widgetKey && <p className="cg-agents-muted">For “{watch.label}”. If the response contains several values, name the fields or total to watch in your instructions. Other widgets keep their own checks.</p>}
           <div className="cg-watch-cadence">
             <label className="cg-watch-field"><span>Check</span>
               <select className="input" value={interval} disabled={busy || !canWatch} onChange={event => setIntervalMinutes(Number(event.target.value))}>

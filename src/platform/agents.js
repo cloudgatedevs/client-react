@@ -58,10 +58,12 @@ export function createAgentsClient({ request, resolveAppIdentity, projectPath })
      * replays `sampleUrl` (the page's own call) in the app's environment and alerts only when `prompt` is met.
      * Pass `id` to change an existing schedule; `enableWorkflowRuns` consents to adding the Testing tools.
      */
-    watchScheduleSet: async ({ id, agentId, endpointId, prompt, intervalMinutes = 60, timeOfDayUtcMinutes, dayOfWeek, isEnabled = true, sampleUrl, enableWorkflowRuns = false }, options) =>
+    watchScheduleSet: async ({ id, agentId, endpointId, prompt, intervalMinutes = 60, timeOfDayUtcMinutes, dayOfWeek, isEnabled = true, sampleUrl, sampleUrls, widgetKey, widgetLabel, enableWorkflowRuns = false }, options) =>
       request('agents/watch/schedule/set', { ...options, body: { ...await scope(), ...(guid(id) ? { id } : {}), agentId, endpointId, prompt, intervalMinutes, isEnabled,
         ...(Number.isInteger(timeOfDayUtcMinutes) ? { timeOfDayUtcMinutes } : {}), ...(Number.isInteger(dayOfWeek) ? { dayOfWeek } : {}),
-        ...(sampleUrl ? { sampleUrl: String(sampleUrl).slice(0, 2048) } : {}), enableWorkflowRuns } }),
+        ...(sampleUrl ? { sampleUrl: String(sampleUrl).slice(0, 2048) } : {}),
+        ...(Array.isArray(sampleUrls) ? { sampleUrls: [...new Set(sampleUrls.map(String))] } : {}),
+        ...(widgetKey ? { widgetKey: String(widgetKey).slice(0, 300), widgetLabel: String(widgetLabel || '').slice(0, 120) } : {}), enableWorkflowRuns } }),
     watchScheduleDelete: (id, options) => request('agents/watch/schedule/delete', { ...options, body: { id } }),
     /** Runs the schedule's saved request once, as the agent will, and says whether the workflow answered. No agent run, no alert. */
     watchScheduleTest: (id, options) => request('agents/watch/schedule/test', { ...options, body: { id }, timeoutMs: 60000 }),

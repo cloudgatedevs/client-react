@@ -326,11 +326,11 @@ export interface AgentsClient {
   chatThread(query: { conversationId: string; rootMessageId: string }, options?: PlatformRequestOptions): Promise<{ items: AgentChatMessage[] }>;
   chatSend(input: { conversationId: string; content: string; replyToMessageId?: string }, options?: PlatformRequestOptions): Promise<AgentChatMessage>;
   chatRead(conversationId: string, options?: PlatformRequestOptions): Promise<{ read: boolean }>;
-  watchResolve(routes: AgentWatchRoute[], options?: PlatformRequestOptions): Promise<{ items: Array<{ key: string; workflows: AgentWatchWorkflow[] }>; canWatch: boolean }>;
-  watchWorkflows(options?: PlatformRequestOptions): Promise<{ items: AgentWatchWorkflow[]; canWatch: boolean }>;
+  watchResolve(routes: AgentWatchRoute[], options?: PlatformRequestOptions): Promise<{ items: Array<{ key: string; workflows: AgentWatchWorkflow[] }>; canWatch: boolean; supportsRequestGroups?: boolean }>;
+  watchWorkflows(options?: PlatformRequestOptions): Promise<{ items: AgentWatchWorkflow[]; canWatch: boolean; supportsRequestGroups?: boolean }>;
   watchList(query?: { agentId?: string }, options?: PlatformRequestOptions): Promise<{ items: AgentWatchWorkflow[]; canWatch: boolean }>;
   watchSet(input: { agentId: string; endpointId: string; attached?: boolean; watchPrompt?: string; watchSandbox?: boolean; watchProduction?: boolean }, options?: PlatformRequestOptions): Promise<AgentWatchWorkflow>;
-  watchScheduleSet(input: AgentWatchCadence & { id?: string; agentId: string; endpointId: string; prompt: string; isEnabled?: boolean; sampleUrl?: string; enableWorkflowRuns?: boolean }, options?: PlatformRequestOptions): Promise<AgentWatchWorkflow>;
+  watchScheduleSet(input: AgentWatchCadence & { id?: string; agentId: string; endpointId: string; prompt: string; isEnabled?: boolean; sampleUrl?: string; sampleUrls?: string[]; widgetKey?: string; widgetLabel?: string; enableWorkflowRuns?: boolean }, options?: PlatformRequestOptions): Promise<AgentWatchWorkflow>;
   watchScheduleDelete(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
   watchScheduleRun(id: string, options?: PlatformRequestOptions): Promise<{ updated: boolean }>;
   watchScheduleTest(id: string, options?: PlatformRequestOptions): Promise<{ statusCode: number; ok: boolean; signedIn: boolean; responseTimeMs: number; preview: string }>;
@@ -338,7 +338,7 @@ export interface AgentsClient {
 export interface AgentWatchFeed { route: string; method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; label?: string }
 export interface AgentWatchRoute { key?: string; path: string; method?: string; label?: string; /** The call the page made (path and query). */ url?: string }
 export interface AgentWatch { agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; watchPrompt?: string | null; watchSandbox: boolean; watchProduction: boolean }
-export interface AgentWatchSchedule { id: string; agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; prompt: string; intervalMinutes: number; timeOfDayUtcMinutes?: number | null; dayOfWeek?: number | null; isEnabled: boolean; isProduction: boolean; sampleRequestId?: string | null; lastRunAtUtc?: string | null; nextRunAtUtc: string }
+export interface AgentWatchSchedule { id: string; agentId: string; agentName: string; avatarUrl: string; avatarColor?: string | null; prompt: string; intervalMinutes: number; timeOfDayUtcMinutes?: number | null; dayOfWeek?: number | null; isEnabled: boolean; isProduction: boolean; sampleRequestId?: string | null; sampleUrls?: string[]; widgetKey?: string | null; widgetLabel?: string | null; lastRunAtUtc?: string | null; nextRunAtUtc: string }
 /** `watches` fire on every run (actions); `schedules` are checks the agent makes itself on a cadence (reads). */
 export interface AgentWatchWorkflow { endpointId: string; name?: string | null; route: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'ANY'; /** The workflow starts with a sign-in check; a scheduled check of it runs as the app user who created the schedule. */ requiresSignIn: boolean; watches: AgentWatch[]; schedules: AgentWatchSchedule[] }
 export interface AgentWatchCadence { intervalMinutes?: number; timeOfDayUtcMinutes?: number | null; dayOfWeek?: number | null }
@@ -349,6 +349,9 @@ export function watchWords(text: string): string[];
 /** Orders workflows by how likely each is behind an element: shared words, workflows the page called, and read or write fit. */
 export function rankWorkflows<T extends AgentWatchWorkflow>(workflows: T[], options?: { label?: string; kind?: 'action' | 'data'; calledIds?: Iterable<string>; /** The page's own path without the app's base path: it names the resource in the backend's words. */ context?: string; /** Routes the page called: a weak extra hint for actions. */ routes?: string }): Array<T & { score: number; matched: boolean }>;
 export function routeMatches(route: string, path: string): boolean;
+export function callsFor(entries: Array<{ name: string; startTime?: number }>, gatewayUrl: string, route: string, since?: number): AgentWatchRoute[];
+export function watchWidgetKey(watch?: { widgetKey?: string; label?: string; auto?: { context?: string; label?: string } }): string;
+export function watchElementKey(element: Element | null, page: string, label: string): string;
 export function lastCallFor(entries: Array<{ name: string; startTime?: number }>, gatewayUrl: string, route: string): string;
 export function localScheduleToUtc(local?: { time?: string; day?: number }, offsetMinutes?: number): { timeOfDayUtcMinutes?: number; dayOfWeek?: number };
 export function utcScheduleToLocal(utc?: AgentWatchCadence, offsetMinutes?: number): { time?: string; day?: number };

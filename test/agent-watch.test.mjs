@@ -36,9 +36,9 @@ test('page routes come from gateway resource timings only, newest first and dedu
     { name: 'http://open-admin.localhost:44301/prod/old/page', startTime: 10 },
   ];
   const routes = gatewayRoutesFromEntries(entries, 'http://open-admin.localhost:44301/sbx/', 50);
-  assert.deepEqual(routes.map(route => route.path), ['risk/cases', 'balance/profiles/AA 36']);
+  assert.deepEqual(routes.map(route => route.path), ['risk/cases', 'balance/profiles/AA 36', 'risk/cases']);
   assert.equal(routes[0].method, '');
-  assert.equal(gatewayRoutesFromEntries(entries, 'http://open-admin.localhost:44301').length, 3);
+  assert.equal(gatewayRoutesFromEntries(entries, 'http://open-admin.localhost:44301').length, 4);
   assert.deepEqual(gatewayRoutesFromEntries(entries, ''), []);
   assert.equal(gatewayRoutesFromEntries(entries, 'http://open-admin.localhost:44301', 0, 1).length, 1);
 });

@@ -202,3 +202,7 @@ ul.cg-md-list { list-style: disc; } ol.cg-md-list { list-style: decimal; }
 .cg-toast-close { flex-shrink: 0; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; color: rgb(var(--mist-dim)); }
 .cg-toast-close:hover { background: rgb(var(--ink-800)); color: rgb(var(--mist)); }
 @media (prefers-reduced-motion: reduce) { .cg-toast, .cg-chat-typing i, .cg-agent-bubble, .cg-agent-dock-item, .cg-agent-dock-badge, .cg-chat-item, .cg-agents-bar { animation: none !important; } }
+
+.cg-watch-requests { min-width: 0; border: 1px solid rgb(var(--ink-600)); border-radius: 10px; padding: 12px; }
+.cg-watch-requests .cg-watch-consent { margin-top: 6px; background: transparent; border-color: rgb(var(--ink-600)); }
+.cg-watch-requests code { white-space: normal; overflow-wrap: anywhere; min-width: 0; }

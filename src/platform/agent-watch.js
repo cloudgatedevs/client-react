@@ -27,7 +27,7 @@ export const watchRouteKey = ({ path, method }) => `${String(method || '').toUpp
 
 /**
  * The workflow routes a page called, read from the browser's resource timings so it works however the app
- * fetches. Newest first, one entry per path, environment segment and query removed. Methods are not recorded
+ * fetches. Newest first, one entry per concrete path and query, with the environment segment removed. Methods are not recorded
  * by the browser, so a path served by several workflows resolves to all of them.
  */
 export function gatewayRoutesFromEntries(entries, gatewayUrl, since = 0, limit = 40) {
@@ -42,10 +42,11 @@ export function gatewayRoutesFromEntries(entries, gatewayUrl, since = 0, limit =
     const parts = url.pathname.split('/').filter(Boolean);
     if (!/^(sbx|prod|sandbox|production)$/i.test(parts[0] || '') || parts.length < 2) continue;
     const path = parts.slice(1).map(part => { try { return decodeURIComponent(part); } catch { return part; } }).join('/');
-    if (seen.has(path.toLowerCase())) continue;
-    seen.add(path.toLowerCase());
+    const requestUrl = parts.slice(1).join('/') + url.search;
+    if (seen.has(requestUrl)) continue;
+    seen.add(requestUrl);
     // `url` keeps the query the page sent, so a scheduled check can replay the same request.
-    routes.push({ key: watchRouteKey({ path }), path, method: '', label: path, url: path + url.search });
+    routes.push({ key: watchRouteKey({ path: requestUrl }), path, method: '', label: path, url: requestUrl });
     if (routes.length >= limit) break;
   }
   return routes;
@@ -65,6 +66,27 @@ export function routeMatches(route, path) {
 /** The most recent call (path and query) the page made to a declared route: what a scheduled check replays. */
 export function lastCallFor(entries, gatewayUrl, route) {
   return gatewayRoutesFromEntries(entries, gatewayUrl, 0, 200).find(call => routeMatches(route, call.path))?.url || '';
+}
+
+/** All inputs observed for a route, including different filters and route parameters. */
+export function callsFor(entries, gatewayUrl, route, since = 0) {
+  return gatewayRoutesFromEntries(entries, gatewayUrl, since, 80).filter(call => routeMatches(route, call.path));
+}
+
+/** Widget identity is independent of changing counts; no app-specific binding is required. */
+export function watchWidgetKey(watch) {
+  return watch?.widgetKey || (watch?.auto ? `${watch.auto.context || '/'}::${watch.label || watch.auto.label || ''}`.slice(0, 300) : '');
+}
+
+/** Disambiguate equally labelled widgets using their DOM position, without depending on changing values. */
+export function watchElementKey(element, page, label) {
+  const parts = [];
+  for (let node = element; node?.parentElement && node.id !== 'main-content'; node = node.parentElement) {
+    const siblings = [...node.parentElement.children].filter(other => other.tagName === node.tagName);
+    parts.unshift(`${node.tagName.toLowerCase()}:${siblings.indexOf(node) + 1}`);
+    if (node.getAttribute('role') === 'dialog') break;
+  }
+  return `${page}::${label}::${parts.join('/')}`.slice(0, 300);
 }
 
 /** Cadences a scheduled check can run on. Agents never run more often than every 15 minutes. */

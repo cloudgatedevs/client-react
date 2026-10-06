@@ -27,6 +27,34 @@ test('a scheduled check replays the newest matching call with its query', () => 
   assert.equal(lastCallFor(entries, 'http://app.localhost:44301', 'never/called'), '');
 });
 
+test('distinct inputs for one workflow survive capture while identical repeats collapse', () => {
+  const entries = ['transactions', 'payments', 'deposits', 'withdrawal', 'kyc', 'merchants', 'markets', 'holding']
+    .map((segment, index) => ({ name: `https://app.test/sbx/admin/metrics/warnings/${segment}`, startTime: index + 1 }));
+  entries.push({ name: 'https://app.test/sbx/admin/metrics/warnings/transactions', startTime: 20 });
+  entries.push(...['open', 'closed'].map(status => ({ name: `https://app.test/sbx/admin/cases?status=${status}`, startTime: 21 })));
+  entries.push({ name: 'https://elsewhere.test/sbx/admin/secret', startTime: 22 });
+  const calls = gatewayRoutesFromEntries(entries, 'https://app.test');
+  assert.equal(calls.length, 10);
+  assert.equal(new Set(calls.map(call => call.key)).size, 10);
+  assert.equal(calls.filter(call => call.path.includes('warnings')).length, 8);
+  assert.deepEqual(calls.filter(call => call.path === 'admin/cases').map(call => call.url), ['admin/cases?status=open', 'admin/cases?status=closed']);
+});
+
+test('request capture preserves encoded path inputs for exactly one decode on replay', () => {
+  const [call] = gatewayRoutesFromEntries([{ name: 'https://app.test/sbx/admin/items/A%2BB?name=a%26b', startTime: 1 }], 'https://app.test');
+  assert.equal(call.url, 'admin/items/A%2BB?name=a%26b');
+});
+
+test('grouped schedules send every chosen request and widget identity without silently truncating inputs', async () => {
+  let sent;
+  const api = createAgentsClient({ request: async (_, options) => { sent = options.body; }, resolveAppIdentity: async () => ({ environment: 'prod' }) });
+  await api.watchScheduleSet({ agentId: 'a', endpointId: 'e', prompt: 'Check the sum', sampleUrls: ['warnings/a', 'warnings/b', 'warnings/a'], widgetKey: '/dashboard::Total', widgetLabel: 'Total' });
+  assert.deepEqual(sent.sampleUrls, ['warnings/a', 'warnings/b']);
+  assert.equal(sent.widgetKey, '/dashboard::Total');
+  assert.equal(sent.widgetLabel, 'Total');
+  assert.equal(sent.environment, 'prod');
+});
+
 test('local schedule times convert to UTC and back across midnight and week boundaries', () => {
   // UTC+2 (Johannesburg): getTimezoneOffset() is -120.
   assert.deepEqual(localScheduleToUtc({ time: '08:00' }, -120), { timeOfDayUtcMinutes: 360 });

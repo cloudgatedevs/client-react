@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useAgents } from './AgentsProvider.jsx';
 import { AgentAvatar } from './AgentAvatar.jsx';
 import { useCloudgate } from '../context.jsx';
-import { describeWatchElement, gatewayRoutesFromEntries, lastCallFor, readWatchTarget } from '../../platform/agent-watch.js';
+import { callsFor, describeWatchElement, gatewayRoutesFromEntries, lastCallFor, readWatchTarget, watchElementKey } from '../../platform/agent-watch.js';
 
 const TARGET = '[data-cg-feed]';
 const targetAt = (x, y) => document.elementFromPoint(x, y)?.closest?.(TARGET) || null;
@@ -79,7 +79,13 @@ export function AgentWatchLayer() {
     agents.endDrag();
     // A declared target also carries the call the page last made to it, which a scheduled check replays.
     const declare = node => { const target = readWatchTarget(node); return target && { ...target, url: lastCallFor(calls.current, gatewayUrl, target.path) }; };
-    if (element) { const target = declare(element); agents.openWatch({ agent, targets: [target], label: target?.label }); return; }
+    if (element) {
+      const target = declare(element);
+      const inputs = callsFor(calls.current, gatewayUrl, target.path, pageStart.current);
+      agents.openWatch({ agent, targets: inputs.length ? inputs.map(call => ({ ...call, method: target.method })) : [target], label: target?.label,
+        widgetKey: watchElementKey(element, location.pathname, target?.label || target.path) });
+      return;
+    }
     if (!widget && !overPage) return;
     // Nothing declared under the pointer: match the widget (or the page) against the app's workflows, favouring
     // the ones this page called.
@@ -95,7 +101,9 @@ export function AgentWatchLayer() {
     const context = basePath && location.pathname.startsWith(basePath) ? location.pathname.slice(basePath.length) : location.pathname;
     // An action has not been called yet, so the routes this page did call are a weak extra clue for it.
     const routes = described.kind === 'action' ? called.map(call => call.path).join(' ') : '';
-    agents.openWatch({ agent, targets, label: described.label, page: !widget, auto: { ...described, context, routes } });
+    agents.openWatch({ agent, targets, label: described.label, page: !widget,
+      widgetKey: widget ? watchElementKey(widget, location.pathname, described.label) : undefined,
+      auto: { ...described, context, routes } });
   };
   if (agents?.dropRef) agents.dropRef.current = available ? drop : null;
 

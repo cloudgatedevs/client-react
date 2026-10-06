@@ -670,8 +670,15 @@ or loses `backoffice.agents.access`. After saving, the dialog tries the request 
 workflow answered.
 
 Elements that declare nothing are targets too: while dragging, the table, card, tile or button under the pointer
-lights up, and dropping on it lists the app's workflows with the most likely one first (matched on the element's
-label, the workflows the page called, and whether it is an action or data). Declaring the route removes the
+lights up. The SDK records distinct page requests, including concrete route parameters and query filters.
+If the widget's label does not identify its source, the dialog offers the workflows the page actually called
+without silently selecting an unrelated one. Choose its workflow and the requests to check together (up to 20
+GET requests). One scheduled check evaluates all selected responses; failed requests are not treated as zero.
+For a shared response, name the relevant fields or calculation in the instructions. Each widget keeps its own
+schedule and instructions, including when several widgets share one workflow. No widget-specific app code or
+summary endpoint is required. This needs the server's `web_agent_widget_requests` migration and request-group
+support; older servers show an update requirement instead of silently discarding inputs. Declaring a route is
+still optional; it removes the
 guesswork and also lets the element show which agent watches it. Watched elements show the
 agent's small portrait, and the eye button in an agent's chat bubble lists what it watches, with edit and a
 click-to-pick alternative to dragging. Saving a watch needs the linked account's AiAgents.Approve permission,
