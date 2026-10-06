@@ -130,6 +130,14 @@ export function DeveloperDock() {
   const openTab = async () => {
     const destination = window.open('about:blank', '_blank');
     if (!destination) { setError('Allow popups to open the developer workspace in a new tab.'); return; }
+    destination.document.title = 'Opening developer workspace…';
+    const currentIcon = document.querySelector("link[rel~='icon']");
+    if (currentIcon?.href) {
+      const icon = destination.document.createElement('link');
+      icon.rel = 'icon';
+      icon.href = currentIcon.href;
+      destination.document.head.appendChild(icon);
+    }
     destination.opener = null;
     try {
       const result = await client.developerWorkspace.open({ returnUrl: window.location.href, sdkVersion, sdkSource });
