@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 
 import { DEFAULT_SETTINGS, normalizeSettings, paletteVariables, fontVariables } from '../../platform/appearance-model.js';
 import cloudgateIcon from '../assets/cloudgate-icon.svg';
+import { applyBrandingMetadata } from './branding-metadata.js';
 
 const SettingsContext = createContext(null);
 export function SettingsProvider({ children, publicAccess = false }) {
@@ -51,23 +52,12 @@ export function SettingsProvider({ children, publicAccess = false }) {
     };
     apply();
     media.addEventListener('change', apply);
-    document.title = `${settings.app_name} · ${settings.app_tagline || 'Back office'}`;
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute('content', settings.app_description || 'Cloudgate administration');
-    let icon = document.querySelector('link[rel="icon"][data-app-brand]');
-    const href = settings.app_icon_url || settings.app_logo_url || cloudgateIcon;
-    if (href) {
-      if (!icon) {
-        icon = document.createElement('link');
-        icon.rel = 'icon';
-        icon.dataset.appBrand = 'true';
-        document.head.appendChild(icon);
-      }
-      icon.href = href;
-    } else icon?.remove();
     return () => media.removeEventListener('change', apply);
   }, [settings]);
+  useEffect(() => {
+    // Preserve the published branding while settings load, including on a failed read.
+    if (!loading && !error) applyBrandingMetadata(document, settings, cloudgateIcon);
+  }, [settings, loading, error]);
   const save = useCallback(async (values) => {
     const value = await settingsApi.save(values, savedRevision);
     setSettings(normalizeSettings(value.values));

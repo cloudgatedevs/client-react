@@ -27,6 +27,13 @@ All former full-SDK entry points keep their suffix under the new package name:
 
 The sidebar footer shows this React SDK's package version. App versions remain in app metadata.
 
+Branding settings also control the page title, description, favicon and Open Graph/Twitter
+link preview metadata. An empty description falls back to the tagline. The logo is used
+for shared links, falling back to the browser icon; favicons prefer the browser icon.
+Cloudgate's publisher writes the same metadata into the initial HTML and refreshes it
+when branding is saved. This server support is required for link crawlers that do not
+run JavaScript; retain the template's `data-app-brand` favicon marker in `index.html`.
+
 ## React widget library
 
 Reusable tables, charts, cards, controls and animated dialogs are available from
