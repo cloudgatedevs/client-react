@@ -48,6 +48,7 @@
 .cwl-notice-warn{color:#92400e;background:#fffbeb;border-color:#fde68a}
 .cwl-notice-info{color:#1e40af;background:#eff6ff;border-color:#bfdbfe}
 .cwl-notice-error{color:#991b1b;background:#fef2f2;border-color:#fecaca}
+.cwl-notice-retry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 .cwl-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .cwl-stat{padding:14px 16px}

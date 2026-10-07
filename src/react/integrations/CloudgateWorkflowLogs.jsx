@@ -68,7 +68,12 @@ function useAsync(fn, deps) {
 // ---------------------------------------------------------------- small pieces
 const Badge = ({ tone = 'gray', plain = false, children }) => <span className={`cwl-badge cwl-badge-${tone}${plain ? ' cwl-plain' : ''}`}>{children}</span>;
 const Skeleton = ({ lines = 3 }) => <div className="cwl-skel" aria-hidden="true">{Array.from({ length: lines }, (_, i) => <i key={i} />)}</div>;
-const ErrorNote = ({ error }) => (error ? <div role="alert" className="cwl-notice cwl-notice-error">{String(error?.message ?? error)}</div> : null);
+const ErrorNote = ({ error, onRetry, retryLabel = 'Try again' }) => (error ? (
+  <div role="alert" className={`cwl-notice cwl-notice-error${onRetry ? ' cwl-notice-retry' : ''}`}>
+    <span>{String(error?.message ?? error)}</span>
+    {onRetry ? <button type="button" className="cwl-btn cwl-btn-sm" onClick={onRetry}><RefreshCw size={14} />{retryLabel}</button> : null}
+  </div>
+) : null);
 const Empty = ({ title, text }) => <div className="cwl-card cwl-empty"><span className="cwl-empty-icon"><Activity size={20} /></span><strong>{title}</strong>{text ? <p>{text}</p> : null}</div>;
 
 const Stat = ({ label, value, trend, sub }) => (
@@ -260,6 +265,7 @@ export function CloudgateWorkflowLogs({ title = 'Logs', showTitle = true, titleC
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [openId, setOpenId] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const configured = workflowLogsScope.configured;
 
   useEffect(() => {
@@ -270,11 +276,13 @@ export function CloudgateWorkflowLogs({ title = 'Logs', showTitle = true, titleC
   }, [searchInput, search]);
   const clearSearch = () => { setSearchInput(''); setSearch(''); setPage(0); };
   const pendingSearch = searchInput.trim() !== search;
-  const summary = useAsync(signal => (configured ? workflowLogsApi.summary(period, { signal }) : Promise.resolve(null)), [period, configured]);
-  const since = useMemo(() => new Date(Date.now() - period * 3600 * 1000).toISOString(), [period, summary.data?.to]);
+  const summary = useAsync(signal => (configured ? workflowLogsApi.summary(period, { signal }) : Promise.resolve(null)), [period, configured, refreshKey, workflowLogsApi]);
+  // Keep list requests independent of summary completion (or failure). Updating
+  // the summary used to change this boundary and issue a second list request.
+  const since = useMemo(() => new Date(Date.now() - period * 3600 * 1000).toISOString(), [period, refreshKey]);
   const list = useAsync(
     signal => (configured ? workflowLogsApi.list({ skip: page * PAGE_SIZE, take: PAGE_SIZE, search: search || undefined, outcome: outcome || undefined, route: route || undefined, minDurationMs: minMs || undefined, startDate: since, signal }) : Promise.resolve(null)),
-    [period, outcome, route, minMs, search, page, configured, since],
+    [period, outcome, route, minMs, search, page, configured, since, refreshKey, workflowLogsApi],
   );
   useEffect(() => { setPage(0); }, [period, outcome, route, minMs]);
 
@@ -301,13 +309,13 @@ export function CloudgateWorkflowLogs({ title = 'Logs', showTitle = true, titleC
           <div className="cwl-seg" role="group" aria-label="Period">
             {PERIODS.map(([hours, label]) => <button key={hours} type="button" aria-pressed={period === hours} onClick={() => setPeriod(hours)}>{label}</button>)}
           </div>
-          <button type="button" className="cwl-btn" onClick={() => { summary.reload(); list.reload(); }} disabled={!configured}><RefreshCw size={14} /> Refresh</button>
+          <button type="button" className="cwl-btn" onClick={() => setRefreshKey(key => key + 1)} disabled={!configured}><RefreshCw size={14} /> Refresh</button>
         </div>
       </div>
 
       {blocking ? <Unavailable error={summary.error} /> : (
         <>
-          <ErrorNote error={summary.error} />
+          <ErrorNote error={summary.error} onRetry={summary.reload} retryLabel="Retry statistics" />
           {s?.sampled ? <div className="cwl-notice cwl-notice-warn">More than 100 000 calls in this period: the percentiles and the chart cover the newest 100 000 only.</div> : null}
 
           {summary.loading ? <div className="cwl-card"><Skeleton lines={3} /></div> : cur ? (
@@ -320,13 +328,13 @@ export function CloudgateWorkflowLogs({ title = 'Logs', showTitle = true, titleC
             </div>
           ) : null}
 
-          <div className="cwl-grid">
+          {!summary.error ? <div className="cwl-grid">
             <section className="cwl-card">
               <div className="cwl-card-head"><h3>Calls per {s?.bucketSize === 'day' ? 'day' : 'hour'}</h3><span className="cwl-legend"><i style={{ background: 'var(--cwl-accent, #4f46e5)' }} />calls<i style={{ background: '#dc2626' }} />errors</span></div>
               {summary.loading ? <Skeleton lines={4} /> : <BucketChart buckets={s?.buckets} bucketSize={s?.bucketSize} />}
             </section>
             <ActionBreakdown rows={s?.byRoute || []} loading={summary.loading} route={route} setRoute={setRoute} />
-          </div>
+          </div> : null}
 
           <div className="cwl-filters">
             <div className="cwl-search">
@@ -351,8 +359,8 @@ export function CloudgateWorkflowLogs({ title = 'Logs', showTitle = true, titleC
             <span className="cwl-count" role="status">{list.loading || pendingSearch ? 'Loading calls…' : list.data ? `${total.toLocaleString()} calls in the last ${PERIODS.find(([h]) => h === period)?.[1]}` : ''}</span>
           </div>
 
-          <ErrorNote error={list.error} />
-          {list.loading ? <div className="cwl-card"><Skeleton lines={8} /></div> : !rows.length ? (
+          <ErrorNote error={list.error} onRetry={list.reload} retryLabel="Retry calls" />
+          {list.loading ? <div className="cwl-card"><Skeleton lines={8} /></div> : list.error ? null : !rows.length ? (
             <Empty title="No calls match" text={search ? 'Try another search, widen the period or clear the filters.' : 'Widen the period or clear the filters. Calls appear here when an accessible workflow runs in this environment.'} />
           ) : (
             <>
