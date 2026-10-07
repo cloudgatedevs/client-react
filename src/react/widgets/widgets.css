@@ -794,9 +794,11 @@ a > .cgw-card:only-child {
 .cgw-field--floating.cgw-field--error > label { color: rgb(var(--cgw-danger)); }
 .cgw-check {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.65rem;
+  min-width: 0;
   font-size: 0.8125rem;
+  line-height: 1.5;
   cursor: pointer;
 }
 .cgw-radio-group { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
@@ -817,12 +819,22 @@ a > .cgw-card:only-child {
 .cgw-radio-option:has(input:disabled) { opacity: .5; cursor: not-allowed; }
 .cgw-radio-group.cgw-field--error .cgw-radio-options--cards > .cgw-radio-option { border-color: rgb(var(--cgw-danger)); }
 @media (prefers-reduced-motion: reduce) { .cgw-radio-options--cards > .cgw-radio-option { transition: none; } }
-.cgw-check input {
+.cgw-check > input {
   width: 1rem;
   height: 1rem;
   flex: none;
+  font: inherit;
+  margin: 0;
+  margin-block-start: max(0px, calc((1lh - 1rem) / 2));
   accent-color: rgb(var(--accent));
-  cursor: pointer;
+  cursor: inherit;
+}
+.cgw-check > input:only-child {
+  margin-block-start: 0;
+}
+.cgw-check > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .cgw-check small {
   display: block;

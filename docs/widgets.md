@@ -58,6 +58,12 @@ settings. Use a visible `label`, optional `hint`, controlled `checked` and
 `onChange(checked)`; `disabled` prevents changes. Size does not change the callback
 or checkbox behavior.
 
+Use `Checkbox label="…"` for checkbox text, with optional `hint` below it.
+The control aligns with the label's first line and wrapped text stays in the
+label column. Do not place the label in a separate `Text` sibling inside `Field`,
+which stacks form controls vertically. Clicking the checkbox label toggles the
+native input; standalone table checkboxes should use `aria-label`.
+
 ### Calendar
 
 **Widget library → Scheduling → Calendar** provides month, week, day and agenda

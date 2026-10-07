@@ -307,10 +307,10 @@ export const Checkbox = forwardRef(function Checkbox(
         }}
         aria-checked={indeterminate ? "mixed" : props.checked}
       />
-      <span>
+      {(label || label === 0 || hint) ? <span>
         {label}
         {hint && <small>{hint}</small>}
-      </span>
+      </span> : null}
     </label>
   );
 });
