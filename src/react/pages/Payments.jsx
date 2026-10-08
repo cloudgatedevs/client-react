@@ -14,7 +14,7 @@ export function Payments() {
   const status = wallet.data;
   return (
     <div className="space-y-6">
-      <PageHead title="Cloudgate payments" subtitle="Manage payment readiness through your tenant’s Cloudgate Wallet.">
+      <PageHead title="Payments" subtitle="Manage payment readiness through your tenant’s Cloudgate Wallet.">
         <Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.history}>All payments</Link>
         <Link className="btn-ghost" to={SDK_PAYMENT_ROUTES.test}>Test payment</Link>
         <button className="btn-ghost" disabled={wallet.loading} onClick={wallet.reload}>

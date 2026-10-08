@@ -9,7 +9,7 @@ const RequireAuth = ({ children }) => {
   const { client } = useCloudgate();
   const cloudgateAuth = client.auth;
   const redirectToLogin = client.login;
-  const { auth, loading, currentUser, error, refreshLoginDetails, sessionEnded, acknowledgeSessionEnd } = useAuthContext();
+  const { auth, loading, currentUser, error, refreshLoginDetails, logout, sessionEnded, acknowledgeSessionEnd } = useAuthContext();
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const leaving = useRef(false);
@@ -47,7 +47,10 @@ const RequireAuth = ({ children }) => {
 
   if (error) return <div className="cg-connection-screen"><section className="card space-y-4 p-6" role="alert">
     <h1 className="text-lg font-semibold">Could not check your account</h1><p>{error.message}</p>
-    <button className="btn-primary" onClick={() => refreshLoginDetails()}>Try again</button>
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" className="btn-primary" onClick={() => refreshLoginDetails()}>Try again</button>
+      <button type="button" className="btn-ghost" onClick={() => logout(true)}>Sign out</button>
+    </div>
   </section></div>;
   if (!currentUser) return <ScreenLoader />;
 

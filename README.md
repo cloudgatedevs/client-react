@@ -145,7 +145,7 @@ Cloudgate backend and SDK together to enable search. No database migration is re
 
 ### Payments
 
-**Administration → Cloudgate payments** includes **Overview**, **All payments** and **Test payment**. These SDK pages use `/cloudgate/payments`, `/cloudgate/payments/list` and `/cloudgate/payments/test` beneath your `basePath`, independently of your application's payment pages. Their permission keys are unchanged.
+**Administration → Payments** includes **Overview**, **All payments** and **Test payment**. These SDK pages use `/cloudgate/payments`, `/cloudgate/payments/list` and `/cloudgate/payments/test` beneath your `basePath`, independently of your application's payment pages. Their permission keys are unchanged.
 
 The former `/payments` URLs redirect to the SDK pages only when the application does not declare routes or navigation in that namespace. Apps can therefore keep their own `/payments` pages. Other built-in SDK routes are reserved: `CloudgateBackoffice` rejects conflicting application routes/navigation with a descriptive error, rather than silently choosing a page and a different active menu item. Sidebar groups are visual organization and do not create URL prefixes.
 History is scoped to the authenticated tenant and selected environment, with status filters
@@ -808,6 +808,10 @@ BrowserRouter to serve a website at `/` alongside the protected back office.
 Application routes and navigation remain relative to the back office (for example `/orders`
 opens `/backoffice/orders`). `useCloudgate().backofficePath()` builds links to shared screens.
 Existing integrations that omit these props retain their root-mounted workspace.
+
+The back-office header includes **View website**, which opens the app's root (`/`) in the
+same tab. It also works when your application owns the root page outside `CloudgateBackoffice`.
+On mobile, the link appears as a globe icon.
 
 The shared Settings screen saves **Enable public website** and **Website access** per web app
 and environment. Choose **Everyone** for anonymous browsing or **Signed-in users** for an app

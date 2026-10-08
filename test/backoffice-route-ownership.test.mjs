@@ -6,9 +6,9 @@ import { navigationSections, navigationTrail } from '../src/react/components/nav
 import { permissionForBackofficePath } from '../src/react/auth/page-permissions.js';
 import { BACKOFFICE_PERMISSIONS as P } from '../src/platform/backoffice-permissions.js';
 
-test('application and Cloudgate payments select distinct pages and active links', () => {
+test('application and SDK payments select distinct pages and active links', () => {
   const app = { to: '/payments', label: 'Application payments' };
-  const sdk = { label: 'Administration', section: 'platform', children: [{ label: 'Cloudgate payments', children: [
+  const sdk = { label: 'Administration', section: 'platform', children: [{ label: 'Payments', children: [
     { to: SDK_PAYMENT_ROUTES.overview, label: 'Overview', end: true },
     { to: SDK_PAYMENT_ROUTES.history, label: 'All payments' },
   ] }] };

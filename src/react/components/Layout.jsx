@@ -2,7 +2,7 @@ import { useCloudgate } from '../context.jsx';
 import { Suspense, useEffect, useId, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Menu, X, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Menu, X, ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, Globe } from 'lucide-react';
 import { useAuthContext } from '../auth/index.js';
 import { useSettings } from '../settings/SettingsProvider.jsx';
 import { PoweredByCloudgate } from '../integrations/CloudgateAbout.jsx';
@@ -28,7 +28,7 @@ export function Layout({ developerMode = true, agents = true }) {
   const showDeveloperDock = developerMode && can(P.DeveloperAccess) && import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW !== 'true';
   // AI agents show as icons in the bottom bar for users whose profile links a Cloudgate account; the provider decides.
   const showAgents = agents && import.meta.env?.VITE_CLOUDGATE_BUILD_PREVIEW !== 'true';
-  const { navigation: allNavigation, identity, client, basePath, backofficePath, publicWebsite } = useCloudgate();
+  const { navigation: allNavigation, identity, client, basePath, backofficePath } = useCloudgate();
   const navigation = filterPermissionNavigation(allNavigation, can, basePath);
   const { currentUser } = useAuthContext();
   const [open, setOpen] = useState(false);
@@ -105,9 +105,14 @@ export function Layout({ developerMode = true, agents = true }) {
               </span>)}
             </nav>
           </div>
-          <div className="flex items-center gap-3">{publicWebsite && settings.enable_public_website === 'true' && <Link to="/" className="btn-ghost btn-sm">View website</Link>}<NotificationBell /><span className={`environment-pill ${isProduction ? 'is-production' : ''}`}>
-            <span aria-hidden="true" />{environment ? (isProduction ? 'Production' : 'Sandbox') : 'Connecting…'}
-          </span><AccountMenu /></div>
+          <div className="flex shrink-0 items-center gap-3">
+            <Link to="/" className="btn-ghost btn-sm"><Globe size={16} aria-hidden="true" />View website</Link>
+            <NotificationBell />
+            <span className={`environment-pill ${isProduction ? 'is-production' : ''}`}>
+              <span aria-hidden="true" />{environment ? (isProduction ? 'Production' : 'Sandbox') : 'Connecting…'}
+            </span>
+            <AccountMenu />
+          </div>
         </header>
         <header className="app-bar flex shrink-0 items-center gap-2 border-b border-ink-700 bg-ink-850 lg:hidden">
           {back ? (
@@ -142,6 +147,9 @@ export function Layout({ developerMode = true, agents = true }) {
           <p className="min-w-0 flex-1 truncate px-1 text-base font-semibold">
             {trail.at(-1)?.label || routeTitle(routePath)}
           </p>
+          <Link to="/" className="btn-ghost p-2" title="View website">
+            <Globe size={21} aria-hidden="true" /><span className="sr-only">View website</span>
+          </Link>
           <NotificationBell />
           <AccountMenu />
         </header>

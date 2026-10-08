@@ -8,7 +8,7 @@ export const PLATFORM_NAV = [WIDGET_NAV, {
   children: [
     { to: '/analytics', label: 'Analytics', icon: ChartNoAxesCombined },
     { to: '/logs', label: 'Logs', icon: Activity },
-    { id: 'payments', label: 'Cloudgate payments', icon: Wallet, keywords: ['billing', 'wallet'], children: [
+    { id: 'payments', label: 'Payments', icon: Wallet, keywords: ['billing', 'wallet'], children: [
       { to: SDK_PAYMENT_ROUTES.overview, label: 'Overview', icon: Wallet, end: true },
       { to: SDK_PAYMENT_ROUTES.history, label: 'All payments', icon: Wallet, keywords: ['transactions', 'history'] },
       { to: SDK_PAYMENT_ROUTES.test, label: 'Test payment', icon: Wallet, keywords: ['sandbox', 'checkout'] },
