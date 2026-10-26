@@ -27,6 +27,10 @@ All former full-SDK entry points keep their suffix under the new package name:
 
 The sidebar footer shows this React SDK's package version. App versions remain in app metadata.
 
+Signed-in users can connect their own eZAR wallet and view its balance with the `UserWallet`
+component or `client.wallet` APIs. Use `UserMenu` in a public header for the signed-in profile menu, wallet balance and logout; `CloudgateBackoffice` supplies authenticated `/account/profile` and `/account/wallet` pages when a public website is configured. See [App user wallets](docs/user-wallet.md) for the SMS/PIN
+flow, environment scoping, and backend deployment requirements.
+
 Branding settings also control the page title, description, favicon and Open Graph/Twitter
 link preview metadata. An empty description falls back to the tagline. The logo is used
 for shared links, falling back to the browser icon; favicons prefer the browser icon.
@@ -145,6 +149,8 @@ Cloudgate backend and SDK together to enable search. No database migration is re
 
 ### Payments
 
+Use the exported `PayWithEzarButton` on an order page to pay an existing invoice from the signed-in user's voucher wallet without hosted checkout. Pass the `paymentId` created by your trusted backend; the button handles wallet connection, SMS/PIN unlock, payment review, PIN authorization, status recovery and a receipt. See [the wallet payment integration guide](docs/user-wallet.md#paying-a-tenant-invoice-from-the-wallet). The sandbox **Test payment** page also includes this flow.
+
 **Administration → Payments** includes **Overview**, **All payments** and **Test payment**. These SDK pages use `/cloudgate/payments`, `/cloudgate/payments/list` and `/cloudgate/payments/test` beneath your `basePath`, independently of your application's payment pages. Their permission keys are unchanged.
 
 The former `/payments` URLs redirect to the SDK pages only when the application does not declare routes or navigation in that namespace. Apps can therefore keep their own `/payments` pages. Other built-in SDK routes are reserved: `CloudgateBackoffice` rejects conflicting application routes/navigation with a descriptive error, rather than silently choosing a page and a different active menu item. Sidebar groups are visual organization and do not create URL prefixes.
@@ -153,6 +159,16 @@ and pagination. Test payment creates a sandbox checkout only, including when the
 in production. Amounts are entered in currency units and sent as integer minor units.
 The native IdP Admin APIs recheck the user's current role permissions and tenant; no ABP account link
 or workflow is required. Configure providers and payouts in the Cloudgate hub.
+
+The overview and test page show the connected wallet's 16-digit account number (with copy),
+mobile number, wallet type, owner details and network. This requires the matching Cloudgate
+server update. An unavailable upstream wallet is shown as unavailable, without inventing an account number.
+Payment history and new test checkouts show invoice numbers and the invoice's original receiving
+account. Click an invoice to view details, refresh its recorded status or open checkout in a new tab.
+`client.payments.get({ paymentId, environment })` reads a tenant- and environment-scoped payment
+and requires payment-history permission. Refresh reads recorded status; provider webhooks confirm payments.
+HTTPS checkout links remain supported. Local HTTP OpenPay links are allowed only for sandbox
+payments when both the app and checkout use a loopback host. Production checkouts require HTTPS.
 
 ### Creating and inviting app users
 

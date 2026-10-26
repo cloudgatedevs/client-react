@@ -1,3 +1,4 @@
+import { readWalletSettings } from './wallet-settings.js';
 import { normalizeSettings } from './appearance-model.js';
 import { createAppIdentityResolver, isWebAppId } from './identity.js';
 
@@ -11,7 +12,7 @@ export function createAppearanceClient({ request, publicRequest, webAppId, envir
     if (!response?.values || typeof response.values !== 'object' || Array.isArray(response.values) ||
         typeof response.revision !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.revision))
       throw new Error('Cloudgate returned an invalid appearance response. Refresh and try again.');
-    return { values: normalizeSettings(response.values), revision: response.revision };
+    return { values: normalizeSettings(response.values), revision: response.revision, walletSettings: readWalletSettings(response.walletSettings, scope.environment) };
   }
   function write(action, values, revision) {
     if (!revision) return Promise.reject(new Error('Load the saved appearance before making changes.'));
@@ -29,7 +30,7 @@ export function createAppearanceClient({ request, publicRequest, webAppId, envir
           (Object.hasOwn(response.values, 'require_public_website_login') && !['true', 'false'].includes(response.values.require_public_website_login)) ||
           typeof response.revision !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.revision))
         throw new Error('The website settings could not be loaded. Update the Cloudgate server and try again.');
-      return { values: normalizeSettings(response.values), revision: response.revision, allowSelfRegistration: response.allowSelfRegistration };
+      return { values: normalizeSettings(response.values), revision: response.revision, allowSelfRegistration: response.allowSelfRegistration, walletSettings: readWalletSettings(response.walletSettings, scope.environment) };
     },
     get: () => run('details'),
     save: (values, revision) => write('update', values, revision),

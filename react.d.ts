@@ -1,6 +1,7 @@
 import type { ComponentType, Context, DependencyList, ReactNode, RefObject } from 'react';
 import type { AppearanceValues, CloudgatePlatform, IdpProfile, IdpRolePermission, AppIdentity, AgentsChangedMessage, AgentWatchRoute, BackofficeAgent, BackofficeAgentsOverview, BackofficeInsight } from './platform.js';
 import type { CloudgateSession } from './index.js';
+import type { UserWalletSession, UserWalletOperation } from './platform.js';
 export { getProfileDisplayName, getProfilePictureSrc } from './platform.js';
 export interface NavigationBase {
   label: string; icon?: ComponentType<any>; group?: string; keywords?: string[];
@@ -35,8 +36,17 @@ export function useAuthContext(): AuthContextValue;
 export function usePermissions(): { can(permission: string): boolean; permissions: IdpRolePermission[] };
 export function RequireAuth(props: { children?: ReactNode }): ReactNode;
 export function RequireAdmin(): ReactNode;
-export function Profile(): ReactNode;
+export function Profile(props?: { showAccountLink?: boolean }): ReactNode;
+/** Signed-in public account menu. CloudgateBackoffice with publicHome supplies /account/profile and /account/wallet. */
+export function UserMenu(): ReactNode;
 export function CloudgateAccountLink(): ReactNode;
+export function UserWallet(props: { environment?: 'sbx' | 'sandbox' | 'prod' | 'production' }): ReactNode;
+/** Full signed-in wallet: holdings, history, PIN-authorized transfers, receive QR and top-up checkout. */
+export function WalletWorkspace(): ReactNode;
+/** Pay one of the tenant's eZAR invoices (SDK payment id) from the signed-in user's wallet balance; render inside the SDK providers with a linked wallet. */
+export function PayInvoice(props: { client: CloudgatePlatform; environment?: string; wallet: { accountNumber: string; phoneNumber?: string; production?: boolean }; session: UserWalletSession | null; setSession: (session: UserWalletSession | null) => void; paymentId: number; recoveryKey?: string; onChanged?: () => void; onPaid?: (operation: UserWalletOperation) => void | Promise<void>; onClose: () => void }): ReactNode;
+/** Inside the SDK providers: connects the user's wallet, reviews a server-created invoice and authorizes payment without checkout navigation. onPaid is for UI updates; verify payment on your backend before fulfilment. */
+export function PayWithEzarButton(props: { paymentId: number; environment?: 'sbx' | 'sandbox' | 'prod' | 'production'; onPaid?: (operation: UserWalletOperation) => void | Promise<void>; onClose?: () => void; disabled?: boolean; className?: string; children?: ReactNode }): ReactNode;
 export function SettingsProvider(props: { children?: ReactNode; publicAccess?: boolean }): ReactNode;
 export function useSettings(): { settings: AppearanceValues; allowSelfRegistration: boolean; loading: boolean; error: Error | null; save(values: AppearanceValues): Promise<AppearanceValues>; reload(): void };
 export function NotificationsProvider(props: { children?: ReactNode }): ReactNode;

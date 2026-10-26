@@ -75,7 +75,14 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
     else if (redirect && publicAccess) window.location.assign('/');
     else if (redirect && client.auth.enabled) client.login(window.location.href);
   }, [client, publicAccess, onLogoutRedirect]);
-  const updateUser = useCallback(async values => applyProfile(await client.profile.update(values)), [client, applyProfile]);
+  const updateUser = useCallback(async values => {
+    const userId = currentUserRef.current?.user?.id;
+    const profile = await client.profile.update(values);
+    if (mounted.current && userId != null && currentUserRef.current?.user?.id === userId) {
+      revision.current++;
+      applyProfile(profile);
+    }
+  }, [client, applyProfile]);
   const updateProfilePicture = useCallback(async file => {
     const userId = currentUserRef.current?.user?.id;
     const picture = await (file ? client.profile.uploadPicture(file) : client.profile.removePicture());
@@ -93,7 +100,7 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
     onSuccess={tokens => { challengePromise.current?.resolve(tokens); challengePromise.current = null; setChallenge(null); }}
     onCancel={() => { challengePromise.current?.reject(new Error('Sign-in cancelled.')); challengePromise.current = null; setChallenge(null); }} />;
   if (error && !publicAccess) return <div className="cg-connection-screen"><section className="card space-y-4 p-8 text-center" role="alert">
-    <h1 className="text-xl font-semibold">Let’s get you signed in</h1><p className="text-sm text-mist-muted">{error.message}</p>
+    <div className="cg-heading-copy"><h1 className="text-xl font-semibold">Let’s get you signed in</h1><p className="text-sm text-mist-muted">{error.message}</p></div>
     {auth && <button className="btn-ghost" onClick={loadProfile}>Try again</button>}
     <button className="btn-primary" onClick={() => client.login()}>Sign in</button>
   </section></div>;

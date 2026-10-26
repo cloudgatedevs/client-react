@@ -1,5 +1,7 @@
 export const PAYMENT_STATUSES = ['Pending', 'Succeeded', 'Failed', 'Expired', 'Partially refunded', 'Refunded'];
 export const paymentStatusTone = status => ({ 0: 'amber', 1: 'green', 2: 'red', 3: 'gray', 4: 'violet', 5: 'gray' }[status] || 'gray');
+export const walletTypeLabel = value => ({ Personal: 'Individual / sole proprietor', Business: 'Registered business' }[value] || 'Not selected');
+export const walletAccountNumber = value => typeof value === 'string' && /^\d{16}$/.test(value) ? value.replace(/(.{4})(?=.)/g, '$1 ') : null;
 export function paymentAmount(value, currency) {
   try {
     const format = new Intl.NumberFormat(undefined, { style: 'currency', currency: String(currency).toUpperCase() });

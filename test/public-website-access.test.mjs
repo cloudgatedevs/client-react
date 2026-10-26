@@ -171,3 +171,30 @@ test('a guest opening the back office signs in even when the website is open', a
   try { assert.equal(calls.login.length, 1); assert.doesNotMatch(view.host.textContent, /Member wallet/); }
   finally { await view.close(); }
 });
+
+test('user wallet settings require a country, save independently and respect settings permissions', async () => {
+  for (const editable of [true, false]) {
+    const { client, calls } = makeClient();
+    let saved = { enabled: false, countryCode: '', production: false, availableCountries: ['ZA'] }, writes = [];
+    const getPublic = client.appearance.getPublic;
+    client.appearance.getPublic = async () => ({ ...await getPublic(), walletSettings: saved });
+    client.wallet = { updateSettings: async input => { writes.push(input); return saved = { ...input, production: false, availableCountries: ['ZA'] }; } };
+    const grants = [P.Access, P.SettingsView, ...(editable ? [P.SettingsEdit] : [])].map(key => ({ key, value: 'true' }));
+    const view = await mount(h(MemoryRouter, null, h(CloudgateProvider, { client },
+      h(AuthContext.Provider, { value: { currentUser: { user: { role: 'User', rolePermissions: grants } } } },
+        h(SettingsProvider, { publicAccess: true }, h(WebsiteSettings))))));
+    try {
+      const form = view.host.querySelector('[aria-label="User wallet settings"]'), checkbox = form.querySelector('input'), select = form.querySelector('select'), save = form.querySelector('button');
+      assert.equal(checkbox.disabled, !editable);
+      if (editable) {
+        await act(async () => checkbox.click()); assert.equal(save.disabled, true);
+        await act(async () => { select.value = 'ZA'; select.dispatchEvent(new window.Event('change', { bubbles: true })); });
+        assert.equal(save.disabled, false);
+        await act(async () => form.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true })));
+        assert.deepEqual(writes, [{ enabled: true, countryCode: 'ZA' }]);
+        assert.deepEqual(calls.saves, []);
+        assert.match(form.textContent, /User wallet settings saved/);
+      } else { assert.equal(select.disabled, true); assert.equal(save.disabled, true); assert.deepEqual(writes, []); }
+    } finally { await view.close(); }
+  }
+});

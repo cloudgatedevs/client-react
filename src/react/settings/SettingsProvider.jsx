@@ -5,10 +5,11 @@ import { DEFAULT_SETTINGS, normalizeSettings, paletteVariables, fontVariables } 
 import cloudgateIcon from '../assets/cloudgate-icon.svg';
 import { applyBrandingMetadata } from './branding-metadata.js';
 
-const SettingsContext = createContext(null);
+export const SettingsContext = createContext(null);
 export function SettingsProvider({ children, publicAccess = false }) {
   const { client } = useCloudgate();
   const settingsApi = client.appearance;
+  const [walletSettings, setWalletSettings] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,12 +24,13 @@ export function SettingsProvider({ children, publicAccess = false }) {
       .then((value) => {
         if (active) {
           setSettings(value.values);
+          setWalletSettings(value.walletSettings ?? null);
           setSavedRevision(value.revision);
           setAllowSelfRegistration(value.allowSelfRegistration === true);
         }
       })
       .catch((err) => {
-        if (active) setError(err);
+        if (active) { setError(err); setWalletSettings(null); }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -37,6 +39,22 @@ export function SettingsProvider({ children, publicAccess = false }) {
       active = false;
     };
   }, [revision, settingsApi, publicAccess]);
+  // Re-check feature availability when returning from the Cloudgate management tab.
+  useEffect(() => {
+    let active = true;
+    const refresh = () => {
+      (publicAccess ? settingsApi.getPublic() : settingsApi.get())
+        .then(value => { if (active) setWalletSettings(value.walletSettings ?? null); })
+        .catch(() => { if (active) setWalletSettings(null); });
+    };
+    window.addEventListener('focus', refresh);
+    return () => { active = false; window.removeEventListener('focus', refresh); };
+  }, [publicAccess, settingsApi]);
+  const saveWalletSettings = useCallback(async (input) => {
+    const value = await client.wallet.updateSettings(input);
+    setWalletSettings(value);
+    return value;
+  }, [client]);
   useEffect(() => {
     const root = document.documentElement;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -67,7 +85,7 @@ export function SettingsProvider({ children, publicAccess = false }) {
   }, [savedRevision, settingsApi]);
   return (
     <SettingsContext.Provider
-      value={{ settings, allowSelfRegistration, loading, error, save, reload: () => setRevision((v) => v + 1) }}
+      value={{ settings, walletSettings, saveWalletSettings, allowSelfRegistration, loading, error, save, reload: () => setRevision((v) => v + 1) }}
     >
       {children}
     </SettingsContext.Provider>

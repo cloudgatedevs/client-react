@@ -17,8 +17,10 @@ export function PlaceholderPage({ title, subtitle, icon: Icon, heading, descript
           </div>
         </div>
         <Badge>Placeholder</Badge>
-        <h2 id={headingId} className="mt-4 text-2xl font-semibold tracking-tight text-mist">{heading}</h2>
-        <p className="mt-3 max-w-md text-sm leading-7 text-mist-muted">{description}</p>
+        <div className="cg-heading-copy mt-4">
+          <h2 id={headingId} className="text-2xl font-semibold tracking-tight text-mist">{heading}</h2>
+          <p className="max-w-md text-sm text-mist-muted">{description}</p>
+        </div>
       </section>
     </div>
   );

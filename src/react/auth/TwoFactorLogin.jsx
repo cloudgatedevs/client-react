@@ -15,8 +15,8 @@ export function TwoFactorLogin({ client, challenge, onSuccess, onCancel }) {
     finally { if (!controller.signal.aborted) setBusy(false); }
   };
   return <div className="grid min-h-screen place-items-center p-6"><form onSubmit={submit} className="card w-full max-w-sm space-y-4 p-6">
-    <h1 className="text-xl font-semibold">Verify your sign-in</h1>
-    <p className="text-sm text-mist-muted">Enter the six-digit code from your authenticator app, or an unused recovery code.</p>
+    <div className="cg-heading-copy"><h1 className="text-xl font-semibold">Verify your sign-in</h1>
+      <p className="text-sm text-mist-muted">Enter the six-digit code from your authenticator app, or an unused recovery code.</p></div>
     {error && <p role="alert" className="account-message is-error">{error}</p>}
     <label className="block text-xs font-medium" htmlFor="launcher-two-factor-code">Authenticator or recovery code</label>
     <input id="launcher-two-factor-code" className="input" value={code} onChange={event => setCode(event.target.value)} required maxLength={32} autoFocus autoComplete="one-time-code" spellCheck={false} />

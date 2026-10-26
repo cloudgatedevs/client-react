@@ -55,7 +55,7 @@ export function createAccountLinkClient(options: { request: PlatformRequest }): 
   detach(options?: PlatformRequestOptions): Promise<AccountLink>;
 };
 export type AppearanceValues = Record<string, string>;
-export interface AppearanceSnapshot { values: AppearanceValues; revision: string }
+export interface AppearanceSnapshot { values: AppearanceValues; revision: string; walletSettings: UserWalletSettings }
 export function createAppearanceClient(options: { request: PlatformRequest; publicRequest?: PlatformRequest; webAppId?: string; environment?: string; resolveAppIdentity?: IdentityResolver }): {
   getPublic(): Promise<AppearanceSnapshot & { allowSelfRegistration: boolean }>;
   get(): Promise<AppearanceSnapshot>; save(values: AppearanceValues, revision: string): Promise<AppearanceSnapshot>; reset(revision: string): Promise<AppearanceSnapshot>;
@@ -179,10 +179,13 @@ export function createSmtpClient(options: { request: PlatformRequest }): {
   delete(options?: PlatformRequestOptions): Promise<Record<string, any>>;
   sendTest(to: string, options?: PlatformRequestOptions): Promise<Record<string, any>>;
 };
-export interface CloudgatePayment { id: number; isProduction: boolean; grossAmount: number; applicationFeeAmount: number; currency: string; status: number; reference?: string | null; description?: string | null; paymentUrl?: string | null; refundedAmount: number; creationTime: string; paidAt?: string | null }
-export function safePaymentUrl(value: unknown): string | null;
+export interface CloudgatePayment { id: number; isProduction: boolean; grossAmount: number; applicationFeeAmount: number; currency: string; status: number; reference?: string | null; description?: string | null; invoiceId?: string | null; invoiceNumber?: string | null; receivingAccountNumber?: string | null; invoiceDetailsUnavailable?: boolean; paymentUrl?: string | null; refundedAmount: number; creationTime: string; paidAt?: string | null }
+export interface CloudgateWalletDetails { accountNumber?: string | null; phoneNumber?: string | null; walletType?: 'Personal' | 'Business' | null; profileName?: string | null; firstName?: string | null; lastName?: string | null; email?: string | null; network?: string | null }
+export interface CloudgateWalletStatus { ready: boolean; comingSoon?: boolean; provider: string; status: string; chargesEnabled: boolean; payoutsEnabled: boolean; currency?: string | null; country?: string | null; production: boolean; reason?: string | null; wallet?: CloudgateWalletDetails | null; walletDetailsUnavailable?: boolean }
+export function safePaymentUrl(value: unknown, options?: { isProduction?: boolean; appUrl?: string }): string | null;
 export function createPaymentsClient(options: { request: PlatformRequest; environment?: string; resolveAppIdentity?: IdentityResolver }): {
-  status(query?: { environment?: string }): Promise<Record<string, any>>;
+  status(query?: { environment?: string }, options?: PlatformRequestOptions): Promise<CloudgateWalletStatus>;
+  get(query: { paymentId: number; environment?: string }, options?: PlatformRequestOptions): Promise<CloudgatePayment>;
   list(query?: { environment?: string; skip?: number; take?: number; status?: number | null }, options?: PlatformRequestOptions): Promise<{ items: CloudgatePayment[]; totalCount: number }>;
   createTest(input: { amount: number; currency: string; description: string; reference?: string; idempotencyKey: string; returnUrl: string }, options?: PlatformRequestOptions): Promise<CloudgatePayment>;
 };
@@ -276,6 +279,7 @@ export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'id
   resolvePublishedApp?: () => Promise<PublishedApp | null>;
 }
 export interface CloudgatePlatform {
+  wallet: ReturnType<typeof createUserWalletClient>;
   config: Readonly<{ idpBaseUrl: string; apiUrl: string; tenancyName: string; returnUrl: string; webAppId: string; environment: string; projectPath: string; gatewayUrl: string; apiKey: string }>;
   auth: CloudgateAuth; request: PlatformRequest; resolveAppIdentity: IdentityResolver;
   /** Workflow gateway calls as the signed-in user: refreshes the bearer, retries one 401, ends a dead session. */
@@ -295,6 +299,60 @@ export interface CloudgatePlatform {
   agents: AgentsClient;
   initialize(options?: { onTwoFactorRequired?: TwoFactorHandler }): Promise<CloudgateSession | null>; loginUrl(returnUrl?: string): string; login(returnUrl?: string): string; signupUrl(returnUrl?: string): string;
 }
+
+export interface UserWalletSettings {
+  configuredEnabled: boolean;
+  platformEnabled: boolean;
+  comingSoon: boolean;
+  availabilityMessage: string;
+  availableCountries: string[]; enabled: boolean; countryCode: string; production: boolean }
+export interface UserWalletStatus {
+  manageWalletUrl?: string | null;
+  linked: boolean; production: boolean; accountNumber?: string; phoneNumber?: string;
+  linkedAtUtc?: string; network?: 'XCAP Voucher'; symbol?: 'eZAR'; accountNotFound?: boolean; message?: string;
+}
+export interface UserWalletBalance {
+  accountNumber: string; production: boolean; symbol: 'eZAR'; available: number; reserved: number;
+  pending: number; restricted: number; pendingChange: number; checkedAtUtc: string;
+}
+export interface UserWalletCode { production: boolean; verificationToken: string; phoneNumber: string; expiresAtUtc: string; resendAvailableAtUtc: string }
+export interface UserWalletScope { environment?: string }
+export interface UserWalletPage<T> { production: boolean; accountNumber: string; totalCount: number; items: T[] }
+export interface UserWalletHolding { id: string; amount: number; status: 'available' | 'reserved' | 'pending' | 'restricted'; createdAtUtc: string; expiresAtUtc?: string | null }
+export interface UserWalletTransaction { id: string; status: number; kind: number; direction: 'in' | 'out'; amount: number; fee: number; createdAtUtc: string; completedAtUtc?: string | null; counterpartyAccountNumber?: string | null; canAuthorize: boolean }
+/** Keep this ticket in memory only. Never persist it or a wallet PIN. */
+export interface UserWalletSession { production: boolean; accountNumber: string; spendingToken: string; expiresAtUtc: string }
+export interface UserWalletSpendingInput extends UserWalletScope { spendingToken: string }
+export interface UserWalletOperation { id: string; invoiceId?: string | null; status: 0 | 1 | 2 | 3 | 4 | 5 | 6; kind: number; amount: number; fee: number; recipientAccountNumber?: string; authorizationDigest: string; expiresAtUtc: string }
+export interface UserWalletInvoice { production: boolean; paymentId: number; invoiceId: string; checkoutToken: string; description: string; reference?: string | null; merchantName?: string; amount: number; currency: 'ZAR'; status: 0 | 100 | 200 | 400 | 410 | 500; paid: boolean; canPay: boolean }
+export interface UserWalletOperationResult { production: boolean; accountNumber: string; operation: UserWalletOperation | null }
+export interface UserWalletTopup { production: boolean; accountNumber: string; invoiceId: string; amount: number; status: number; paymentUrl: string; createdAtUtc: string }
+export function createUserWalletClient(options: { request: PlatformRequest; environment?: string; resolveAppIdentity?: IdentityResolver }): {
+  sendCode(input: UserWalletScope & { phoneNumber: string }, options?: { signal?: AbortSignal }): Promise<UserWalletCode>;
+  link(input: UserWalletScope & { verificationToken: string; code: string; pin: string; createWallet?: boolean; confirmPin?: string }, options?: { signal?: AbortSignal }): Promise<UserWalletStatus>;
+  settings(input?: UserWalletScope, options?: { signal?: AbortSignal }): Promise<UserWalletSettings>;
+  updateSettings(input: UserWalletScope & { enabled: boolean; countryCode: string }, options?: { signal?: AbortSignal }): Promise<UserWalletSettings>;
+  holdings(input?: UserWalletScope & { skip?: number; take?: number }, options?: { signal?: AbortSignal }): Promise<UserWalletPage<UserWalletHolding>>;
+  transactions(input?: UserWalletScope & { skip?: number; take?: number }, options?: { signal?: AbortSignal }): Promise<UserWalletPage<UserWalletTransaction>>;
+  sendUnlockCode(input?: UserWalletScope, options?: { signal?: AbortSignal }): Promise<UserWalletCode & { production: boolean; accountNumber: string }>;
+  unlock(input: UserWalletScope & { verificationToken: string; code: string; pin: string }, options?: { signal?: AbortSignal }): Promise<UserWalletSession>;
+  prepareSend(input: UserWalletSpendingInput & { recipientAccountNumber: string; amount: number | string; requestId: string }, options?: { signal?: AbortSignal }): Promise<UserWalletOperationResult>;
+  operation(input: UserWalletSpendingInput & { operationId?: string; requestId?: string }, options?: { signal?: AbortSignal }): Promise<UserWalletOperationResult>;
+  authorize(input: UserWalletSpendingInput & { operationId: string; authorizationDigest: string; pin: string }, options?: { signal?: AbortSignal }): Promise<UserWalletOperationResult>;
+  cancel(input: UserWalletSpendingInput & { operationId: string }, options?: { signal?: AbortSignal }): Promise<UserWalletOperationResult>;
+  /** One of the tenant's own eZAR invoices (by SDK payment id), ready to be paid from this wallet. */
+  invoice(input: UserWalletScope & { paymentId: number }, options?: { signal?: AbortSignal }): Promise<UserWalletInvoice>;
+  /** Reserve the invoice amount from the wallet (needs an unlocked wallet); authorize the returned operation with `authorize`. */
+  payInvoice(input: UserWalletSpendingInput & { paymentId: number; requestId: string }, options?: { signal?: AbortSignal }): Promise<UserWalletOperationResult>;
+  topup(input: UserWalletScope & { amount: number | string; requestId: string }, options?: { signal?: AbortSignal }): Promise<UserWalletTopup>;
+  topupStatus(input: UserWalletScope & { invoiceId: string }, options?: { signal?: AbortSignal }): Promise<UserWalletTopup>;
+  get(input?: { environment?: string }, options?: { signal?: AbortSignal }): Promise<UserWalletStatus>;
+  /** Removes this app profile's connection only. The wallet, funds and existing invoices remain intact. */
+  disconnect(input?: UserWalletScope, options?: { signal?: AbortSignal }): Promise<UserWalletStatus>;
+  balance(input?: { environment?: string }, options?: { signal?: AbortSignal }): Promise<UserWalletBalance>;
+  startConnect(input: UserWalletScope & { returnUri: string }, options?: { signal?: AbortSignal }): Promise<{ production: boolean; authorizationUrl: string; state: string; connectionTicket: string; expiresAtUtc: string }>;
+  completeConnect(input: UserWalletScope & { connectionTicket: string; code: string; state: string }, options?: { signal?: AbortSignal }): Promise<UserWalletStatus>;
+};
 export function createCloudgatePlatform(options?: CloudgatePlatformOptions): CloudgatePlatform;
 export const AGENT_SEVERITY: { readonly info: 0; readonly warning: 1; readonly critical: 2 };
 export const AGENT_INSIGHT_STATUS: { readonly open: 0; readonly handled: 1; readonly dismissed: 2 };

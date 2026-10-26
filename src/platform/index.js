@@ -4,6 +4,7 @@ import { createAppIdentityResolver } from './identity.js';
 import { createPublishedAnalyticsResolver } from './published.js';
 import { createAppearanceClient } from './appearance.js';
 import { createPaymentsClient } from './payments.js';
+import { createUserWalletClient } from './wallet.js';
 import { createNotificationsClient, connectNotificationSocket } from './notifications.js';
 import { createAppAnalyticsClient } from './analytics.js';
 import { createAccountSecurityClient } from './account-security.js';
@@ -25,6 +26,7 @@ export * from './published.js';
 export * from './appearance.js';
 export * from './appearance-model.js';
 export * from './payments.js';
+export * from './wallet.js';
 export * from './notifications.js';
 export * from './notification-appearance.js';
 export * from './analytics.js';
@@ -78,6 +80,7 @@ export function createCloudgatePlatform(options = {}) {
     roles: createRolesClient({ request }),
     appearance: createAppearanceClient({ request, publicRequest, resolveAppIdentity }),
     payments: createPaymentsClient({ request, resolveAppIdentity }),
+    wallet: createUserWalletClient({ request, resolveAppIdentity }),
     files: createFilesClient({ request, resolveAppIdentity, mediaFolder: options.mediaFolder || (config.projectPath === '*' ? '' : config.projectPath) }),
     smtp: createSmtpClient({ request }),
     // Preserve an explicit invalid path so Logs cannot treat it as an omitted controller scope.

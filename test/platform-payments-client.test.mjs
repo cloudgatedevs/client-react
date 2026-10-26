@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPaymentsClient } from '../src/platform/payments.js';
-import { amountInMinorUnits } from '../src/react/pages/paymentDisplay.js';
+import { createPaymentsClient, safePaymentUrl } from '../src/platform/payments.js';
+import { amountInMinorUnits, walletAccountNumber } from '../src/react/pages/paymentDisplay.js';
 
 const status = { ready: true, provider: 'StripeConnect', status: 'Active', chargesEnabled: true, payoutsEnabled: false, production: true };
 test('payments uses the native IdP endpoint with tenant environment without a controller', async () => {
@@ -25,6 +25,16 @@ test('payments preserves setup-required status and surfaces API errors without a
 test('payments does not show readiness from a malformed response', async () => {
   for (const value of [null, {}, { ready: true }, { ...status, payoutsEnabled: 'false' }])
     await assert.rejects(createPaymentsClient({ request: async () => value }).status(), /invalid Wallet status/);
+});
+
+test('readiness rejects the wrong environment and preserves coming-soon and request cancellation', async () => {
+  const signal = new AbortController().signal;
+  const calls = [];
+  const result = { ...status, ready: false, comingSoon: true };
+  const client = createPaymentsClient({ request: async (...args) => { calls.push(args); return result; } });
+  await assert.rejects(client.status({ environment: 'sbx' }), /different environment/);
+  assert.equal(await client.status({ environment: 'production' }, { signal }), result);
+  assert.equal(calls[1][1].signal, signal);
 });
 
 test('payment history sends environment, paging and status through the native IdP API', async () => {
@@ -61,4 +71,39 @@ test('test amounts convert to minor units without rounding or decimal loss', () 
   assert.equal(amountInMinorUnits('12', 'JPY'), 12);
   assert.equal(amountInMinorUnits('1.234', 'BHD'), 1234);
   for (const value of ['0', '-1', '1e3', '1.001', 'NaN', '99999999999999999999']) assert.throws(() => amountInMinorUnits(value, 'USD'));
+});
+
+test('invoice reads retain tenant API scope and reject different payment or environment responses', async () => {
+  const calls = [];
+  let invoice = { id: 24, isProduction: false, receivingAccountNumber: '0123456789012345' };
+  const client = createPaymentsClient({ request: async (...args) => { calls.push(args); return invoice; } });
+  assert.equal(await client.get({ paymentId: 24, environment: 'sandbox' }), invoice);
+  assert.deepEqual(calls, [['admin/payments/invoice', { body: { environment: 'sandbox', paymentId: 24 } }]]);
+  for (const paymentId of [0, -1, 1.5, '24', Number.MAX_SAFE_INTEGER + 1]) await assert.rejects(client.get({ paymentId }));
+  assert.equal(calls.length, 1);
+  invoice = { ...invoice, id: 25 };
+  await assert.rejects(client.get({ paymentId: 24 }), /different payment/);
+  invoice = { ...invoice, id: 24, isProduction: true };
+  await assert.rejects(client.get({ paymentId: 24 }), /different payment/);
+  assert.equal(await client.get({ paymentId: 24, environment: 'prod' }), invoice);
+});
+
+test('checkout permits HTTP only for a sandbox payment opened from a local app', async () => {
+  const url = 'http://localhost:5173/pay/openpay/sandbox/invoice';
+  const appUrl = 'http://localhost:3001/backoffice/cloudgate/payments/test';
+  assert.equal(safePaymentUrl(url, { isProduction: false, appUrl }), url);
+  assert.equal(safePaymentUrl(url, { isProduction: true, appUrl }), null);
+  assert.equal(safePaymentUrl(url, { isProduction: false, appUrl: 'https://app.example' }), null);
+  for (const unsafe of ['javascript:alert(1)', 'http://checkout.example/test', 'https://user:secret@checkout.example/test', '//checkout.example/test'])
+    assert.equal(safePaymentUrl(unsafe, { isProduction: false, appUrl }), null);
+  assert.equal(safePaymentUrl('https://checkout.example/test'), 'https://checkout.example/test');
+  const client = createPaymentsClient({ request: async () => ({ id: 24, isProduction: false, paymentUrl: url }) });
+  assert.equal((await client.createTest({ ...testPayment, returnUrl: appUrl })).paymentUrl, url);
+  await assert.rejects(client.createTest(testPayment), /invalid sandbox checkout/);
+});
+
+test('account display preserves leading zeroes and never displays GUIDs as account numbers', () => {
+  assert.equal(walletAccountNumber('0123456789012345'), '0123 4567 8901 2345');
+  for (const value of [null, '', '7c6804d09b0441a3b0dd62ed0c698b92', '123456789012345', 1234567890123456])
+    assert.equal(walletAccountNumber(value), null);
 });

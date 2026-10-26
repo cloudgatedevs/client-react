@@ -201,8 +201,10 @@ export function Media() {
         !files.error && (
           <div className="card flex flex-col items-center gap-3 p-12 text-center">
             <ImageIcon className="text-mist-dim" size={36} />
-            <h2 className="font-semibold">No images in this folder</h2>
-            <p className="text-sm text-mist-muted">Upload your first image to get started.</p>
+            <div className="cg-heading-copy">
+              <h2 className="font-semibold">No images in this folder</h2>
+              <p className="text-sm text-mist-muted">Upload your first image to get started.</p>
+            </div>
           </div>
         )
       )}

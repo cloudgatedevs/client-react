@@ -3,7 +3,7 @@ import {Bell, CreditCard, LayoutDashboard, ListChecks, Settings, ShieldCheck, Us
 import {Badge,Input,Select,Switch,Tabs} from '../widgets/primitives.jsx';
 
 function Panel({title,description,children}) {
-  return <div className="cgw-tabs-demo-panel"><h4>{title}</h4><p>{description}</p>{children}</div>;
+  return <div className="cgw-tabs-demo-panel"><div className="cg-heading-copy"><h4>{title}</h4><p>{description}</p></div>{children}</div>;
 }
 function Section({title,description,children,wide=false}) {
   return <section className={`cgw-tabs-demo-section ${wide?'cgw-tabs-demo-section--wide':''}`}><header><h3>{title}</h3><p>{description}</p></header>{children}</section>;

@@ -3,7 +3,7 @@ import postcss from 'postcss';
 import tailwind from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 import preset from '../tailwind.preset.js';
-import { readFile, writeFile, mkdir, readdir, rm, stat, cp } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rm, stat, cp } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createWidgetManifest } from '../src/widgets/manifest.mjs';
@@ -37,8 +37,13 @@ await build({
     }));
   } }],
 });
-const integrationStyles = (await readdir(path.join(root, 'src/react/integrations'))).filter(name => name.endsWith('.css')).map(name => `integrations/${name}`);
-const input = (await Promise.all(['fonts.css', 'index.css', 'theme.css', 'polish.css', 'users.css', 'media.css', 'account.css', 'popover.css', 'widgets/widgets.css', 'widgets/rich-text.css', 'widgets/calendar.css', 'widgets/scrum-board.css', 'widgets/library.css', ...integrationStyles, 'layout.css', 'palettes.css'].map(name => readFile(path.join(root, 'src/react', name), 'utf8')))).join('\n');
+// Use the same stylesheet entry as source development, preserving import order.
+// A separate file list silently omitted new profile and wallet styles from npm builds.
+const styles = await build({
+  absWorkingDir: root, entryPoints: ['src/react/styles.css'],
+  bundle: true, write: false, external: ['./assets/*'], logLevel: 'silent',
+});
+const input = styles.outputFiles[0].text;
 const css = await postcss([tailwind({ ...preset, content: [path.join(root, 'src/**/*.{js,jsx}').replaceAll('\\', '/')] }), autoprefixer()]).process(input, { from: undefined });
 await writeFile(path.join(output, 'styles.css'), css.css);
 await cp(path.join(root, 'src/react/assets/fonts'), path.join(output, 'assets/fonts'), { recursive: true });

@@ -101,7 +101,7 @@ export function CloudgateAccountLink() {
   };
 
   return <section className="card flex flex-col gap-4 p-6" aria-labelledby="cloudgate-link-title">
-    <div><h2 id="cloudgate-link-title" className="font-semibold">Cloudgate account</h2>
+    <div className="cg-heading-copy"><h2 id="cloudgate-link-title" className="font-semibold">Cloudgate account</h2>
       <p className="mt-1 text-sm text-mist-muted">Connect your Cloudgate account to this IdP profile. Your link is saved for future sign-ins. Linking is optional; back-office access uses your app role’s permissions.</p></div>
     {error && <p role="alert" className="text-sm text-red-600 dark:text-red-300">{error}</p>}
     {link?.linked ? <>

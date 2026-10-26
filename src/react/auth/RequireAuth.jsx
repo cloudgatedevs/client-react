@@ -46,7 +46,7 @@ const RequireAuth = ({ children }) => {
   }
 
   if (error) return <div className="cg-connection-screen"><section className="card space-y-4 p-6" role="alert">
-    <h1 className="text-lg font-semibold">Could not check your account</h1><p>{error.message}</p>
+    <div className="cg-heading-copy"><h1 className="text-lg font-semibold">Could not check your account</h1><p>{error.message}</p></div>
     <div className="flex flex-wrap items-center gap-2">
       <button type="button" className="btn-primary" onClick={() => refreshLoginDetails()}>Try again</button>
       <button type="button" className="btn-ghost" onClick={() => logout(true)}>Sign out</button>

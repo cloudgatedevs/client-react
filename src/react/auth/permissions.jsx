@@ -26,5 +26,5 @@ export function RequirePagePermission({ children }) {
   const item = find(navigation).find(item => item.to?.replace(/\/+$/, '') === pathname.replace(/\/+$/, ''));
   const permission = item?.permission || permissionForBackofficePath(path);
   if (can(permission)) return children;
-  return <section className="card p-6 space-y-3" role="alert"><h1 className="text-xl font-semibold">Permission required</h1><p className="text-sm text-mist-muted">Your role does not have access to this page. Choose an available page from the menu or ask someone who manages roles to update your access.</p></section>;
+  return <section className="card cg-heading-copy p-6" role="alert"><h1 className="text-xl font-semibold">Permission required</h1><p className="text-sm text-mist-muted">Your role does not have access to this page. Choose an available page from the menu or ask someone who manages roles to update your access.</p></section>;
 }

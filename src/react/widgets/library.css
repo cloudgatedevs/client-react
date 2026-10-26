@@ -620,8 +620,8 @@
 .cgw-tabs-demo-section > header h3 { margin: 0 0 .35rem; font-size: .875rem; font-weight: 600; }
 .cgw-tabs-demo-section > header p { color: rgb(var(--mist-muted)); font-size: .75rem; line-height: 1.65; margin: 0; }
 .cgw-tabs-demo-panel { display: flex; flex-direction: column; gap: .7rem; min-width: 0; }
-.cgw-tabs-demo-panel > h4 { margin: 0; font-weight: 600; font-size: .875rem; }
-.cgw-tabs-demo-panel > p { margin: 0; font-size: .8125rem; color: rgb(var(--mist-muted)); line-height: 1.65; }
+.cgw-tabs-demo-panel > .cg-heading-copy > h4 { margin: 0; font-weight: 600; font-size: .875rem; }
+.cgw-tabs-demo-panel > .cg-heading-copy > p { margin: var(--cg-heading-gap, 2px) 0 0; font-size: .8125rem; color: rgb(var(--mist-muted)); line-height: var(--cg-subtitle-leading, 1.35); }
 .cgw-tabs-demo-panel > .cgw-badge { align-self: flex-start; }
 .cgw-tabs-demo-panel > .cgw-field { max-width: 28rem; }
 .cgw-tabs-demo-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; max-width: 48rem; }

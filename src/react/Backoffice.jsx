@@ -25,6 +25,8 @@ const Notifications = page(() => import('./pages/Notifications.jsx'), 'Notificat
 const About = page(() => import('./pages/About.jsx'), 'About');
 const AccountSettings = page(() => import('./pages/AccountSettings.jsx'), 'AccountSettings');
 const Profile = page(() => import('./pages/Profile.jsx'), 'Profile');
+const PublicAccountLayout = page(() => import('./pages/PublicAccount.jsx'), 'PublicAccountLayout');
+const PublicWallet = page(() => import('./pages/PublicAccount.jsx'), 'PublicWallet');
 const Registration = page(() => import('./pages/Registration.jsx'), 'Registration');
 const EmailTemplate = page(() => import('./pages/EmailTemplate.jsx'), 'EmailTemplate');
 const AppNotifications = page(() => import('./pages/AppNotifications.jsx'), 'AppNotifications');
@@ -48,6 +50,9 @@ export function CloudgateBackoffice({ client, metadata, navigation = [], childre
   const base = normalizeBackofficeBasePath(basePath);
   if (publicHome && !base) throw new Error('Set a back office basePath when providing a public home page.');
   if (publicRoutes && !publicHome) throw new Error('Provide a public home page when adding public website routes.');
+  if (publicHome) assertNoPlatformRouteConflicts([
+    ...collectRoutePaths(createRoutesFromChildren(publicRoutes)), `${base}/*`,
+  ], ['/account/profile', '/account/wallet']);
   const nav = useMemo(() => scopeNavigation([...navigation, ...PLATFORM_NAV], base), [navigation, base]);
   const path = value => scopedBackofficePath(base, value);
   const appRoutes = relativeRoutes(children);
@@ -77,6 +82,10 @@ export function CloudgateBackoffice({ client, metadata, navigation = [], childre
     </Route></Route></Route></Route>
     {publicHome && <Route element={<PublicHomeGate />}>
       <Route path="/" element={publicHome} />
+      <Route element={<RequireAuth />}><Route element={<Suspense fallback={<ScreenLoader />}><PublicAccountLayout /></Suspense>}>
+        <Route path="/account/profile" element={<Profile showAccountLink={false} />} />
+        <Route path="/account/wallet" element={<PublicWallet />} />
+      </Route></Route>
       {publicRoutes}
     </Route>}
     {base && [...new Set([...navigationPaths([...navigation, ...PLATFORM_NAV]), ...paymentRedirects.map(({ from }) => from), '/profile', '/account/settings', '/about', '/notifications', '/sample-users'])]

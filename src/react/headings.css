@@ -1,0 +1,51 @@
+/* Shared spacing for application headings and their supporting copy. */
+:root {
+  --cg-heading-gap: 2px;
+  --cg-heading-leading: 1.25;
+  --cg-subtitle-leading: 1.35;
+}
+
+:is(
+  .cg-heading-copy, .page-head, .modal-heading, .palette-heading,
+  .cg-profile-heading, .cg-profile-identity-copy, .cg-profile-section-heading,
+  .cg-w-heading, .cg-w-section-heading, .cg-w-panel-heading,
+  .account-settings-heading, .account-security-title, .account-recovery,
+  .cgw-card-head, .cgw-dialog-head, .cgw-pattern-heading, .cgw-scrum-heading,
+  .cgw-library-head, .cgw-library-section-head, .cgw-widget-title,
+  .cgw-button-demo-section > :where(header), .cgw-tabs-demo-section > :where(header),
+  .cgw-timeline-demo-heading, .cwl-head, .cwl-drawer-head, .developer-panel-header
+) :is(h1, h2, h3, h4, h5, h6) {
+  margin-bottom: 0;
+  line-height: var(--cg-heading-leading);
+}
+
+:is(.page-head, .cg-profile-heading, .cg-w-heading, .cgw-library-head) h1 {
+  line-height: 1.2;
+}
+
+:is(
+  .cg-heading-copy, .page-head, .modal-heading, .palette-heading,
+  .cg-profile-heading, .cg-profile-identity-copy, .cg-profile-section-heading,
+  .cg-w-heading, .cg-w-section-heading, .cg-w-panel-heading,
+  .account-settings-heading, .account-recovery,
+  .cgw-card-head, .cgw-dialog-head, .cgw-scrum-heading,
+  .cgw-library-head, .cgw-library-section-head,
+  .cgw-button-demo-section > :where(header), .cgw-tabs-demo-section > :where(header),
+  .cgw-timeline-demo-heading, .cwl-head, .cwl-drawer-head, .developer-panel-header
+) :is(h1, h2, h3, h4, h5, h6, label) + p:not(.sr-only),
+.account-security-title + :is(.account-email, .account-security-description),
+.cgw-widget-heading-row + p,
+.cg-wallet-setup-brand p {
+  margin-top: var(--cg-heading-gap);
+  line-height: var(--cg-subtitle-leading);
+}
+
+.cg-wallet-setup-brand strong { line-height: var(--cg-heading-leading); }
+.cgw-library-head[data-detail] h1 { margin-bottom: 0; }
+.cgw-pattern-head:has(+ .cgw-pattern-description) { padding-bottom: var(--cg-heading-gap); }
+.cgw-pattern-description { line-height: var(--cg-subtitle-leading); }
+
+/* The mobile page name is already shown in the app bar. */
+@media (max-width: 1023px) {
+  .page-head > div > h1 + p:not(.sr-only) { margin-top: 0; }
+}

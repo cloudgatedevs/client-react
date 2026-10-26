@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { SDK_PAYMENT_ROUTES } from '../routing.js';
 import { useCloudgate } from '../context.jsx';
 import { ExternalLink, RefreshCw, Wallet, CheckCircle2, CircleAlert } from 'lucide-react';
@@ -5,13 +6,28 @@ import { ExternalLink, RefreshCw, Wallet, CheckCircle2, CircleAlert } from 'luci
 import { PageHead, useAsync, Spinner, ErrorNote } from '../components/ui.jsx';
 import { Notice } from '../components/forms.jsx';
 import { BackofficeLink as Link } from '../components/BackofficeLink.jsx';
+import { PaymentWalletDetails } from './PaymentDetails.jsx';
+import { AboutEzarLink } from '../components/AboutEzarLink.jsx';
 
 export function Payments() {
   const { client } = useCloudgate();
   const paymentsApi = client.payments;
-  const wallet = useAsync(() => paymentsApi.status(), []);
+  const wallet = useAsync(() => paymentsApi.status(), [client]);
   const base = client.config.idpBaseUrl;
   const status = wallet.data;
+  const reloadWallet = useRef(wallet.reload);
+  reloadWallet.current = wallet.reload;
+  useEffect(() => {
+    let timer;
+    const refresh = () => {
+      if (document.visibilityState === 'hidden') return;
+      clearTimeout(timer);
+      timer = setTimeout(() => reloadWallet.current(), 200);
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => { clearTimeout(timer); window.removeEventListener('focus', refresh); document.removeEventListener('visibilitychange', refresh); };
+  }, []);
   return (
     <div className="space-y-6">
       <PageHead title="Payments" subtitle="Manage payment readiness through your tenant’s Cloudgate Wallet.">
@@ -29,6 +45,7 @@ export function Payments() {
         )}
       </PageHead>
       <ErrorNote error={wallet.error} />
+      <PaymentWalletDetails status={status} />
       {wallet.loading ? (
         <Spinner />
       ) : (
@@ -40,9 +57,9 @@ export function Payments() {
               >
                 {status.ready ? <CheckCircle2 size={25} /> : <CircleAlert size={25} />}
               </span>
-              <div>
+              <div className="cg-heading-copy">
                 <h2 className="text-lg font-semibold">
-                  {status.ready ? 'Ready to accept payments' : 'Wallet setup required'}
+                  {status.ready ? 'Ready to accept payments' : status.comingSoon ? 'Coming soon' : 'Wallet setup required'}
                 </h2>
                 <p className="mt-1 text-sm text-mist-muted">
                   {status.reason ||
@@ -76,13 +93,14 @@ export function Payments() {
           Payment setup
         </h2>
         <ol className="list-decimal space-y-3 pl-5 text-sm text-mist-muted">
-          <li>Open Cloudgate Wallet and select your payment provider.</li>
-          <li>Complete the provider’s business, bank account and identity requirements.</li>
-          <li>Return here and refresh to confirm charges and payouts are enabled.</li>
+          <li>Choose Connect wallet in Cloudgate, then verify your mobile number and enter your wallet PIN.</li>
+          <li>Receive payments using your account number or a payment invoice.</li>
+          <li>Complete withdrawal setup in Cloudgate and follow the individual or business identity verification steps.</li>
         </ol>
         <p className="text-sm text-mist-muted">
           View transactions in All payments or try the sandbox in Test payment. Payment-provider credentials and payouts are managed in the Cloudgate hub.
         </p>
+        <AboutEzarLink />
       </section>
       {status && <Notice>
         {status.production

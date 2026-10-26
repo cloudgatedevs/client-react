@@ -11,6 +11,7 @@
 @import './integrations/cloudgate-smtp.css';
 @import './integrations/cloudgate-workflow-logs.css';
 @import './account.css';
+@import './wallet-workspace.css';
 @import './popover.css';
 @import './widgets/widgets.css';
 @import './widgets/rich-text.css';
@@ -19,3 +20,5 @@
 @import './widgets/library.css';
 @import './layout.css';
 @import './palettes.css';
+@import './public-account.css';
+@import './headings.css';
