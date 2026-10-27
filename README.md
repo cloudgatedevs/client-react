@@ -652,6 +652,39 @@ allowed by backend CORS, and the hub deployment must allow the app to frame `/de
 `Content-Security-Policy: frame-ancestors` policy. Use the hub built for that backend; an unrelated
 dedicated server selected in the normal hub is intentionally ignored by developer mode.
 
+## App workflow setup
+
+Apps that pass their `template.json` as `CloudgateBackoffice` metadata get an **App workflows** check
+in the back office when developer mode is enabled and the user has `backoffice.developer.access`.
+Metadata must include the catalogue `id` and `workflows.file`. The server loads the trusted package
+from its configured App Store catalogue; browser-supplied URLs, SQL and workflow bundles are not accepted.
+
+The check identifies missing, inactive or unpublished actions, available package updates and workflows
+awaiting production release. **Set up workflows** / **Manage workflows** opens the action list, package
+version and target controller. Import and update require an explicit confirmation, a linked Cloudgate
+account with the necessary resource permissions, and a current review. Connection and permission errors
+are shown separately from missing workflows. An older backend reports that workflow setup is unavailable.
+
+Imports prepare workflows in sandbox using Cloudgate's existing release process. Existing databases,
+their data and WebSocket credentials are preserved; matching workflow definitions (including custom edits)
+are replaced. Database migrations need a separate review. Production releases still require approval in
+**Developers**. This operation does not build or publish the website. If `projectPath` is blank or `*`,
+the catalogue's controller path is proposed and the dialog explains the required env change.
+
+For a custom setup UI, use the same native IdP API through the SDK:
+
+```js
+const review = await client.workflowSetup.status(metadata);
+// After the user reviews the target/actions and explicitly confirms:
+const result = await client.workflowSetup.apply(metadata, {
+  revision: review.revision,
+  confirmOverwrite: true,
+});
+```
+
+Setup records the installed package fingerprint for future update detection. Older/manual installs without
+that record are checked for missing actions and can be updated explicitly; their version is shown as unknown.
+
 ## AI agents in the back office
 
 Cloudgate AI agents (the tenant's **AI Agents** in the hub) appear in every SDK back office as icons in the dark
@@ -856,5 +889,9 @@ the website access gate and preserve their path, query and hash through hosted s
 Keep customer pages inside this route group so the access setting covers them. Website
 content does not mount until settings and the required session/profile have loaded; failed
 checks offer retry. Signing out returns to `/` and requires sign-in again when configured.
+Expired or rejected sessions show a recovery screen with **Sign out** and **Sign in again**
+instead of redirecting without explanation. Signing in again preserves the requested URL;
+signing out clears the stored session. Website configuration and connection failures also
+offer **Sign out**, and missing app identity is reported as **Website not configured**.
 This gates page rendering; application APIs must still enforce authentication, tenant and
 record ownership, including for wallet data. Self-registration remains a separate tenant policy.

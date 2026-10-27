@@ -1,6 +1,7 @@
 import { readWalletSettings } from './wallet-settings.js';
 import { normalizeSettings } from './appearance-model.js';
 import { createAppIdentityResolver, isWebAppId } from './identity.js';
+import { CloudgatePlatformError } from './transport.js';
 
 /** Native IdP configuration; no workflow signatures or application database are involved. */
 export function createAppearanceClient({ request, publicRequest, webAppId, environment = 'sbx', resolveAppIdentity = createAppIdentityResolver({ webAppId, environment }) }) {
@@ -22,8 +23,8 @@ export function createAppearanceClient({ request, publicRequest, webAppId, envir
     async getPublic() {
       const scope = await resolveAppIdentity();
       if (!isWebAppId(scope.webAppId) || !/^(sbx|sandbox|prod|production)$/.test(scope.environment))
-        throw new Error('Set the Cloudgate web app ID and environment to load this website.');
-      if (!publicRequest) throw new Error('Configure an anonymous Cloudgate request client to load this website.');
+        throw new CloudgatePlatformError('Set the Cloudgate web app ID and environment to load this website.', { code: 'configuration' });
+      if (!publicRequest) throw new CloudgatePlatformError('Configure an anonymous Cloudgate request client to load this website.', { code: 'configuration' });
       const response = await publicRequest(`website?${new URLSearchParams({ webAppId: scope.webAppId, environment: scope.environment })}`, { method: 'GET' });
       if (typeof response?.allowSelfRegistration !== 'boolean' || !response.values ||
           Array.isArray(response.values) || !['true', 'false'].includes(response.values.enable_public_website) ||

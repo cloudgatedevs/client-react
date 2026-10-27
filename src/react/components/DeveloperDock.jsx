@@ -118,6 +118,11 @@ export function DeveloperDock() {
     return () => { document.removeEventListener('keydown', keydown); toggle.current?.focus(); };
   }, [open]);
   const show = () => { setOpen(true); if (!launch && status !== 'connecting') void start(); };
+  useEffect(() => {
+    const openRequested = () => show();
+    window.addEventListener('cloudgate:open-developer', openRequested);
+    return () => window.removeEventListener('cloudgate:open-developer', openRequested);
+  }, [launch, status, client, currentUser?.user?.id]);
   // Opens the workspace on one of its pages, such as the agents page.
   const showAt = path => {
     if (launch && status === 'ready' && frame.current?.contentWindow) frame.current.contentWindow.postMessage({ source: 'cloudgate-app', type: 'navigate', path }, launch.frameOrigin);

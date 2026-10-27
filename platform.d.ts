@@ -271,6 +271,19 @@ export interface GatewayClient {
 export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean>;
   /** Gateway API key; with `apiSecret`, requests are signed (X-Api-Key, X-Timestamp, X-Authentication-Signature) in addition to the IdP bearer. */
   apiKey?: string; apiSecret?: string }): GatewayClient;
+export interface WorkflowAppMetadata { id?: string; workflows?: { file?: string; projectPath?: string } }
+export interface AppWorkflowSetupStatus {
+  appId: string; appName: string; environment: 'sbx' | 'prod'; projectPath: string; controllerId: string | null;
+  status: 'missing' | 'ready' | 'update-available' | 'release-required'; catalogVersion: string; installedVersion?: string | null;
+  revision: string; canApply: boolean; configurationRequired: boolean;
+  workflows: Array<{ name: string; route: string; state: 'missing' | 'inactive' | 'unpublished' | 'release-required' | 'ready' }>;
+}
+export interface AppWorkflowSetupResult { projectPath: string; publishedWorkflowCount: number; warnings: string[] }
+export function createWorkflowSetupClient(options: { request: PlatformRequest; resolveAppIdentity: IdentityResolver; projectPath?: string }): {
+  status(metadata: WorkflowAppMetadata, options?: PlatformRequestOptions): Promise<AppWorkflowSetupStatus>;
+  apply(metadata: WorkflowAppMetadata, review: { revision: string; confirmOverwrite: boolean }, options?: PlatformRequestOptions): Promise<AppWorkflowSetupResult>;
+};
+export function workflowSetupError(error: { status?: number; message?: string }): string;
 export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'idpBaseUrl'> {
   idpBaseUrl?: string; apiUrl?: string; returnUrl?: string; webAppId?: string; environment?: string;
   projectPath?: string; gatewayUrl?: string; mediaFolder?: string; timeoutMs?: number; auth?: CloudgateAuth;
@@ -286,6 +299,7 @@ export interface CloudgatePlatform {
   gateway: GatewayClient;
   profile: ReturnType<typeof createProfileClient>; accountSecurity: ReturnType<typeof createAccountSecurityClient>; accountLink: ReturnType<typeof createAccountLinkClient>;
   developerWorkspace: ReturnType<typeof createDeveloperWorkspaceClient>;
+  workflowSetup: ReturnType<typeof createWorkflowSetupClient>;
   registration: ReturnType<typeof createRegistrationClient>;
   emailTemplate: ReturnType<typeof createEmailTemplateClient>;
   notificationAdmin: ReturnType<typeof createNotificationAdminClient>;

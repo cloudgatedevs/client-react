@@ -14,6 +14,7 @@ import { PageSkeleton } from './ScreenLoader';
 import { SidebarNavigation, useNavigationPreferences } from './SidebarNavigation.jsx';
 import { navigationTrail } from './navigation.js';
 import { DeveloperDock } from './DeveloperDock.jsx';
+import { WorkflowSetupNotice } from './WorkflowSetupNotice.jsx';
 import { EmailVerificationPrompt } from './EmailVerificationPrompt.jsx';
 import { usePermissions, filterPermissionNavigation, RequirePagePermission } from '../auth/permissions.jsx';
 import { BACKOFFICE_PERMISSIONS as P } from '../../platform/backoffice-permissions.js';
@@ -156,6 +157,7 @@ export function Layout({ developerMode = true, agents = true }) {
         <main ref={main} tabIndex={-1} className="app-main flex-1 overflow-y-auto" id="main-content">
           <div className="app-content">
             <EmailVerificationPrompt />
+            {showDeveloperDock && <WorkflowSetupNotice />}
             <Suspense fallback={<PageSkeleton />}>
               <div key={location.pathname} className="page-transition">
                 <ErrorBoundary resetKey={location.pathname} title="This page could not be displayed"

@@ -1,0 +1,20 @@
+.workflow-setup-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border: 1px solid rgb(var(--ink-700));
+  border-radius: 12px;
+  font-size: 13px;
+}
+.workflow-setup-notice > div { flex: 1; min-width: 0; }
+.workflow-setup-notice > svg { flex-shrink: 0; }
+.workflow-setup-notice p { margin-top: 4px; opacity: .8; overflow-wrap: anywhere; }
+.workflow-setup-notice.needs-attention { border-color: currentColor; }
+.workflow-setup-dialog { width: min(640px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto; }
+.workflow-setup-dialog code { overflow-wrap: anywhere; }
+.workflow-setup-routes { max-height: 240px; overflow-y: auto; border-block: 1px solid rgb(var(--ink-700)); padding-block: 8px; }
+.workflow-setup-routes li { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; font-size: 13px; }
+.workflow-setup-routes li > :last-child { flex-shrink: 0; opacity: .75; }
+@media (max-width: 639px) { .workflow-setup-notice { flex-wrap: wrap; } .workflow-setup-notice > button { margin-left: 29px; } }

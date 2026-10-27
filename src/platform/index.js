@@ -16,6 +16,7 @@ import { createRegistrationClient } from './registration.js';
 import { createEmailTemplateClient } from './email-template.js';
 import { createNotificationAdminClient } from './notification-admin.js';
 import { createDeveloperWorkspaceClient } from './developer-workspace.js';
+import { createWorkflowSetupClient } from './workflow-setup.js';
 import { consumeLauncherLogin } from './launcher.js';
 import { createGatewayClient } from './gateway.js';
 import { createAgentsClient } from './agents.js';
@@ -43,6 +44,7 @@ export * from './registration.js';
 export * from './email-template.js';
 export * from './notification-admin.js';
 export * from './developer-workspace.js';
+export * from './workflow-setup.js';
 export * from './gateway.js';
 export * from './agents.js';
 export * from './agent-watch.js';
@@ -91,6 +93,7 @@ export function createCloudgatePlatform(options = {}) {
     } }),
     accountLink: createAccountLinkClient({ request }),
     developerWorkspace: createDeveloperWorkspaceClient({ request, resolveAppIdentity, projectPath: options.projectPath }),
+    workflowSetup: createWorkflowSetupClient({ request, resolveAppIdentity, projectPath: config.projectPath }),
     registration: createRegistrationClient({ request }),
     emailTemplate: createEmailTemplateClient({ request }),
     notificationAdmin: createNotificationAdminClient({ request, resolveAppIdentity }),

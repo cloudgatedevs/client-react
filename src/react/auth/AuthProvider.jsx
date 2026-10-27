@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCloudgate } from '../context.jsx';
 import { getProfilePictureSrc } from '../../platform/profile.js';
 import { TwoFactorLogin } from './TwoFactorLogin.jsx';
@@ -11,7 +11,7 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
   const [error, setError] = useState(null);
   const [challenge, setChallenge] = useState(null);
   // True when a session existed and was lost without the user signing out: the refresh token
-  // expired or the IdP refused it. RequireAuth uses it to choose between sign in and the public site.
+  // expired or the IdP refused it. Keep recovery visible instead of redirecting without explanation.
   const [sessionEnded, setSessionEnded] = useState(false);
   const hadSession = useRef(false), signingOut = useRef(false);
   const challengePromise = useRef(null), mounted = useRef(false);
@@ -70,10 +70,15 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
   }, [client, loadProfile, requestTwoFactor]);
   const logout = useCallback((redirect = true) => {
     signingOut.current = true;
-    client.auth.logout({ redirectToLogin: false });
-    if (redirect && onLogoutRedirect) onLogoutRedirect();
-    else if (redirect && publicAccess) window.location.assign('/');
-    else if (redirect && client.auth.enabled) client.login(window.location.href);
+    // Keep the cleared session and router navigation in the same transition so an old
+    // protected route cannot redirect to login before the public home is mounted.
+    startTransition(() => {
+      setSessionEnded(false); setError(null);
+      client.auth.logout({ redirectToLogin: false });
+      if (redirect && onLogoutRedirect) onLogoutRedirect();
+      else if (redirect && publicAccess) window.location.assign('/');
+      else if (redirect && client.auth.enabled) client.login(window.location.href);
+    });
   }, [client, publicAccess, onLogoutRedirect]);
   const updateUser = useCallback(async values => {
     const userId = currentUserRef.current?.user?.id;
@@ -99,10 +104,19 @@ export function AuthProvider({ children, publicAccess = false, onLogoutRedirect 
   if (challenge) return <TwoFactorLogin client={client} challenge={challenge}
     onSuccess={tokens => { challengePromise.current?.resolve(tokens); challengePromise.current = null; setChallenge(null); }}
     onCancel={() => { challengePromise.current?.reject(new Error('Sign-in cancelled.')); challengePromise.current = null; setChallenge(null); }} />;
+  if (!loading && sessionEnded) return <div className="cg-connection-screen"><section className="card space-y-4 p-6" role="alert">
+    <h1 className="text-xl font-semibold">Session expired</h1>
+    <p className="text-sm text-mist-muted">Your sign-in token has expired or is no longer valid. Sign out to clear this session, or sign in again to continue.</p>
+    <div className="flex flex-wrap gap-3">
+      <button type="button" className="btn-primary" onClick={() => { client.auth.logout({ redirectToLogin: false }); client.login(window.location.href); }}>Sign in again</button>
+      <button type="button" className="btn-ghost" onClick={() => logout(true)}>Sign out</button>
+    </div>
+  </section></div>;
   if (error && !publicAccess) return <div className="cg-connection-screen"><section className="card space-y-4 p-8 text-center" role="alert">
     <div className="cg-heading-copy"><h1 className="text-xl font-semibold">Let’s get you signed in</h1><p className="text-sm text-mist-muted">{error.message}</p></div>
     {auth && <button className="btn-ghost" onClick={loadProfile}>Try again</button>}
     <button className="btn-primary" onClick={() => client.login()}>Sign in</button>
+    <button type="button" className="btn-ghost" onClick={() => logout(true)}>Sign out</button>
   </section></div>;
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

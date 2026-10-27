@@ -39,7 +39,7 @@ test('public settings use the current app and environment and do not fall back o
     response = invalid;
     await assert.rejects(client.getPublic(), /website settings could not be loaded/);
   }
-  await assert.rejects(createAppearanceClient({ webAppId: '', publicRequest: () => assert.fail() }).getPublic(), /web app ID/);
+  await assert.rejects(createAppearanceClient({ webAppId: '', publicRequest: () => assert.fail() }).getPublic(), error => error.code === 'configuration' && /web app ID/.test(error.message));
 });
 
 test('back office paths and nested navigation stay under the selected mount without double prefixes', () => {

@@ -15,7 +15,7 @@ export interface NavigationGroup extends NavigationBase {
   id: string; children: NavigationItem[]; defaultExpanded?: boolean; to?: never;
 }
 export type NavigationItem = NavigationLink | NavigationGroup;
-export interface AppMetadata { name?: string; description?: string; version?: string; [key: string]: unknown }
+export interface AppMetadata { id?: string; name?: string; description?: string; version?: string; workflows?: { file?: string; projectPath?: string }; [key: string]: unknown }
 export interface CloudgateContextValue { client: CloudgatePlatform; metadata: AppMetadata; navigation: NavigationItem[]; identity: AppIdentity | null; basePath: string; publicWebsite: boolean; backofficePath(path?: string): string }
 export function CloudgateProvider(props: { client: CloudgatePlatform; metadata?: AppMetadata; navigation?: NavigationItem[]; children?: ReactNode; basePath?: string; publicWebsite?: boolean }): ReactNode;
 export function CloudgateBackoffice(props: { client: CloudgatePlatform; metadata?: AppMetadata; navigation?: NavigationItem[]; children?: ReactNode; fallback?: string; developerMode?: boolean; /** Show AI agent icons in the bottom bar to users with a linked Cloudgate account (default true). */ agents?: boolean; basePath?: string; publicHome?: ReactNode; publicRoutes?: ReactNode }): ReactNode;
