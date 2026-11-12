@@ -19,6 +19,7 @@ import { createDeveloperWorkspaceClient } from './developer-workspace.js';
 import { createWorkflowSetupClient } from './workflow-setup.js';
 import { consumeLauncherLogin } from './launcher.js';
 import { createGatewayClient } from './gateway.js';
+import { createGatewayProxyResolver } from './gateway-proxy.js';
 import { createAgentsClient } from './agents.js';
 
 export * from './transport.js';
@@ -46,6 +47,7 @@ export * from './notification-admin.js';
 export * from './developer-workspace.js';
 export * from './workflow-setup.js';
 export * from './gateway.js';
+export * from './gateway-proxy.js';
 export * from './agents.js';
 export * from './agent-watch.js';
 
@@ -66,6 +68,7 @@ export function createCloudgatePlatform(options = {}) {
   const publicRequest = createIdpClient({ auth, apiUrl: config.apiUrl, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, anonymous: true });
   const published = options.resolvePublishedApp ?? createPublishedAnalyticsResolver({ fetchImpl: options.fetch });
   const resolveAppIdentity = createAppIdentityResolver({ ...config, resolvePublishedApp: published });
+  const resolveGateway = createGatewayProxyResolver({ gatewayUrl: config.gatewayUrl, tenancyName: config.tenancyName, publicRequest });
   const profile = createProfileClient({ request });
   const notifications = createNotificationsClient({ request, resolveAppIdentity });
   let initialization, sessionCheck;
@@ -76,7 +79,7 @@ export function createCloudgatePlatform(options = {}) {
   }).finally(() => { sessionCheck = undefined; });
   const platform = {
     config, auth, request, resolveAppIdentity, profile,
-    gateway: createGatewayClient({ auth, gatewayUrl: config.gatewayUrl, environment: config.environment, resolveAppIdentity, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, verifySession, apiKey: config.apiKey, apiSecret: options.apiSecret }),
+    gateway: createGatewayClient({ auth, gatewayUrl: config.gatewayUrl, environment: config.environment, resolveAppIdentity, resolveGateway, fetchImpl: options.fetch, timeoutMs: options.timeoutMs, verifySession, apiKey: config.apiKey, apiSecret: options.apiSecret }),
     accountSecurity: createAccountSecurityClient({ request, auth }),
     users: createUsersClient({ request, resolveAppIdentity }),
     roles: createRolesClient({ request }),
@@ -103,7 +106,8 @@ export function createCloudgatePlatform(options = {}) {
       resolveAppIdentity().then(scope => {
         if (stopped) return;
         disconnect = connectNotificationSocket({ ...socketOptions, apiUrl: config.apiUrl,
-          environment: /^prod/.test(scope.environment) ? 'prod' : 'sbx', getAccessToken: () => auth.ensureAccessToken(), onChange, onStatus });
+          environment: scope.environment,
+          getSocketTicket: ({ environment, signal }) => request('notifications/socket-ticket', { body: { environment }, signal }), onChange, onStatus });
       }).catch(() => { if (!stopped) onStatus?.('disconnected'); });
       return () => { stopped = true; disconnect?.(); };
     } },

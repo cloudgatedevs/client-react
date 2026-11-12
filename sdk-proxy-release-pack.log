@@ -1,0 +1,2354 @@
+
+> @cloudgatedevs/cloudgate-client-react@0.1.23 prepack
+> npm run build
+
+
+> @cloudgatedevs/cloudgate-client-react@0.1.23 build
+> node scripts/build.mjs
+
+
+  dist\react\WidgetLibrary-HMJ7JBCB.js  302.9kb
+  dist\react\chunk-35KELTNC.js          190.0kb
+  dist\react\index.js                   171.1kb
+  dist\react\chunk-JU2X6ECL.js           69.4kb
+  dist\react\chunk-YSH24C2U.js           42.3kb
+  ...and 59 more output files...
+
+Done in 77ms
+Built React entry, lazy feature chunks and shared CSS.
+[
+  {
+    "id": "@cloudgatedevs/cloudgate-client-react@0.1.23",
+    "name": "@cloudgatedevs/cloudgate-client-react",
+    "version": "0.1.23",
+    "size": 4726838,
+    "unpackedSize": 8035822,
+    "shasum": "95a1259f5a3613094ecf4b0a51107cf081ae6a08",
+    "integrity": "sha512-T3hVodcZVMrahD8pckS4nY7hwlv2sUxtpONmle/y+IRsvjnPwLmdnlfIVK2g0LV93dj6pkBQegIGCrIc3mtdEg==",
+    "filename": "cloudgatedevs-cloudgate-client-react-0.1.23.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1071,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 56581,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/About-6AFBXOJL.js",
+        "size": 1433,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/AccountSettings-ZTOO2ZU2.js",
+        "size": 12193,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Analytics-ZESVCUAG.js",
+        "size": 24071,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Appearance-LSUCFKXC.js",
+        "size": 41054,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/AppNotifications-LDSDDDPM.js",
+        "size": 29381,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/dm-sans/dm-sans-latin-ext-wght-italic.woff2",
+        "size": 20808,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/dm-sans/dm-sans-latin-ext-wght-normal.woff2",
+        "size": 18228,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/dm-sans/dm-sans-latin-wght-italic.woff2",
+        "size": 39712,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/dm-sans/dm-sans-latin-wght-normal.woff2",
+        "size": 36932,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/dm-sans/LICENSE.txt",
+        "size": 4502,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-wght-italic.woff2",
+        "size": 33900,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-wght-normal.woff2",
+        "size": 30964,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-wght-italic.woff2",
+        "size": 50184,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-wght-normal.woff2",
+        "size": 45712,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/ibm-plex-sans/LICENSE.txt",
+        "size": 4429,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/inter/inter-latin-ext-wght-italic.woff2",
+        "size": 91900,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/inter/inter-latin-ext-wght-normal.woff2",
+        "size": 85068,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/inter/inter-latin-wght-italic.woff2",
+        "size": 51832,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/inter/inter-latin-wght-normal.woff2",
+        "size": 48256,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/inter/LICENSE.txt",
+        "size": 4477,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/lora/LICENSE.txt",
+        "size": 4563,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/lora/lora-latin-ext-wght-italic.woff2",
+        "size": 21128,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/lora/lora-latin-ext-wght-normal.woff2",
+        "size": 20088,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/lora/lora-latin-wght-italic.woff2",
+        "size": 40772,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/lora/lora-latin-wght-normal.woff2",
+        "size": 37788,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/manifest.json",
+        "size": 14339,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/manrope/LICENSE.txt",
+        "size": 4383,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/manrope/manrope-latin-ext-wght-normal.woff2",
+        "size": 15120,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/manrope/manrope-latin-wght-normal.woff2",
+        "size": 24836,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/montserrat/LICENSE.txt",
+        "size": 4509,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/montserrat/montserrat-latin-ext-wght-italic.woff2",
+        "size": 74892,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/montserrat/montserrat-latin-ext-wght-normal.woff2",
+        "size": 70688,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/montserrat/montserrat-latin-wght-italic.woff2",
+        "size": 39632,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/montserrat/montserrat-latin-wght-normal.woff2",
+        "size": 37956,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/nunito-sans/LICENSE.txt",
+        "size": 4526,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/nunito-sans/nunito-sans-latin-ext-wght-italic.woff2",
+        "size": 30344,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/nunito-sans/nunito-sans-latin-ext-wght-normal.woff2",
+        "size": 27908,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/nunito-sans/nunito-sans-latin-wght-italic.woff2",
+        "size": 33080,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/nunito-sans/nunito-sans-latin-wght-normal.woff2",
+        "size": 31076,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/open-sans/LICENSE.txt",
+        "size": 4508,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/open-sans/open-sans-latin-ext-wght-italic.woff2",
+        "size": 37752,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/open-sans/open-sans-latin-ext-wght-normal.woff2",
+        "size": 35156,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/open-sans/open-sans-latin-wght-italic.woff2",
+        "size": 50216,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/open-sans/open-sans-latin-wght-normal.woff2",
+        "size": 48320,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/plus-jakarta-sans/LICENSE.txt",
+        "size": 4534,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-wght-italic.woff2",
+        "size": 23224,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-wght-normal.woff2",
+        "size": 21728,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-wght-italic.woff2",
+        "size": 29600,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-wght-normal.woff2",
+        "size": 27348,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/README.md",
+        "size": 1297,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/roboto/LICENSE.txt",
+        "size": 4512,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/roboto/roboto-latin-ext-wght-italic.woff2",
+        "size": 31820,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/roboto/roboto-latin-ext-wght-normal.woff2",
+        "size": 29392,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/roboto/roboto-latin-wght-italic.woff2",
+        "size": 47208,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/roboto/roboto-latin-wght-normal.woff2",
+        "size": 43136,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/rubik/LICENSE.txt",
+        "size": 4486,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/rubik/rubik-latin-ext-wght-italic.woff2",
+        "size": 21152,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/rubik/rubik-latin-ext-wght-normal.woff2",
+        "size": 19400,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/rubik/rubik-latin-wght-italic.woff2",
+        "size": 36616,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/rubik/rubik-latin-wght-normal.woff2",
+        "size": 35348,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-sans-3/LICENSE.txt",
+        "size": 4314,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-sans-3/source-sans-3-latin-ext-wght-italic.woff2",
+        "size": 59496,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-sans-3/source-sans-3-latin-ext-wght-normal.woff2",
+        "size": 60088,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-sans-3/source-sans-3-latin-wght-italic.woff2",
+        "size": 28532,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-sans-3/source-sans-3-latin-wght-normal.woff2",
+        "size": 28740,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-serif-4/LICENSE.txt",
+        "size": 4314,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-serif-4/source-serif-4-latin-ext-wght-italic.woff2",
+        "size": 44260,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-serif-4/source-serif-4-latin-ext-wght-normal.woff2",
+        "size": 42040,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-serif-4/source-serif-4-latin-wght-italic.woff2",
+        "size": 51516,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/source-serif-4/source-serif-4-latin-wght-normal.woff2",
+        "size": 50824,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/work-sans/LICENSE.txt",
+        "size": 4515,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/work-sans/work-sans-latin-ext-wght-italic.woff2",
+        "size": 32280,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/work-sans/work-sans-latin-ext-wght-normal.woff2",
+        "size": 35716,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/work-sans/work-sans-latin-wght-italic.woff2",
+        "size": 48180,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/assets/fonts/work-sans/work-sans-latin-wght-normal.woff2",
+        "size": 50316,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/CalendarContent-T3CIPXYL.js",
+        "size": 12168,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chart-engine-VJIMKYOM.js",
+        "size": 1047,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-3IUYGU5R.js",
+        "size": 910,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-4TO3PWWN.js",
+        "size": 20728,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-5SVOCUO6.js",
+        "size": 35500,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-35KELTNC.js",
+        "size": 194519,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-BJMYZV2I.js",
+        "size": 10138,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-BV2YOTBD.js",
+        "size": 6964,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-BYXBJQAS.js",
+        "size": 0,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-CWWSNKZL.js",
+        "size": 11748,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-CXO75GVG.js",
+        "size": 3704,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-EG3X56HM.js",
+        "size": 2071,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-EYQLBEAT.js",
+        "size": 16253,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-FTKQ3TQY.js",
+        "size": 6370,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-GUMXEG4R.js",
+        "size": 23379,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-H7MZYXXQ.js",
+        "size": 12480,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-HQ46B3O3.js",
+        "size": 1949,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-IHV3QRFU.js",
+        "size": 476,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-IYVD5632.js",
+        "size": 502,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-JU2X6ECL.js",
+        "size": 71093,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-JXG4STX5.js",
+        "size": 1915,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-KFZJ472R.js",
+        "size": 795,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-LTZEPLIX.js",
+        "size": 3567,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-MKBO26DX.js",
+        "size": 481,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-MTVJKIT6.js",
+        "size": 4176,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-NZTMWDHG.js",
+        "size": 11848,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-OYIWXFNE.js",
+        "size": 9758,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-POLPUOCO.js",
+        "size": 1065,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-QBKR42K5.js",
+        "size": 3987,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-SW7XECJH.js",
+        "size": 161,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-SXWOWWO2.js",
+        "size": 1527,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-VMW3WOCS.js",
+        "size": 5400,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-VOSTGLY2.js",
+        "size": 4738,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-VOXKDFVW.js",
+        "size": 11949,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-WKYOZLCA.js",
+        "size": 3762,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-YSH24C2U.js",
+        "size": 43343,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/chunk-ZGIRY7SO.js",
+        "size": 31235,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/CodeEditorContent-5QR6IHD3.js",
+        "size": 2886,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/EmailTemplate-LSYVJLTL.js",
+        "size": 17753,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/IconLibraryContent-6LY62KON.js",
+        "size": 15921,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/index.js",
+        "size": 175175,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Logs-EG34MA42.js",
+        "size": 34157,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Media-R3OCOEYF.js",
+        "size": 10380,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Notifications-BM5FFLCZ.js",
+        "size": 6646,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/PaymentList-HJZIYOH5.js",
+        "size": 6630,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Payments-5DFRILM6.js",
+        "size": 5985,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Profile-75ZJ4QIT.js",
+        "size": 521,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/ProfilePictureDialog-AW6GWKPB.js",
+        "size": 9804,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/PublicAccount-YAWDJDDO.js",
+        "size": 2971,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Registration-LTGC22ZP.js",
+        "size": 9149,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/RichTextEditorContent-HVMCW65I.js",
+        "size": 7467,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/RoleManagement-H43TRNB7.js",
+        "size": 17890,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/Smtp-F6NRKXHZ.js",
+        "size": 9402,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/styles.css",
+        "size": 372398,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/table-model-BUIWRUMB.js",
+        "size": 247,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/TestPayment-XSPK5NKY.js",
+        "size": 9296,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/UserManagement-WIHPUYOF.js",
+        "size": 31136,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/WebsiteSettings-GU3ZUVAQ.js",
+        "size": 9916,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/WidgetLibrary-HMJ7JBCB.js",
+        "size": 310129,
+        "mode": 420
+      },
+      {
+        "path": "dist/react/widgets.js",
+        "size": 2937,
+        "mode": 420
+      },
+      {
+        "path": "docs/user-wallet.md",
+        "size": 17864,
+        "mode": 420
+      },
+      {
+        "path": "docs/widgets.md",
+        "size": 52771,
+        "mode": 420
+      },
+      {
+        "path": "index.d.ts",
+        "size": 139,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 3594,
+        "mode": 420
+      },
+      {
+        "path": "platform.d.ts",
+        "size": 44660,
+        "mode": 420
+      },
+      {
+        "path": "react.d.ts",
+        "size": 12915,
+        "mode": 420
+      },
+      {
+        "path": "src/index.js",
+        "size": 228,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/account-link.js",
+        "size": 594,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/account-security.js",
+        "size": 2471,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/agent-watch.js",
+        "size": 13826,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/agents.js",
+        "size": 6551,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/analytics-format.js",
+        "size": 2379,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/analytics.js",
+        "size": 2267,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/appearance-model.js",
+        "size": 4235,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/appearance.js",
+        "size": 3371,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/backoffice-permissions.js",
+        "size": 8514,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/checkout-navigation.js",
+        "size": 856,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/developer-workspace.js",
+        "size": 3850,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/email-template.js",
+        "size": 1771,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/features.js",
+        "size": 5897,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/gateway-proxy.js",
+        "size": 2093,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/gateway.js",
+        "size": 3768,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/identity.js",
+        "size": 793,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/index.js",
+        "size": 8020,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/launcher.js",
+        "size": 2864,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/notification-admin.js",
+        "size": 4116,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/notification-appearance.js",
+        "size": 931,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/notifications.js",
+        "size": 6258,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/payments.js",
+        "size": 4328,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/profile.js",
+        "size": 2906,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/published.js",
+        "size": 1116,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/registration.js",
+        "size": 1649,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/role-management.js",
+        "size": 1893,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/roles.js",
+        "size": 242,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/sdk-update.js",
+        "size": 828,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/theme-colors.js",
+        "size": 1402,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/theme-fonts.js",
+        "size": 2088,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/theme-palette.js",
+        "size": 6913,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/transport.js",
+        "size": 5006,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/wallet-connect.js",
+        "size": 2945,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/wallet-settings.js",
+        "size": 956,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/wallet.js",
+        "size": 13523,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/workflow-setup.js",
+        "size": 3119,
+        "mode": 420
+      },
+      {
+        "path": "src/react/account.css",
+        "size": 7138,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentAvatar.jsx",
+        "size": 1534,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentChatBubble.jsx",
+        "size": 22709,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentDock.jsx",
+        "size": 5835,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentsProvider.jsx",
+        "size": 7574,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentWatch.jsx",
+        "size": 12499,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/AgentWatchDialog.jsx",
+        "size": 20219,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/index.js",
+        "size": 526,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/markdown.jsx",
+        "size": 4611,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/MetricsApp.jsx",
+        "size": 3439,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/metricsAppStores.js",
+        "size": 11248,
+        "mode": 420
+      },
+      {
+        "path": "src/react/agents/storeLogos.js",
+        "size": 2616,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/cloudgate-icon.svg",
+        "size": 1052,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/cloudgate-logo.svg",
+        "size": 5529,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/ezar-logo.svg",
+        "size": 18471,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/dm-sans/dm-sans-latin-ext-wght-italic.woff2",
+        "size": 20808,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/dm-sans/dm-sans-latin-ext-wght-normal.woff2",
+        "size": 18228,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/dm-sans/dm-sans-latin-wght-italic.woff2",
+        "size": 39712,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/dm-sans/dm-sans-latin-wght-normal.woff2",
+        "size": 36932,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/dm-sans/LICENSE.txt",
+        "size": 4502,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-wght-italic.woff2",
+        "size": 33900,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-wght-normal.woff2",
+        "size": 30964,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-wght-italic.woff2",
+        "size": 50184,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/ibm-plex-sans/ibm-plex-sans-latin-wght-normal.woff2",
+        "size": 45712,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/ibm-plex-sans/LICENSE.txt",
+        "size": 4429,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/inter/inter-latin-ext-wght-italic.woff2",
+        "size": 91900,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/inter/inter-latin-ext-wght-normal.woff2",
+        "size": 85068,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/inter/inter-latin-wght-italic.woff2",
+        "size": 51832,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/inter/inter-latin-wght-normal.woff2",
+        "size": 48256,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/inter/LICENSE.txt",
+        "size": 4477,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/lora/LICENSE.txt",
+        "size": 4563,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/lora/lora-latin-ext-wght-italic.woff2",
+        "size": 21128,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/lora/lora-latin-ext-wght-normal.woff2",
+        "size": 20088,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/lora/lora-latin-wght-italic.woff2",
+        "size": 40772,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/lora/lora-latin-wght-normal.woff2",
+        "size": 37788,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/manifest.json",
+        "size": 14339,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/manrope/LICENSE.txt",
+        "size": 4383,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/manrope/manrope-latin-ext-wght-normal.woff2",
+        "size": 15120,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/manrope/manrope-latin-wght-normal.woff2",
+        "size": 24836,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/montserrat/LICENSE.txt",
+        "size": 4509,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/montserrat/montserrat-latin-ext-wght-italic.woff2",
+        "size": 74892,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/montserrat/montserrat-latin-ext-wght-normal.woff2",
+        "size": 70688,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/montserrat/montserrat-latin-wght-italic.woff2",
+        "size": 39632,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/montserrat/montserrat-latin-wght-normal.woff2",
+        "size": 37956,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/nunito-sans/LICENSE.txt",
+        "size": 4526,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/nunito-sans/nunito-sans-latin-ext-wght-italic.woff2",
+        "size": 30344,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/nunito-sans/nunito-sans-latin-ext-wght-normal.woff2",
+        "size": 27908,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/nunito-sans/nunito-sans-latin-wght-italic.woff2",
+        "size": 33080,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/nunito-sans/nunito-sans-latin-wght-normal.woff2",
+        "size": 31076,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/open-sans/LICENSE.txt",
+        "size": 4508,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/open-sans/open-sans-latin-ext-wght-italic.woff2",
+        "size": 37752,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/open-sans/open-sans-latin-ext-wght-normal.woff2",
+        "size": 35156,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/open-sans/open-sans-latin-wght-italic.woff2",
+        "size": 50216,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/open-sans/open-sans-latin-wght-normal.woff2",
+        "size": 48320,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/plus-jakarta-sans/LICENSE.txt",
+        "size": 4534,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-wght-italic.woff2",
+        "size": 23224,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-wght-normal.woff2",
+        "size": 21728,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-wght-italic.woff2",
+        "size": 29600,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-wght-normal.woff2",
+        "size": 27348,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/README.md",
+        "size": 1297,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/roboto/LICENSE.txt",
+        "size": 4512,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/roboto/roboto-latin-ext-wght-italic.woff2",
+        "size": 31820,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/roboto/roboto-latin-ext-wght-normal.woff2",
+        "size": 29392,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/roboto/roboto-latin-wght-italic.woff2",
+        "size": 47208,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/roboto/roboto-latin-wght-normal.woff2",
+        "size": 43136,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/rubik/LICENSE.txt",
+        "size": 4486,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/rubik/rubik-latin-ext-wght-italic.woff2",
+        "size": 21152,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/rubik/rubik-latin-ext-wght-normal.woff2",
+        "size": 19400,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/rubik/rubik-latin-wght-italic.woff2",
+        "size": 36616,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/rubik/rubik-latin-wght-normal.woff2",
+        "size": 35348,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-sans-3/LICENSE.txt",
+        "size": 4314,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-sans-3/source-sans-3-latin-ext-wght-italic.woff2",
+        "size": 59496,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-sans-3/source-sans-3-latin-ext-wght-normal.woff2",
+        "size": 60088,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-sans-3/source-sans-3-latin-wght-italic.woff2",
+        "size": 28532,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-sans-3/source-sans-3-latin-wght-normal.woff2",
+        "size": 28740,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-serif-4/LICENSE.txt",
+        "size": 4314,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-serif-4/source-serif-4-latin-ext-wght-italic.woff2",
+        "size": 44260,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-serif-4/source-serif-4-latin-ext-wght-normal.woff2",
+        "size": 42040,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-serif-4/source-serif-4-latin-wght-italic.woff2",
+        "size": 51516,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/source-serif-4/source-serif-4-latin-wght-normal.woff2",
+        "size": 50824,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/work-sans/LICENSE.txt",
+        "size": 4515,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/work-sans/work-sans-latin-ext-wght-italic.woff2",
+        "size": 32280,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/work-sans/work-sans-latin-ext-wght-normal.woff2",
+        "size": 35716,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/work-sans/work-sans-latin-wght-italic.woff2",
+        "size": 48180,
+        "mode": 420
+      },
+      {
+        "path": "src/react/assets/fonts/work-sans/work-sans-latin-wght-normal.woff2",
+        "size": 50316,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/AuthProvider.jsx",
+        "size": 8211,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/index.js",
+        "size": 363,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/page-permissions.js",
+        "size": 1148,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/permissions.jsx",
+        "size": 1948,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/RequireAdmin.jsx",
+        "size": 1155,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/RequireAuth.jsx",
+        "size": 3075,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/TwoFactorLogin.jsx",
+        "size": 2066,
+        "mode": 420
+      },
+      {
+        "path": "src/react/auth/useAuthContext.js",
+        "size": 277,
+        "mode": 420
+      },
+      {
+        "path": "src/react/Backoffice.jsx",
+        "size": 8223,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/AboutEzarLink.jsx",
+        "size": 239,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/AccountMenu.jsx",
+        "size": 7621,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ActionMenu.jsx",
+        "size": 3662,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/BackofficeLink.jsx",
+        "size": 327,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/Brand.jsx",
+        "size": 1002,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/DeveloperDock.jsx",
+        "size": 14848,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/dialog-stack.js",
+        "size": 1155,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/EmailVerificationPrompt.jsx",
+        "size": 4294,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/EzarLogo.jsx",
+        "size": 221,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/forms.jsx",
+        "size": 3872,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/Layout.jsx",
+        "size": 10310,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/MediaImagePicker.jsx",
+        "size": 5325,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/navConfig.jsx",
+        "size": 2599,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/navigation.js",
+        "size": 2457,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/PayInvoice.jsx",
+        "size": 15458,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/PayWithEzarButton.jsx",
+        "size": 3035,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/PermissionTree.jsx",
+        "size": 3561,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/PlaceholderPage.jsx",
+        "size": 1138,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ProfilePictureCard.jsx",
+        "size": 1369,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/profilePictureCrop.js",
+        "size": 2004,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ProfilePictureDialog.jsx",
+        "size": 6134,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ProfilePictureEditor.jsx",
+        "size": 865,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ScreenLoader.jsx",
+        "size": 1126,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/SidebarNavigation.jsx",
+        "size": 6708,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/Toaster.jsx",
+        "size": 2661,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/ui.jsx",
+        "size": 13806,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/useDialogLayer.js",
+        "size": 776,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/UserAvatar.jsx",
+        "size": 714,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/UserWallet.jsx",
+        "size": 5567,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/useUserWallet.js",
+        "size": 2172,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/WalletConnect.jsx",
+        "size": 9724,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/WalletDialogs.jsx",
+        "size": 19867,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/WalletWorkspace.jsx",
+        "size": 18383,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/widgetNavigation.js",
+        "size": 2575,
+        "mode": 420
+      },
+      {
+        "path": "src/react/components/WorkflowSetupNotice.jsx",
+        "size": 8397,
+        "mode": 420
+      },
+      {
+        "path": "src/react/context.jsx",
+        "size": 1156,
+        "mode": 420
+      },
+      {
+        "path": "src/react/fonts.css",
+        "size": 22713,
+        "mode": 420
+      },
+      {
+        "path": "src/react/headings.css",
+        "size": 2215,
+        "mode": 420
+      },
+      {
+        "path": "src/react/index.css",
+        "size": 5389,
+        "mode": 420
+      },
+      {
+        "path": "src/react/index.jsx",
+        "size": 1523,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/agents.css",
+        "size": 25266,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/cloudgate-about.css",
+        "size": 4800,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/cloudgate-app-analytics.css",
+        "size": 6645,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/cloudgate-smtp.css",
+        "size": 1385,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/cloudgate-workflow-logs.css",
+        "size": 12210,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/CloudgateAbout.jsx",
+        "size": 9586,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/CloudgateAppAnalytics.jsx",
+        "size": 14409,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/CloudgateSmtpSettings.jsx",
+        "size": 5944,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/CloudgateWorkflowLogs.jsx",
+        "size": 27291,
+        "mode": 420
+      },
+      {
+        "path": "src/react/integrations/DeveloperDock.css",
+        "size": 6090,
+        "mode": 420
+      },
+      {
+        "path": "src/react/layout.css",
+        "size": 8032,
+        "mode": 420
+      },
+      {
+        "path": "src/react/media.css",
+        "size": 2604,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationBell.jsx",
+        "size": 7889,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationComposer.jsx",
+        "size": 7682,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationItem.jsx",
+        "size": 1147,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationReadStatus.jsx",
+        "size": 442,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationsProvider.jsx",
+        "size": 1865,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/NotificationStyleBadge.jsx",
+        "size": 889,
+        "mode": 420
+      },
+      {
+        "path": "src/react/notifications/RecipientPicker.jsx",
+        "size": 6900,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/About.jsx",
+        "size": 1301,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/AccountSettings.jsx",
+        "size": 8734,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Analytics.jsx",
+        "size": 157,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Appearance.jsx",
+        "size": 18374,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/AppNotifications.jsx",
+        "size": 8075,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/CloudgateAccountLink.jsx",
+        "size": 7556,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/EmailTemplate.jsx",
+        "size": 9410,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/emailTemplatePreview.js",
+        "size": 5643,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Logs.jsx",
+        "size": 451,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Media.jsx",
+        "size": 9618,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Notifications.jsx",
+        "size": 5420,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/PaymentDetails.jsx",
+        "size": 6944,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/paymentDisplay.js",
+        "size": 1425,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/PaymentList.jsx",
+        "size": 5002,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Payments.jsx",
+        "size": 5232,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Profile.jsx",
+        "size": 6682,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/PublicAccount.jsx",
+        "size": 1762,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Registration.jsx",
+        "size": 7413,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/RoleAssignment.jsx",
+        "size": 2430,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/RoleManagement.jsx",
+        "size": 9471,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/Smtp.jsx",
+        "size": 505,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/TestPayment.jsx",
+        "size": 6902,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/UserEditor.jsx",
+        "size": 3791,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/UserListDetails.jsx",
+        "size": 3015,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/UserManagement.jsx",
+        "size": 14106,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/UserWalletSettings.jsx",
+        "size": 4061,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WebsiteSettings.jsx",
+        "size": 3772,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetButtons.jsx",
+        "size": 4391,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetCalendar.jsx",
+        "size": 6802,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetCards.jsx",
+        "size": 9992,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetCharts.jsx",
+        "size": 598,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetLibrary.jsx",
+        "size": 46475,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetRadio.jsx",
+        "size": 2632,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetRichText.jsx",
+        "size": 2961,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetRowSelection.jsx",
+        "size": 4998,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetScrumBoard.jsx",
+        "size": 5853,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetTabs.jsx",
+        "size": 6847,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetTimeline.jsx",
+        "size": 6266,
+        "mode": 420
+      },
+      {
+        "path": "src/react/pages/WidgetTypography.jsx",
+        "size": 7878,
+        "mode": 420
+      },
+      {
+        "path": "src/react/palettes.css",
+        "size": 5037,
+        "mode": 420
+      },
+      {
+        "path": "src/react/polish.css",
+        "size": 24998,
+        "mode": 420
+      },
+      {
+        "path": "src/react/popover.css",
+        "size": 1404,
+        "mode": 420
+      },
+      {
+        "path": "src/react/public-account.css",
+        "size": 11626,
+        "mode": 420
+      },
+      {
+        "path": "src/react/PublicHomeGate.jsx",
+        "size": 1472,
+        "mode": 420
+      },
+      {
+        "path": "src/react/routing.js",
+        "size": 2670,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/branding-metadata.js",
+        "size": 2543,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/FontPicker.jsx",
+        "size": 1453,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/FontSelect.jsx",
+        "size": 1662,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/PalettePicker.jsx",
+        "size": 6700,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/SettingsProvider.jsx",
+        "size": 4155,
+        "mode": 420
+      },
+      {
+        "path": "src/react/settings/useWalletAvailability.js",
+        "size": 672,
+        "mode": 420
+      },
+      {
+        "path": "src/react/styles.css",
+        "size": 815,
+        "mode": 420
+      },
+      {
+        "path": "src/react/theme.css",
+        "size": 5767,
+        "mode": 420
+      },
+      {
+        "path": "src/react/users.css",
+        "size": 9189,
+        "mode": 420
+      },
+      {
+        "path": "src/react/wallet-workspace.css",
+        "size": 15471,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/advanced-chart-model.js",
+        "size": 17452,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/AdvancedCharts.jsx",
+        "size": 7484,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/button-model.js",
+        "size": 437,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/calendar-model.js",
+        "size": 3683,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/calendar.css",
+        "size": 6868,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Calendar.jsx",
+        "size": 1451,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/CalendarContent.jsx",
+        "size": 9585,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/card-model.js",
+        "size": 1457,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/card-shared.jsx",
+        "size": 6966,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Cards.jsx",
+        "size": 12418,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/chart-engine.js",
+        "size": 890,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/chart-model.js",
+        "size": 1285,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/chart-theme.js",
+        "size": 750,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/charts.jsx",
+        "size": 14744,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/CodeEditor.jsx",
+        "size": 3169,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/CodeEditorContent.jsx",
+        "size": 2772,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/DataTable.jsx",
+        "size": 30353,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/ErrorBoundary.jsx",
+        "size": 1470,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/filter-model.js",
+        "size": 4034,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Form.jsx",
+        "size": 4387,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/icon-model.js",
+        "size": 6261,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/IconLibrary.jsx",
+        "size": 493,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/IconLibraryContent.jsx",
+        "size": 7347,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/index.jsx",
+        "size": 1741,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/library.css",
+        "size": 21110,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/motion.js",
+        "size": 2302,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/network-graph-model.js",
+        "size": 10162,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/NetworkGraph.jsx",
+        "size": 7042,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/primitives.jsx",
+        "size": 18901,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/RadioGroup.jsx",
+        "size": 4966,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/rich-text-model.js",
+        "size": 4370,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/rich-text.css",
+        "size": 8810,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/RichTextEditor.jsx",
+        "size": 6297,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/RichTextEditorContent.jsx",
+        "size": 6469,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/scrum-board.css",
+        "size": 8624,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/scrum-model.js",
+        "size": 3482,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/ScrumBoard.jsx",
+        "size": 14338,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/search-options.js",
+        "size": 963,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/SearchSelect.jsx",
+        "size": 10682,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/table-export.js",
+        "size": 5726,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/table-model.js",
+        "size": 2882,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/TableExport.jsx",
+        "size": 3343,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/TableFilters.jsx",
+        "size": 5570,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Tabs.jsx",
+        "size": 3802,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/timeline-model.js",
+        "size": 1911,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Timeline.jsx",
+        "size": 5855,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/Typography.jsx",
+        "size": 2792,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/useSearchOptions.js",
+        "size": 1908,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/validation.js",
+        "size": 2207,
+        "mode": 420
+      },
+      {
+        "path": "src/react/widgets/widgets.css",
+        "size": 80637,
+        "mode": 420
+      },
+      {
+        "path": "src/react/workflow-setup.css",
+        "size": 1095,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/admin-styling-guidance.js",
+        "size": 2886,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/calendar-catalog.js",
+        "size": 4242,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/card-catalog.js",
+        "size": 12787,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/card-examples.js",
+        "size": 6992,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/card-index.js",
+        "size": 4523,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/catalog.d.ts",
+        "size": 912,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/catalog.js",
+        "size": 82586,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/chart-catalog.js",
+        "size": 6518,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/chart-examples.js",
+        "size": 31645,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/chart-index.js",
+        "size": 3831,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/cli.mjs",
+        "size": 1619,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/manifest.mjs",
+        "size": 1193,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/mcp.mjs",
+        "size": 5436,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/picker-manifest.json",
+        "size": 37949,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/radio-catalog.js",
+        "size": 3461,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/record-editor-guidance.js",
+        "size": 2959,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/rich-text-catalog.js",
+        "size": 4005,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/scrum-catalog.js",
+        "size": 4828,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/select-catalog.js",
+        "size": 5151,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/table-examples.js",
+        "size": 6164,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/tabs-catalog.js",
+        "size": 4147,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/timeline-catalog.js",
+        "size": 4785,
+        "mode": 420
+      },
+      {
+        "path": "src/widgets/widget-index.js",
+        "size": 2858,
+        "mode": 420
+      },
+      {
+        "path": "tailwind.preset.js",
+        "size": 1673,
+        "mode": 420
+      },
+      {
+        "path": "widgets.d.ts",
+        "size": 35212,
+        "mode": 420
+      }
+    ],
+    "entryCount": 464,
+    "bundled": []
+  }
+]

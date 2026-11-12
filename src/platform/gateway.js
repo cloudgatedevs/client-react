@@ -14,7 +14,7 @@ import { createCloudgateClient } from '@cloudgatedevs/cloudgate-client';
  * @cloudgatedevs/cloudgate-client, alongside the IdP bearer. Both are required for signing; either
  * one alone is ignored and requests go out unsigned.
  */
-export function createGatewayClient({ auth, gatewayUrl, environment = 'sbx', resolveAppIdentity, fetchImpl, timeoutMs, verifySession, apiKey = '', apiSecret = '' }) {
+export function createGatewayClient({ auth, gatewayUrl, environment = 'sbx', resolveAppIdentity, resolveGateway, fetchImpl, timeoutMs, verifySession, apiKey = '', apiSecret = '' }) {
   const origin = String(gatewayUrl || '').trim().replace(/\/+$/, '').replace(/\/(sbx|prod|sandbox|production)$/i, '');
   const clients = new Map();
   const segment = value => /^prod/i.test(String(value || '')) ? 'prod' : 'sbx';
@@ -22,10 +22,14 @@ export function createGatewayClient({ auth, gatewayUrl, environment = 'sbx', res
   const signing = key && secret ? { apiKey: key, apiSecret: secret } : {};
   async function client() {
     if (!origin) throw new Error('Set gatewayUrl to the workflow gateway host of this app.');
-    let env = segment(environment);
-    try { env = segment((await resolveAppIdentity?.())?.environment ?? environment); } catch { /* keep the configured environment */ }
-    if (!clients.has(env)) clients.set(env, createCloudgateClient({ baseUrl: origin, environment: env, fetch: fetchImpl, ...signing, ...(timeoutMs ? { timeoutMs } : {}) }));
-    return clients.get(env);
+    const scope = await resolveAppIdentity?.() ?? { environment };
+    const env = segment(scope.environment ?? environment);
+    const resolved = await resolveGateway?.(scope);
+    const baseUrl = resolved?.gatewayUrl || origin;
+    const proxy = resolved?.proxyEnabled === true || /\/api\/app-proxy\//.test(baseUrl);
+    const cacheKey = `${baseUrl}:${env}:${proxy}`;
+    if (!clients.has(cacheKey)) clients.set(cacheKey, createCloudgateClient({ baseUrl, environment: env, fetch: fetchImpl, ...(proxy ? {} : signing), ...(timeoutMs ? { timeoutMs } : {}) }));
+    return clients.get(cacheKey);
   }
   async function request(path, options = {}) {
     const gateway = await client();

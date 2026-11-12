@@ -64,7 +64,7 @@ class FakeSocket {
 test('agent frames on the notification socket reach onAgents without refreshing the inbox', async () => {
   FakeSocket.sockets = [];
   let changes = 0; const agents = [];
-  const stop = connectNotificationSocket({ apiUrl: 'https://api.example.test', environment: 'sbx', getAccessToken: async () => 'token', onChange: () => changes++, onAgents: message => agents.push(message), WebSocketImpl: FakeSocket, retryDelayMs: 1 });
+  const stop = connectNotificationSocket({ apiUrl: 'https://api.example.test', environment: 'sbx', getSocketTicket: async () => ({ ticket: 'a'.repeat(64) }), onChange: () => changes++, onAgents: message => agents.push(message), WebSocketImpl: FakeSocket, retryDelayMs: 1 });
   try {
     for (let i = 0; i < 100 && !FakeSocket.sockets.length; i++) await delay(5);
     const socket = FakeSocket.sockets[0]; socket.open();

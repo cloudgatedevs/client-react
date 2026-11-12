@@ -305,6 +305,25 @@ Deploy the updated backend endpoints first; account linking is optional. HTML is
 Writes audit the IdP actor with HTML hashes instead of template content, without attributing the
 change to an ABP user.
 
+### Live notification connections
+
+`client.notifications.connect({ onChange, onStatus, onAgents })` obtains a fresh,
+single-use ticket from the authenticated `notifications/socket-ticket` API for each
+connection. The normal IdP transport refreshes expired access tokens before retrying
+the ticket request. Reusable access tokens are never sent in WebSocket URLs.
+
+Connections are marked connected after the server's `ready` frame. Failed connections
+back off with jitter, respect the ticket API's rate-limit retry delay, and stop retrying
+when authentication is refused after refresh or the endpoint is unavailable. A new
+connection should be started after signing in again. Unmounting cancels pending ticket
+requests and closes the socket.
+
+Direct users of `connectNotificationSocket` must replace the former `getAccessToken`
+callback with `getSocketTicket({ environment, signal })`, returning the ticket API's
+`{ ticket, expiresInSeconds }` response. Prefer `client.notifications.connect`, which
+handles the tenant route, environment, authentication, and refresh automatically.
+Existing apps must update the SDK and rebuild to replace the old token-in-URL protocol.
+
 ### Create app notifications
 
 Open **Administration → Messaging → App notifications** (`/app-notifications`), or choose
@@ -895,3 +914,11 @@ signing out clears the stored session. Website configuration and connection fail
 offer **Sign out**, and missing app identity is reported as **Website not configured**.
 This gates page rendering; application APIs must still enforce authentication, tenant and
 record ownership, including for wallet data. Self-registration remains a separate tenant policy.
+
+## App gateway proxy discovery
+
+`createCloudgatePlatform` can discover an app's server-side workflow proxy from the existing `gatewayUrl`, `tenancyName`, `webAppId` and `environment`. Keep the normal workflow gateway host in `gatewayUrl`; the SDK reads the app's public `website` settings and, when `gatewayProxy.enabled` is true, derives `/api/app-proxy/{tenant}/{appId}/{environment}/...` on that host. Published app identity takes precedence over build defaults.
+
+Configure the key and secret in Cloudgate's Web app settings → API proxy. Workflow requests from the browser send the user's bearer token; Cloudgate adds the HMAC signature on the server. Do not put these signing credentials in browser environment variables. Native IdP calls continue to use `apiUrl` directly.
+
+Discovery is cached for 30 seconds per app/environment. A failed settings request stops the workflow call rather than falling back to direct access. Older servers that omit `gatewayProxy` retain direct routing. Explicit proxy base URLs are also supported for compatibility and never use browser-side signing. This capability requires the backend app-proxy migration and API deployment.

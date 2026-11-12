@@ -218,7 +218,9 @@ export function createNotificationsClient(options: { request: PlatformRequest; r
 export interface NotificationSocketOptions {
   /** Receives `ready` and `agentsChanged` frames for the AI agents provider. */
   onAgents?: (message: AgentsChangedMessage) => void;
-  apiUrl: string; environment: string; getAccessToken: () => Promise<string | null> | string | null;
+  apiUrl: string; environment: string;
+  /** Fetch a fresh one-use ticket through the authenticated IdP REST transport for every connection. */
+  getSocketTicket: (options: { environment: 'sbx' | 'prod'; signal: AbortSignal }) => Promise<{ ticket: string; expiresInSeconds?: number }>;
   onChange: () => void; onStatus?: (status: string) => void; WebSocketImpl?: typeof WebSocket;
   retryDelayMs?: number; heartbeatMs?: number; handshakeMs?: number;
 }
@@ -268,7 +270,9 @@ export interface GatewayClient {
   patch<T = any>(path: string, body?: unknown, options?: GatewayRequestOptions): Promise<T>;
   delete<T = any>(path: string, options?: GatewayRequestOptions): Promise<T>;
 }
-export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean>;
+export interface GatewayConnection { gatewayUrl: string; proxyEnabled: boolean }
+export function createGatewayProxyResolver(options: { gatewayUrl: string; tenancyName: string; publicRequest: PlatformRequest }): (scope: AppIdentity) => Promise<GatewayConnection>;
+export function createGatewayClient(options: { auth: CloudgateAuth; gatewayUrl: string; environment?: string; resolveAppIdentity?: IdentityResolver; resolveGateway?: (scope: AppIdentity) => Promise<GatewayConnection>; fetchImpl?: typeof fetch; timeoutMs?: number; verifySession?: () => Promise<boolean>;
   /** Gateway API key; with `apiSecret`, requests are signed (X-Api-Key, X-Timestamp, X-Authentication-Signature) in addition to the IdP bearer. */
   apiKey?: string; apiSecret?: string }): GatewayClient;
 export interface WorkflowAppMetadata { id?: string; workflows?: { file?: string; projectPath?: string } }
@@ -287,7 +291,7 @@ export function workflowSetupError(error: { status?: number; message?: string })
 export interface CloudgatePlatformOptions extends Omit<CloudgateAuthOptions, 'idpBaseUrl'> {
   idpBaseUrl?: string; apiUrl?: string; returnUrl?: string; webAppId?: string; environment?: string;
   projectPath?: string; gatewayUrl?: string; mediaFolder?: string; timeoutMs?: number; auth?: CloudgateAuth;
-  /** Workflow-gateway signing credentials for projects that enforce API-key validation (e.g. VITE_API_KEY / VITE_API_SECRET). */
+  /** Legacy direct gateway signing. Browser apps should configure the server-side app proxy instead; proxy calls never use these credentials. */
   apiKey?: string; apiSecret?: string;
   resolvePublishedApp?: () => Promise<PublishedApp | null>;
 }
@@ -308,7 +312,7 @@ export interface CloudgatePlatform {
   users: ReturnType<typeof createUsersClient>; smtp: ReturnType<typeof createSmtpClient>;
   analytics: ReturnType<typeof createAppAnalyticsClient>; logs: ReturnType<typeof createWorkflowLogsClient>;
   payments: ReturnType<typeof createPaymentsClient>;
-  notifications: ReturnType<typeof createNotificationsClient> & { connect(options: Omit<NotificationSocketOptions, 'apiUrl' | 'environment' | 'getAccessToken'>): () => void };
+  notifications: ReturnType<typeof createNotificationsClient> & { connect(options: Omit<NotificationSocketOptions, 'apiUrl' | 'environment' | 'getSocketTicket'>): () => void };
   /** AI agents, run on the server as the Cloudgate account linked in the user's profile. */
   agents: AgentsClient;
   initialize(options?: { onTwoFactorRequired?: TwoFactorHandler }): Promise<CloudgateSession | null>; loginUrl(returnUrl?: string): string; login(returnUrl?: string): string; signupUrl(returnUrl?: string): string;

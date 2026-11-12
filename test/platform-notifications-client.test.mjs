@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
 import { safeNotificationLink, createNotificationsClient, connectNotificationSocket } from '../src/platform/notifications.js';
+import { createCloudgatePlatform } from '../src/platform/index.js';
 
 test('notification actions allow local/http links and reject browser-normalized unsafe destinations', () => {
   for (const url of ['/orders/1?tab=receipt#details', 'https://example.test/reports', 'http://localhost:5173/orders']) assert.equal(safeNotificationLink(url), url);
@@ -32,22 +33,26 @@ class FakeSocket {
   close() { this.readyState = 3; this.onclose?.(); }
 }
 
-test('native socket refreshes on ready/change, reconnects with a fresh token, and cleans up', async () => {
+const ticket = number => number.toString(16).padStart(64, '0');
+
+test('native socket refreshes on ready/change, reconnects with a fresh one-use ticket, and cleans up', async () => {
   FakeSocket.sockets = [];
-  let tokens = 0, changes = 0;
+  let tickets = 0, changes = 0;
   const status = [];
-  const stop = connectNotificationSocket({ apiUrl: 'https://api.example.test/', environment: 'sbx', getAccessToken: async () => `token-${++tokens}`, onChange: () => changes++, onStatus: value => status.push(value), WebSocketImpl: FakeSocket, retryDelayMs: 1, heartbeatMs: 5 });
+  const stop = connectNotificationSocket({ apiUrl: 'https://api.example.test/', environment: 'sbx', getSocketTicket: async () => ({ ticket: ticket(++tickets) }), onChange: () => changes++, onStatus: value => status.push(value), WebSocketImpl: FakeSocket, retryDelayMs: 1, heartbeatMs: 5 });
   try {
     await until(() => FakeSocket.sockets.length === 1);
     const first = FakeSocket.sockets[0]; const url = new URL(first.url);
-    assert.equal(url.protocol, 'wss:'); assert.equal(url.pathname, '/ws-idp-notifications'); assert.equal(url.searchParams.get('access_token'), 'token-1');
+    assert.equal(url.protocol, 'wss:'); assert.equal(url.pathname, '/ws-idp-notifications'); assert.equal(url.searchParams.get('ticket'), ticket(1));
+    assert.equal(url.searchParams.has('access_token'), false);
     assert.equal(url.searchParams.get('environment'), 'sbx'); assert.equal(url.searchParams.has('userId'), false);
-    first.open(); first.message({ type: 'ready', environment: 'sbx' }); first.message({ type: 'notificationsChanged', environment: 'sbx' });
+    first.open(); assert.equal(status.includes('connected'), false);
+    first.message({ type: 'ready', environment: 'sbx' }); first.message({ type: 'notificationsChanged', environment: 'sbx' });
     first.message({ type: 'notificationsChanged', environment: 'prod' }); first.message('invalid-json');
     assert.equal(changes, 2);
     await until(() => first.sent.includes('ping'));
     first.close(); await until(() => FakeSocket.sockets.length === 2);
-    const second = FakeSocket.sockets[1]; assert.equal(new URL(second.url).searchParams.get('access_token'), 'token-2');
+    const second = FakeSocket.sockets[1]; assert.equal(new URL(second.url).searchParams.get('ticket'), ticket(2));
     second.open(); second.message({ type: 'ready', environment: 'sbx' }); assert.equal(changes, 3);
     first.message({ type: 'notificationsChanged', environment: 'sbx' }); assert.equal(changes, 3, 'Ignore stale connections');
     stop(); await delay(20); assert.equal(second.readyState, 3); assert.equal(FakeSocket.sockets.length, 2);
@@ -55,10 +60,105 @@ test('native socket refreshes on ready/change, reconnects with a fresh token, an
   } finally { stop(); }
 });
 
-test('unmount during token refresh prevents a socket from opening', async () => {
+test('unmount cancels a pending ticket request and prevents a late socket from opening', async () => {
   FakeSocket.sockets = [];
-  let resolveToken;
-  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', getAccessToken: () => new Promise(resolve => { resolveToken = resolve; }), onChange() {}, WebSocketImpl: FakeSocket });
-  await until(() => resolveToken); stop(); resolveToken('late-token'); await delay(10);
+  let resolveTicket, signal;
+  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', getSocketTicket: options => { signal = options.signal; return new Promise(resolve => { resolveTicket = resolve; }); }, onChange() {}, WebSocketImpl: FakeSocket });
+  await until(() => resolveTicket); stop(); assert.equal(signal.aborted, true);
+  resolveTicket({ ticket: ticket(1) }); await delay(10);
   assert.equal(FakeSocket.sockets.length, 0);
+});
+
+test('platform obtains scoped tickets through bearer refresh and never sends the bearer in a URL', async () => {
+  FakeSocket.sockets = [];
+  const calls = []; let bearer = 'old-bearer', refreshed = 0, ensured = 0;
+  const auth = { tenancyName: 'open-admin', ensureAccessToken: async () => { ensured++; return bearer; },
+    getAccessToken: () => bearer, authHeader: () => ({ Authorization: `Bearer ${bearer}` }),
+    refresh: async () => { refreshed++; bearer = 'fresh-bearer'; return true; } };
+  const client = createCloudgatePlatform({ apiUrl: 'https://open-admin.api.example.test', auth, environment: 'sbx',
+    resolvePublishedApp: async () => ({ webAppId: '11111111-2222-3333-4444-555555555555', isProduction: true }),
+    fetch: async (url, options) => {
+      calls.push({ url, ...options });
+      return options.headers.Authorization === 'Bearer old-bearer'
+        ? Response.json({}, { status: 401 }) : Response.json({ result: { ticket: ticket(calls.length), expiresInSeconds: 30 } });
+    } });
+  const stop = client.notifications.connect({ onChange() {}, WebSocketImpl: FakeSocket, retryDelayMs: 1 });
+  try {
+    await until(() => FakeSocket.sockets.length === 1);
+    assert.equal(refreshed, 1); assert.equal(calls.length, 2);
+    assert.ok(calls.every(call => call.url === 'https://open-admin.api.example.test/api/idp/open-admin/notifications/socket-ticket'
+      && call.method === 'POST' && call.credentials === 'omit' && call.redirect === 'error'
+      && JSON.parse(call.body).environment === 'prod'));
+    const first = new URL(FakeSocket.sockets[0].url);
+    assert.equal(first.searchParams.get('environment'), 'prod'); assert.equal(first.searchParams.get('ticket'), ticket(2));
+    assert.equal(first.searchParams.has('access_token'), false); assert.equal(first.href.includes('bearer'), false);
+    FakeSocket.sockets[0].close(); await until(() => FakeSocket.sockets.length === 2);
+    assert.equal(ensured, 2); assert.equal(calls.length, 3);
+    assert.equal(new URL(FakeSocket.sockets[1].url).searchParams.get('ticket'), ticket(3));
+  } finally { stop(); }
+});
+
+test('failed ticket authentication or missing endpoints stop automatic attempts', async () => {
+  for (const status of [400, 401, 403, 404]) {
+    FakeSocket.sockets = []; let requests = 0;
+    const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', onChange() {}, WebSocketImpl: FakeSocket,
+      retryDelayMs: 1, getSocketTicket: async () => { requests++; throw { status }; } });
+    try { await until(() => requests); await delay(30); assert.equal(requests, 1); assert.equal(FakeSocket.sockets.length, 0); }
+    finally { stop(); }
+  }
+});
+
+test('ticket throttling respects Retry-After before acquiring another ticket', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'setInterval'] });
+  FakeSocket.sockets = []; let requests = 0;
+  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', onChange() {}, WebSocketImpl: FakeSocket,
+    getSocketTicket: async () => { if (++requests === 1) throw { status: 429, body: { retryAfterSeconds: 60 } }; return { ticket: ticket(requests) }; } });
+  try {
+    t.mock.timers.tick(0); await Promise.resolve();
+    t.mock.timers.tick(59999); await Promise.resolve(); assert.equal(requests, 1); assert.equal(FakeSocket.sockets.length, 0);
+    t.mock.timers.tick(1); await Promise.resolve(); assert.equal(requests, 2); assert.equal(FakeSocket.sockets.length, 1);
+  } finally { stop(); }
+});
+
+test('rapid server-ready disconnects retain exponential backoff and stale events cannot reconnect', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'setInterval'] });
+  t.mock.method(Math, 'random', () => 0);
+  FakeSocket.sockets = []; let requests = 0;
+  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', onChange() {}, WebSocketImpl: FakeSocket,
+    getSocketTicket: async () => ({ ticket: ticket(++requests) }) });
+  try {
+    t.mock.timers.tick(0); await Promise.resolve();
+    const first = FakeSocket.sockets[0]; const staleClose = first.onclose;
+    first.open(); first.message({ type: 'ready', environment: 'sbx' }); first.close();
+    t.mock.timers.tick(1000); await Promise.resolve(); assert.equal(requests, 2);
+    const second = FakeSocket.sockets[1]; second.open(); second.message({ type: 'ready', environment: 'sbx' }); second.close();
+    staleClose();
+    t.mock.timers.tick(1999); await Promise.resolve(); assert.equal(requests, 2);
+    t.mock.timers.tick(1); await Promise.resolve(); assert.equal(requests, 3);
+  } finally { stop(); }
+});
+
+test('an upgraded connection without a ready frame times out and acquires a new ticket', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'setInterval'] });
+  t.mock.method(Math, 'random', () => 0);
+  FakeSocket.sockets = []; let requests = 0;
+  const status = [];
+  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sandbox', onChange() {}, onStatus: value => status.push(value),
+    WebSocketImpl: FakeSocket, handshakeMs: 100, getSocketTicket: async ({ environment }) => {
+      assert.equal(environment, 'sbx'); return { ticket: ticket(++requests) };
+    } });
+  try {
+    t.mock.timers.tick(0); await Promise.resolve(); FakeSocket.sockets[0].open();
+    t.mock.timers.tick(100); await Promise.resolve(); assert.equal(FakeSocket.sockets[0].readyState, 3);
+    assert.equal(status.includes('connected'), false);
+    t.mock.timers.tick(1000); await Promise.resolve(); assert.equal(requests, 2);
+  } finally { stop(); }
+});
+
+test('missing or malformed tickets never fall back to access tokens in URLs', async () => {
+  assert.throws(() => connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', getAccessToken: () => 'bearer' }), /getSocketTicket/);
+  FakeSocket.sockets = []; let requests = 0;
+  const stop = connectNotificationSocket({ apiUrl: 'https://example.test', environment: 'sbx', onChange() {}, WebSocketImpl: FakeSocket,
+    getSocketTicket: async () => { requests++; return { ticket: 'invalid' }; } });
+  try { await until(() => requests); assert.equal(FakeSocket.sockets.length, 0); } finally { stop(); }
 });
